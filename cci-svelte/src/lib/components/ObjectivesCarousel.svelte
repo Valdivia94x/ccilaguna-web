@@ -1,0 +1,403 @@
+<script lang="ts">
+	import { onMount, onDestroy } from 'svelte';
+
+	interface Objective {
+		number: number;
+		title: string;
+		description: string;
+	}
+
+	let { objectives, mission }: { objectives: Objective[]; mission: string } = $props();
+
+	let currentIndex = $state(0);
+	let isPaused = $state(false);
+	let intervalId: number | undefined;
+
+	function nextSlide() {
+		currentIndex = (currentIndex + 1) % objectives.length;
+	}
+
+	function prevSlide() {
+		currentIndex = (currentIndex - 1 + objectives.length) % objectives.length;
+	}
+
+	function goToSlide(index: number) {
+		currentIndex = index;
+	}
+
+	function startAutoplay() {
+		if (intervalId) return;
+		intervalId = window.setInterval(() => {
+			if (!isPaused) {
+				nextSlide();
+			}
+		}, 5000);
+	}
+
+	function stopAutoplay() {
+		if (intervalId) {
+			clearInterval(intervalId);
+			intervalId = undefined;
+		}
+	}
+
+	onMount(() => {
+		startAutoplay();
+	});
+
+	onDestroy(() => {
+		stopAutoplay();
+	});
+
+	function handleMouseEnter() {
+		isPaused = true;
+	}
+
+	function handleMouseLeave() {
+		isPaused = false;
+	}
+</script>
+
+<section id="objetivos" class="objectives-section" aria-labelledby="objectives-heading">
+	<!-- Misión -->
+	<div class="mission-container">
+		<div class="quote-icon" aria-hidden="true">"</div>
+		<p class="mission-text">{mission}</p>
+	</div>
+
+	<!-- Título de Objetivos -->
+	<h2 id="objectives-heading" class="objectives-title">Objetivos</h2>
+
+	<!-- Carrusel de Objetivos -->
+	<div
+		class="carousel-container"
+		onmouseenter={handleMouseEnter}
+		onmouseleave={handleMouseLeave}
+		role="region"
+		aria-label="Carrusel de objetivos"
+	>
+		<button
+			class="carousel-btn prev"
+			onclick={prevSlide}
+			aria-label="Objetivo anterior"
+		>
+			&#10094;
+		</button>
+
+		<div class="objectives-carousel">
+			{#each objectives as objective, index (objective.number)}
+				<div
+					class="objective-card"
+					class:active={index === currentIndex}
+					aria-hidden={index !== currentIndex}
+				>
+					<div class="objective-number">
+						<span>{objective.number}</span>
+					</div>
+					<h3 class="objective-title">{objective.title}</h3>
+					<p class="objective-description">{objective.description}</p>
+				</div>
+			{/each}
+		</div>
+
+		<button
+			class="carousel-btn next"
+			onclick={nextSlide}
+			aria-label="Objetivo siguiente"
+		>
+			&#10095;
+		</button>
+	</div>
+
+	<!-- Indicadores -->
+	<div class="carousel-indicators" role="tablist" aria-label="Navegación de objetivos">
+		{#each objectives as objective, index (objective.number)}
+			<button
+				class="indicator"
+				class:active={index === currentIndex}
+				onclick={() => goToSlide(index)}
+				aria-label={`Ir al objetivo ${objective.number}`}
+				aria-selected={index === currentIndex}
+				role="tab"
+			></button>
+		{/each}
+	</div>
+</section>
+
+<style>
+	.objectives-section {
+		padding: 30px 50px;
+		background: var(--bg-objectives);
+		transition: background 0.3s ease;
+		overflow: hidden;
+	}
+
+	/* Misión */
+	.mission-container {
+		max-width: 900px;
+		margin: 0 auto 60px;
+		text-align: center;
+		position: relative;
+	}
+
+	.quote-icon {
+		font-size: 120px;
+		line-height: 1;
+		color: #4a7ba7;
+		font-family: Georgia, serif;
+		margin-bottom: -40px;
+		opacity: 0.3;
+	}
+
+	.mission-text {
+		font-size: 20px;
+		font-weight: 600;
+		color: var(--text-primary);
+		line-height: 1.6;
+		padding: 0 20px;
+	}
+
+	.mission-text::before {
+		content: 'MISIÓN: ';
+		font-weight: 400;
+		color: var(--text-primary);
+	}
+
+	/* Título Objetivos */
+	.objectives-title {
+		color: var(--text-primary);
+		font-size: 48px;
+		font-weight: 400;
+		text-transform: uppercase;
+		margin-bottom: 40px;
+		text-align: center;
+	}
+
+	/* Carrusel */
+	.carousel-container {
+		position: relative;
+		max-width: 800px;
+		margin: 0 auto;
+		padding: 40px 80px;
+	}
+
+	.objectives-carousel {
+		position: relative;
+		width: 100%;
+		min-height: 400px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.objective-card {
+		position: absolute;
+		width: 100%;
+		opacity: 0;
+		transform: scale(0.8);
+		transition: opacity 0.5s ease, transform 0.5s ease;
+		pointer-events: none;
+		text-align: center;
+		padding: 40px;
+		background: var(--card-bg);
+		border-radius: 20px;
+		box-shadow: 0 10px 30px var(--card-shadow);
+	}
+
+	.objective-card.active {
+		opacity: 1;
+		transform: scale(1);
+		pointer-events: auto;
+		z-index: 1;
+	}
+
+	.objective-number {
+		width: 100px;
+		height: 100px;
+		margin: 0 auto 30px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: linear-gradient(135deg, #4a7ba7, #2c5f8d);
+		border-radius: 50%;
+		position: relative;
+	}
+
+	.objective-number::before {
+		content: '';
+		position: absolute;
+		width: 110px;
+		height: 110px;
+		border: 3px solid #4a7ba7;
+		border-radius: 50%;
+		opacity: 0.3;
+	}
+
+	.objective-number span {
+		font-size: 48px;
+		font-weight: 400;
+		color: white;
+	}
+
+	.objective-title {
+		font-size: 28px;
+		font-weight: 400;
+		color: var(--text-primary);
+		margin-bottom: 20px;
+		text-transform: uppercase;
+	}
+
+	.objective-description {
+		font-size: 18px;
+		color: var(--text-primary);
+		line-height: 1.6;
+		max-width: 600px;
+		margin: 0 auto;
+	}
+
+	/* Botones de navegación */
+	.carousel-btn {
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		background: rgba(74, 123, 167, 0.8);
+		color: white;
+		border: none;
+		width: 50px;
+		height: 50px;
+		border-radius: 50%;
+		font-size: 24px;
+		cursor: pointer;
+		transition: all 0.3s ease;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 2;
+		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+	}
+
+	.carousel-btn:hover {
+		background: rgba(74, 123, 167, 1);
+		transform: translateY(-50%) scale(1.1);
+	}
+
+	.carousel-btn.prev {
+		left: 0;
+	}
+
+	.carousel-btn.next {
+		right: 0;
+	}
+
+	/* Indicadores */
+	.carousel-indicators {
+		display: flex;
+		justify-content: center;
+		gap: 15px;
+		margin-top: 40px;
+	}
+
+	.indicator {
+		width: 15px;
+		height: 15px;
+		border-radius: 50%;
+		border: 2px solid #4a7ba7;
+		background: transparent;
+		cursor: pointer;
+		transition: all 0.3s ease;
+		padding: 0;
+	}
+
+	.indicator:hover {
+		transform: scale(1.2);
+	}
+
+	.indicator.active {
+		background: #4a7ba7;
+		transform: scale(1.3);
+	}
+
+	/* Responsive */
+	@media (max-width: 768px) {
+		.objectives-section {
+			padding: 40px 20px;
+		}
+
+		.mission-text {
+			font-size: 16px;
+		}
+
+		.quote-icon {
+			font-size: 80px;
+			margin-bottom: -30px;
+		}
+
+		.objectives-title {
+			font-size: 36px;
+			margin-bottom: 30px;
+		}
+
+		.carousel-container {
+			padding: 20px 60px;
+		}
+
+		.objectives-carousel {
+			min-height: 450px;
+		}
+
+		.objective-card {
+			padding: 30px 20px;
+		}
+
+		.objective-number {
+			width: 80px;
+			height: 80px;
+			margin-bottom: 20px;
+		}
+
+		.objective-number::before {
+			width: 90px;
+			height: 90px;
+		}
+
+		.objective-number span {
+			font-size: 36px;
+		}
+
+		.objective-title {
+			font-size: 22px;
+			margin-bottom: 15px;
+		}
+
+		.objective-description {
+			font-size: 16px;
+		}
+
+		.carousel-btn {
+			width: 40px;
+			height: 40px;
+			font-size: 20px;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.carousel-container {
+			padding: 20px 50px;
+		}
+
+		.objectives-carousel {
+			min-height: 500px;
+		}
+
+		.carousel-btn {
+			width: 35px;
+			height: 35px;
+			font-size: 18px;
+		}
+
+		.indicator {
+			width: 12px;
+			height: 12px;
+		}
+	}
+</style>
