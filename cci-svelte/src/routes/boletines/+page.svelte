@@ -3,8 +3,12 @@
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import BoletinCard from '$lib/components/BoletinCard.svelte';
+	import { urlFor } from '$lib/sanity'; // <--- Importamos Sanity
 
-	// Tipos
+	// Recibimos los datos del servidor (+page.server.js)
+	let { data } = $props();
+
+	// Tipos (Actualizados para incluir PDF y tamaño)
 	interface Boletin {
 		id: string;
 		title: string;
@@ -12,6 +16,17 @@
 		image: string;
 		excerpt: string;
 		category: 'seguridad' | 'empleo';
+		pdfUrl: string; // Nuevo
+		size: string; // Nuevo
+	}
+
+	// Función para formatear bytes (la misma que en Informes)
+	function formatBytes(bytes: number, decimals = 1) {
+		if (!bytes) return 'PDF';
+		const k = 1024;
+		const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+		const i = Math.floor(Math.log(bytes) / Math.log(k));
+		return parseFloat((bytes / Math.pow(k, i)).toFixed(decimals)) + ' ' + sizes[i];
 	}
 
 	// Estado para el tema activo
@@ -21,47 +36,33 @@
 	let filterStartDate = $state('');
 	let filterEndDate = $state('');
 
-	// Datos de ejemplo de boletines
-	const boletines: Boletin[] = [
-		{
-			id: 'seg-001',
-			title: 'Informe de Seguridad Pública - Enero 2024',
-			date: '2024-01-15',
-			image: '/images/boletines/seguridad-1.jpg',
-			excerpt: 'Análisis mensual de los indicadores de seguridad en la Comarca Lagunera.',
-			category: 'seguridad'
-		},
-		{
-			id: 'seg-002',
-			title: 'Reporte Trimestral de Incidencia Delictiva',
-			date: '2024-02-10',
-			image: '/images/boletines/seguridad-2.jpg',
-			excerpt: 'Estadísticas y tendencias del primer trimestre del año.',
-			category: 'seguridad'
-		},
-		{
-			id: 'emp-001',
-			title: 'Panorama del Empleo en La Laguna - Q1 2024',
-			date: '2024-01-20',
-			image: '/images/boletines/empleo-1.jpg',
-			excerpt: 'Análisis del mercado laboral y oportunidades de empleo en la región.',
-			category: 'empleo'
-		},
-		{
-			id: 'emp-002',
-			title: 'Indicadores de Desarrollo Económico Regional',
-			date: '2024-02-25',
-			image: '/images/boletines/empleo-2.jpg',
-			excerpt: 'Evaluación de la situación económica y perspectivas de crecimiento.',
-			category: 'empleo'
-		}
-	];
+	// --- TRANSFORMACIÓN DE DATOS ---
+	// Convertimos los datos crudos de Sanity al formato que tu UI ya conoce
+	let boletines = $derived(
+		data.newsletters
+			? data.newsletters.map((n: any) => ({
+					id: n._id,
+					title: n.title,
+					slug: n.slug.current,
+					date: n.publishedAt,
+					// Generamos la URL de la imagen (cuadrada para que se vea bien en cards)
+					image: n.coverImage ? urlFor(n.coverImage).width(500).height(500).url() : '',
+					// Como no pusimos "excerpt" en el schema del boletín, usamos el tamaño como info útil
+					excerpt: n.description || `Boletín disponible en PDF (${formatBytes(n.size)})`,
+					// Convertimos "Seguridad" (Sanity) a "seguridad" (Tu UI)
+					category: (n.category ? n.category.toLowerCase() : 'seguridad') as 'seguridad' | 'empleo',
+					pdfUrl: n.pdfUrl,
+					size: formatBytes(n.size)
+				}))
+			: []
+	);
 
-	// Filtrar boletines por tema activo
+	// Filtrar boletines (Lógica original pero usando la variable reactiva 'boletines')
 	let boletinesFiltrados = $derived(() => {
+		// Usamos la lista procesada de Sanity
 		let filtered = boletines.filter((b) => b.category === activeTheme);
 
-		// Aplicar filtro de fechas si están definidos
+		// Aplicar filtro de fechas
 		if (filterStartDate) {
 			filtered = filtered.filter((b) => b.date >= filterStartDate);
 		}

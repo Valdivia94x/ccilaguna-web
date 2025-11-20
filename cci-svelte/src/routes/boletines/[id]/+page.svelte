@@ -1,112 +1,16 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import Navbar from '$lib/components/Navbar.svelte';
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 	import Footer from '$lib/components/Footer.svelte';
+	import { urlFor } from '$lib/sanity';
+	import { PortableText } from '@portabletext/svelte';
 
-	// Tipo de boletín completo
-	interface BoletinDetalle {
-		id: string;
-		title: string;
-		date: string;
-		image: string;
-		category: 'seguridad' | 'empleo';
-		content: string;
-		downloadUrl: string;
-	}
-
-	// Obtener ID del boletín desde la URL
-	let boletinId = $derived($page.params.id);
-
-	// Datos de ejemplo (en producción vendrían de una API o base de datos)
-	const boletinesData: Record<string, BoletinDetalle> = {
-		'seg-001': {
-			id: 'seg-001',
-			title: 'Informe de Seguridad Pública - Enero 2024',
-			date: '2024-01-15',
-			image: '/images/boletines/seguridad-1.jpg',
-			category: 'seguridad',
-			content: `
-				<h2>Resumen Ejecutivo</h2>
-				<p>El presente informe analiza la situación de seguridad pública en la Comarca Lagunera durante el mes de enero de 2024, con especial énfasis en los principales indicadores de incidencia delictiva.</p>
-
-				<h2>Principales Hallazgos</h2>
-				<p>Durante el período analizado se observó una reducción del 12% en los delitos de alto impacto en comparación con el mismo mes del año anterior. Los esfuerzos coordinados entre las autoridades municipales y estatales han contribuido significativamente a esta mejora.</p>
-
-				<h3>Indicadores Clave</h3>
-				<ul>
-					<li>Reducción del 15% en robos a comercios</li>
-					<li>Disminución del 8% en delitos contra vehículos</li>
-					<li>Incremento del 20% en detenciones efectivas</li>
-				</ul>
-
-				<h2>Recomendaciones</h2>
-				<p>Se recomienda fortalecer la coordinación interinstitucional y continuar con los programas de prevención del delito en zonas identificadas como prioritarias.</p>
-
-				<h2>Conclusiones</h2>
-				<p>Los resultados muestran una tendencia positiva que debe sostenerse mediante el fortalecimiento de las capacidades institucionales y la participación ciudadana activa.</p>
-			`,
-			downloadUrl: '/downloads/boletines/seg-001.pdf'
-		},
-		'seg-002': {
-			id: 'seg-002',
-			title: 'Reporte Trimestral de Incidencia Delictiva',
-			date: '2024-02-10',
-			image: '/images/boletines/seguridad-2.jpg',
-			category: 'seguridad',
-			content: `
-				<h2>Introducción</h2>
-				<p>Este reporte presenta un análisis detallado de la incidencia delictiva durante el primer trimestre de 2024 en la región de La Laguna.</p>
-
-				<h2>Análisis de Datos</h2>
-				<p>El análisis estadístico revela patrones importantes en la distribución temporal y geográfica de los delitos registrados.</p>
-			`,
-			downloadUrl: '/downloads/boletines/seg-002.pdf'
-		},
-		'emp-001': {
-			id: 'emp-001',
-			title: 'Panorama del Empleo en La Laguna - Q1 2024',
-			date: '2024-01-20',
-			image: '/images/boletines/empleo-1.jpg',
-			category: 'empleo',
-			content: `
-				<h2>Situación Actual del Mercado Laboral</h2>
-				<p>El mercado laboral de la Comarca Lagunera muestra señales de recuperación sostenida, con un crecimiento del 3.5% en la generación de empleos formales durante el primer trimestre de 2024.</p>
-
-				<h2>Sectores Destacados</h2>
-				<ul>
-					<li><strong>Manufactura:</strong> Incremento del 5% en la plantilla laboral</li>
-					<li><strong>Servicios:</strong> Crecimiento del 4.2% en empleos del sector terciario</li>
-					<li><strong>Construcción:</strong> Recuperación gradual con un aumento del 2.8%</li>
-				</ul>
-
-				<h2>Perspectivas</h2>
-				<p>Se proyecta un crecimiento sostenido para los próximos meses, impulsado por las inversiones en infraestructura y la llegada de nuevas empresas a la región.</p>
-			`,
-			downloadUrl: '/downloads/boletines/emp-001.pdf'
-		},
-		'emp-002': {
-			id: 'emp-002',
-			title: 'Indicadores de Desarrollo Económico Regional',
-			date: '2024-02-25',
-			image: '/images/boletines/empleo-2.jpg',
-			category: 'empleo',
-			content: `
-				<h2>Evaluación Económica Regional</h2>
-				<p>Análisis integral de los principales indicadores económicos que determinan el desarrollo de la Comarca Lagunera.</p>
-
-				<h2>Indicadores Principales</h2>
-				<p>El Producto Interno Bruto regional creció un 2.8% en términos reales, superando las expectativas iniciales.</p>
-			`,
-			downloadUrl: '/downloads/boletines/emp-002.pdf'
-		}
-	};
-
-	// Obtener el boletín actual
-	let boletin = $derived(boletinesData[boletinId]);
+	// Recibimos los datos del servidor
+	let { data } = $props();
 
 	// Formatear fecha
 	function formatDate(dateStr: string): string {
+		if (!dateStr) return '';
 		const date = new Date(dateStr);
 		return date.toLocaleDateString('es-MX', {
 			year: 'numeric',
@@ -114,11 +18,20 @@
 			day: 'numeric'
 		});
 	}
+
+	// Función para formatear bytes
+	function formatBytes(bytes: number, decimals = 1) {
+		if (!bytes) return 'PDF';
+		const k = 1024;
+		const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+		const i = Math.floor(Math.log(bytes) / Math.log(k));
+		return parseFloat((bytes / Math.pow(k, i)).toFixed(decimals)) + ' ' + sizes[i];
+	}
 </script>
 
 <svelte:head>
-	<title>{boletin ? boletin.title : 'Boletín'} | Consejo Cívico de Laguna</title>
-	<meta name="description" content={boletin ? boletin.title : 'Boletín informativo'} />
+	<title>{data.boletin ? data.boletin.title : 'Boletín'} | Consejo Cívico de Laguna</title>
+	<meta name="description" content={data.boletin ? data.boletin.description || data.boletin.title : 'Boletín informativo'} />
 
 	<!-- Preconnect for performance -->
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -135,70 +48,81 @@
 <ThemeToggle />
 
 <main class="boletin-detail-page">
-	{#if boletin}
+	{#if data.boletin}
 		<!-- Breadcrumb -->
 		<nav class="breadcrumb">
 			<a href="/">Inicio</a>
 			<span class="separator">/</span>
 			<a href="/boletines">Boletines</a>
 			<span class="separator">/</span>
-			<span class="current">{boletin.category === 'seguridad' ? 'Seguridad' : 'Empleo'}</span>
+			<span class="current">{data.boletin.category === 'Seguridad' || data.boletin.category === 'seguridad' ? 'Seguridad' : 'Empleo'}</span>
 		</nav>
 
 		<!-- Hero Image -->
 		<section class="hero-image">
-			<img src={boletin.image} alt={boletin.title} />
+			{#if data.boletin.coverImage}
+				<img src={urlFor(data.boletin.coverImage).width(1200).height(500).url()} alt={data.boletin.title} />
+			{:else}
+				<div class="no-image">Sin imagen</div>
+			{/if}
 			<div
 				class="category-badge"
-				class:seguridad={boletin.category === 'seguridad'}
-				class:empleo={boletin.category === 'empleo'}
+				class:seguridad={data.boletin.category === 'Seguridad' || data.boletin.category === 'seguridad'}
+				class:empleo={data.boletin.category === 'Empleo' || data.boletin.category === 'empleo'}
 			>
-				{boletin.category === 'seguridad' ? 'Seguridad' : 'Empleo'}
+				{data.boletin.category === 'Seguridad' || data.boletin.category === 'seguridad' ? 'Seguridad' : 'Empleo'}
 			</div>
 		</section>
 
 		<!-- Article Content -->
 		<article class="article-content">
 			<div class="article-header">
-				<time class="article-date" datetime={boletin.date}>
-					{formatDate(boletin.date)}
+				<time class="article-date" datetime={data.boletin.publishedAt}>
+					{formatDate(data.boletin.publishedAt)}
 				</time>
-				<h1 class="article-title">{boletin.title}</h1>
+				<h1 class="article-title">{data.boletin.title}</h1>
+				{#if data.boletin.description}
+					<p class="article-description">{data.boletin.description}</p>
+				{/if}
 			</div>
 
-			<div class="article-body">
-				{@html boletin.content}
-			</div>
+			{#if data.boletin.body}
+				<div class="article-body">
+					<PortableText value={data.boletin.body} />
+				</div>
+			{/if}
 
 			<!-- Download Section -->
-			<div class="download-section">
-				<div class="download-card">
-					<div class="download-icon">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="32"
-							height="32"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-						>
-							<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-							<polyline points="7 10 12 15 17 10"></polyline>
-							<line x1="12" y1="15" x2="12" y2="3"></line>
-						</svg>
+			{#if data.boletin.pdfUrl}
+				<div class="download-section">
+					<div class="download-card">
+						<div class="download-icon">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="32"
+								height="32"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							>
+								<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+								<polyline points="7 10 12 15 17 10"></polyline>
+								<line x1="12" y1="15" x2="12" y2="3"></line>
+							</svg>
+						</div>
+						<div class="download-info">
+							<h3>Descargar Boletín Completo</h3>
+							<p>Descarga el documento PDF con el informe completo{data.boletin.size ? ` (${formatBytes(data.boletin.size)})` : ''}</p>
+						</div>
+						<a href={data.boletin.pdfUrl} class="download-btn" target="_blank" rel="noopener noreferrer">
+							Descargar PDF
+						</a>
 					</div>
-					<div class="download-info">
-						<h3>Descargar Boletín Completo</h3>
-						<p>Descarga el documento PDF con el informe completo</p>
-					</div>
-					<a href={boletin.downloadUrl} class="download-btn" download>
-						Descargar PDF
-					</a>
 				</div>
-			</div>
+			{/if}
 
 			<!-- Back Button -->
 			<div class="back-section">
@@ -284,6 +208,21 @@
 		object-fit: cover;
 	}
 
+	.no-image {
+		width: 100%;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%);
+		color: #999;
+		font-size: 18px;
+	}
+
+	:global([data-theme='dark']) .no-image {
+		background: linear-gradient(135deg, #1a1f2e 0%, #12161d 100%);
+	}
+
 	.category-badge {
 		position: absolute;
 		top: 30px;
@@ -334,6 +273,14 @@
 		color: var(--text-primary);
 		line-height: 1.3;
 		margin: 0;
+	}
+
+	.article-description {
+		font-size: 18px;
+		line-height: 1.6;
+		color: var(--text-primary);
+		opacity: 0.8;
+		margin-top: 20px;
 	}
 
 	.article-body {

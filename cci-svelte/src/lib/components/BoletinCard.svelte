@@ -1,6 +1,7 @@
 <script lang="ts">
 	interface Boletin {
 		id: string;
+		slug: string;
 		title: string;
 		date: string;
 		image: string;
@@ -22,7 +23,7 @@
 </script>
 
 <article class="boletin-card">
-	<a href="/boletines/{boletin.id}" class="card-link">
+	<a href="/boletines/{boletin.slug}" class="card-link">
 		<div class="card-image">
 			<img src={boletin.image} alt={boletin.title} />
 			<div class="card-category" class:seguridad={boletin.category === 'seguridad'} class:empleo={boletin.category === 'empleo'}>
