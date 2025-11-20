@@ -7,6 +7,9 @@
 	import ObjectivesCarousel from '$lib/components/ObjectivesCarousel.svelte';
 	import ContactSection from '$lib/components/ContactSection.svelte';
 	import Footer from '$lib/components/Footer.svelte';
+	import { urlFor } from '$lib/sanity';
+
+	let { data } = $props();
 
 	// Datos del carrusel
 	const carouselSlides = [
@@ -31,24 +34,24 @@
 		image: '/images/proyectosGroup.svg'
 	};
 
+	// --- TRANSFORMAR LOGOS DE SANITY ---
+	// Convertimos los datos de Sanity al formato que tu componente LogoGrid espera ({src, alt})
+	let logosReales = $derived(
+		data.allies
+			? data.allies.map((ally: any) => ({
+					// Generamos la URL del logo. Forzamos un ancho para optimizar.
+					src: ally.logo ? urlFor(ally.logo).width(200).url() : '',
+					alt: ally.name
+					// Si tu componente LogoGrid soporta links, podrías pasarle ally.url también
+				}))
+			: []
+	);
+
 	// Datos de la red de adherentes
-	const adherentesData = {
+	const adherentesData = $derived({
 		title: 'Red de Adherentes',
-		logos: [
-			{ src: '/images/logos/logo1.png', alt: 'Logo Adherente 1' },
-			{ src: '/images/logos/logo2.png', alt: 'Logo Adherente 2' },
-			{ src: '/images/logos/logo3.png', alt: 'Logo Adherente 3' },
-			{ src: '/images/logos/logo4.png', alt: 'Logo Adherente 4' },
-			{ src: '/images/logos/logo5.png', alt: 'Logo Adherente 5' },
-			{ src: '/images/logos/logo6.png', alt: 'Logo Adherente 6' },
-			{ src: '/images/logos/logo7.png', alt: 'Logo Adherente 7' },
-			{ src: '/images/logos/logo8.png', alt: 'Logo Adherente 8' },
-			{ src: '/images/logos/logo9.png', alt: 'Logo Adherente 9' },
-			{ src: '/images/logos/logo10.png', alt: 'Logo Adherente 10' },
-			{ src: '/images/logos/logo11.png', alt: 'Logo Adherente 11' },
-			{ src: '/images/logos/logo12.png', alt: 'Logo Adherente 12' }
-		]
-	};
+		logos: logosReales
+	});
 
 	// Datos de objetivos
 	const objectivesData = {
