@@ -290,7 +290,7 @@
 			transform 0.5s ease;
 		pointer-events: none;
 		text-align: center;
-		padding: 40px;
+		padding: 40px 40px;
 		background: var(--card-bg);
 		border-radius: 20px;
 		box-shadow: 0 10px 30px var(--card-shadow);
@@ -517,7 +517,7 @@
 
 		.title-section {
 			padding: 5px 15px;
-			margin: -50px -20px 30px -20px;
+			margin: -50px -20px 10px -20px;
 			gap: 10px;
 		}
 
@@ -532,11 +532,15 @@
 		}
 
 		.carousel-container {
-			padding: 20px 50px;
+			padding: 5px 50px;
 		}
 
 		.objectives-carousel {
-			min-height: 500px;
+			min-height: 325px;
+		}
+
+		.objective-card {
+			padding: 10px 15px;
 		}
 
 		.carousel-btn {
@@ -548,6 +552,10 @@
 		.indicator {
 			width: 12px;
 			height: 12px;
+		}
+
+		.mission-text {
+			margin-bottom: 140px;
 		}
 	}
 </style>

@@ -81,7 +81,7 @@
 
 	.socios-description {
 		max-width: 900px;
-		margin: 0 auto 50px;
+		margin: 0 auto 20px;
 		font-size: 18px;
 		line-height: 1.6;
 		color: var(--text-primary);
