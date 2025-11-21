@@ -141,7 +141,7 @@
 
 	/* Banda horizontal del título */
 	.title-section {
-		background: #caddff;
+		background: linear-gradient(135deg, #e8f4f8 0%, #d4e9f7 100%);
 		height: 80px;
 		padding: 5px 50px;
 		display: flex;
@@ -159,7 +159,7 @@
 
 	.contact-title {
 		color: #000000;
-		font-size: 48px;
+		font-size: 42px;
 		font-weight: 600;
 		text-transform: uppercase;
 		margin: 0;

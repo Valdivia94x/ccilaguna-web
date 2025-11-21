@@ -16,7 +16,8 @@
 	--bg-secondary: #f4f6f8;
 	--bg-about: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
 	--bg-objectives: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
-	--bg-band: linear-gradient(135deg, #000000 0%, #d4e9f7 100%);
+	--bg-band: linear-gradient(135deg, #e8f4f8 0%, #d4e9f7 100%);
+	--bg-softbrown: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
 	--text-primary: #000000;
 	--text-secondary: #000000;
 	--text-color: #000000;
@@ -49,6 +50,7 @@
 	--bg-secondary: #0f1419;
 	--bg-about: #0f1419;
 	--bg-objectives: #0f1419;
+	--bg-softbrown: #0f1419;
 	--text-primary: #ffffff;
 	--text-secondary: #ffffff;
 	--text-color: #ffffff;

@@ -58,7 +58,15 @@
 
 	<!-- Sección Objetivos -->
 	<section class="objectives-section">
-		<h2>Nuestros Objetivos</h2>
+		<!-- Título con banda -->
+		<div class="title-section">
+			<img
+				src="/images/stickers/nuestrosObjetivosSticker.png"
+				alt="Nuestros Objetivos Sticker"
+				class="sticker"
+			/>
+			<h2 class="objectives-title">Nuestros Objetivos</h2>
+		</div>
 		<div class="objectives-content">
 			<p>
 				A través de la generación y análisis de indicadores técnicos y de percepción ciudadana,
@@ -75,7 +83,15 @@
 
 	<!-- Sección Visión -->
 	<section class="vision-section">
-		<h2>Nuestra Visión</h2>
+		<!-- Título con banda -->
+		<div class="title-section">
+			<h2 class="vision-title">Nuestra Visión</h2>
+			<img
+				src="/images/stickers/nuestraVisionSticker.png"
+				alt="Nuestra Visión Sticker"
+				class="sticker"
+			/>
+		</div>
 		<div class="vision-content">
 			<p>
 				Consolidarnos como el referente ciudadano que representa a los diferentes sectores de la
@@ -171,17 +187,21 @@
 	}
 
 	:global([data-theme='dark']) .hero-section {
-		background: linear-gradient(135deg, #0F1419 0%, #0F1419 100%);
+		background: linear-gradient(135deg, #0f1419 0%, #0f1419 100%);
 	}
 
 	.hero-section h1 {
-		font-size: 56px;
-		font-weight: 400;
+		font-size: 42px;
+		font-weight: 600;
 		color: var(--text-primary);
 		margin-bottom: 40px;
 		text-transform: uppercase;
 		letter-spacing: 2px;
 		text-align: center;
+	}
+
+	:global([data-theme='dark']) .hero-section h1 {
+		color: #ffa100;
 	}
 
 	.hero-content {
@@ -226,9 +246,9 @@
 	}
 
 	.timeline-section h2 {
-		font-size: 42px;
-		font-weight: 400;
-		color: var(--text-primary);
+		font-size: 40px;
+		font-weight: 500;
+		color: var(--text-sub);
 		text-align: center;
 		margin-bottom: 50px;
 		text-transform: uppercase;
@@ -257,19 +277,54 @@
 
 	/* Objectives Section */
 	.objectives-section {
-		padding: 80px 50px;
+		padding: 40px 50px;
+		padding-top: 70px;
 		background: var(--bg-primary);
 		transition: background 0.3s ease;
+		overflow: visible;
 	}
 
-	.objectives-section h2 {
+	/* Banda horizontal del título */
+	.objectives-section .title-section {
+		background: linear-gradient(135deg, #e8f4f8 0%, #d4e9f7 100%);
+		height: 80px;
+		padding: 5px 50px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 20px;
+		position: relative;
+		margin: -70px -50px 40px -50px;
+		transition: background 0.3s ease;
+		overflow: visible;
+	}
+
+	:global([data-theme='dark']) .objectives-section .title-section {
+		background: #414a5e;
+	}
+
+	.objectives-section .sticker {
+		height: 130px;
+		width: auto;
+		object-fit: contain;
+		position: relative;
+		top: -35px;
+		margin-bottom: -60px;
+	}
+
+	.objectives-title {
 		font-size: 42px;
-		font-weight: 400;
-		color: var(--text-primary);
+		font-weight: 600;
+		color: #000000;
 		text-align: center;
-		margin-bottom: 40px;
+		margin: 0;
 		text-transform: uppercase;
 		letter-spacing: 1.5px;
+		transition: color 0.3s ease;
+	}
+
+	:global([data-theme='dark']) .objectives-title {
+		color: #ffa100;
 	}
 
 	.objectives-content {
@@ -287,23 +342,58 @@
 
 	/* Vision Section */
 	.vision-section {
-		padding: 80px 50px;
+		padding: 40px 50px;
+		padding-top: 70px;
 		background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
 		transition: background 0.3s ease;
+		overflow: visible;
 	}
 
 	:global([data-theme='dark']) .vision-section {
 		background: #0f1419;
 	}
 
-	.vision-section h2 {
+	/* Banda horizontal del título */
+	.vision-section .title-section {
+		background: linear-gradient(135deg, #e8f4f8 0%, #d4e9f7 100%);
+		height: 80px;
+		padding: 5px 50px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 20px;
+		position: relative;
+		margin: -70px -50px 40px -50px;
+		transition: background 0.3s ease;
+		overflow: visible;
+	}
+
+	:global([data-theme='dark']) .vision-section .title-section {
+		background: #414a5e;
+	}
+
+	.vision-section .sticker {
+		height: 140px;
+		width: auto;
+		object-fit: contain;
+		position: relative;
+		top: -35px;
+		margin-bottom: -60px;
+	}
+
+	.vision-title {
 		font-size: 42px;
-		font-weight: 400;
-		color: var(--text-primary);
+		font-weight: 600;
+		color: #000000;
 		text-align: center;
-		margin-bottom: 40px;
+		margin: 0;
 		text-transform: uppercase;
 		letter-spacing: 1.5px;
+		transition: color 0.3s ease;
+	}
+
+	:global([data-theme='dark']) .vision-title {
+		color: #ffa100;
 	}
 
 	.vision-content {
@@ -327,9 +417,9 @@
 	}
 
 	.team-section h2 {
-		font-size: 42px;
+		font-size: 40px;
 		font-weight: 400;
-		color: var(--text-primary);
+		color: var(--text-sub);
 		text-align: center;
 		margin-bottom: 60px;
 		text-transform: uppercase;
@@ -440,13 +530,49 @@
 
 		.objectives-section,
 		.vision-section {
-			padding: 60px 30px;
+			padding: 40px 20px;
 		}
 
-		.objectives-section h2,
-		.vision-section h2 {
+		.objectives-section {
+			padding-top: 60px;
+		}
+
+		.objectives-section .title-section {
+			padding: 5px 20px;
+			margin: -60px -20px 40px -20px;
+			gap: 15px;
+		}
+
+		.objectives-section .sticker {
+			height: 140px;
+			top: -30px;
+			margin-bottom: -50px;
+		}
+
+		.objectives-title {
 			font-size: 32px;
-			margin-bottom: 30px;
+			margin-bottom: 0;
+		}
+
+		.vision-section {
+			padding-top: 60px;
+		}
+
+		.vision-section .title-section {
+			padding: 5px 20px;
+			margin: -60px -20px 40px -20px;
+			gap: 15px;
+		}
+
+		.vision-section .sticker {
+			height: 140px;
+			top: -30px;
+			margin-bottom: -50px;
+		}
+
+		.vision-title {
+			font-size: 32px;
+			margin-bottom: 0;
 		}
 
 		.objectives-content p {
@@ -526,8 +652,43 @@
 			padding: 40px 20px;
 		}
 
-		.objectives-section h2,
-		.vision-section h2 {
+		.objectives-section {
+			padding-top: 50px;
+		}
+
+		.objectives-section .title-section {
+			padding: 5px 15px;
+			margin: -50px -20px 30px -20px;
+			gap: 10px;
+		}
+
+		.objectives-section .sticker {
+			height: 110px;
+			top: -40px;
+			margin-bottom: -40px;
+		}
+
+		.objectives-title {
+			font-size: 28px;
+		}
+
+		.vision-section {
+			padding-top: 50px;
+		}
+
+		.vision-section .title-section {
+			padding: 5px 15px;
+			margin: -50px -20px 30px -20px;
+			gap: 10px;
+		}
+
+		.vision-section .sticker {
+			height: 110px;
+			top: -40px;
+			margin-bottom: -40px;
+		}
+
+		.vision-title {
 			font-size: 28px;
 		}
 

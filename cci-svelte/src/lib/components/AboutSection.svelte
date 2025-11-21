@@ -38,7 +38,7 @@
 
 	.about-content h2 {
 		color: var(--text-sub);
-		font-size: 42px;
+		font-size: 40px;
 		margin-bottom: 20px;
 		font-weight: 500;
 		text-align: center;
