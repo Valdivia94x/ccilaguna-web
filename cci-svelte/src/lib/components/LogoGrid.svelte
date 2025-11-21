@@ -8,10 +8,17 @@
 </script>
 
 <section class="socios">
-	<h2>{title}</h2>
+	<div class="title-section">
+		<h2>{title}</h2>
+		<img src="/images/stickers/adherentesSticker.png" alt="Adherentes Sticker" class="sticker" />
+	</div>
 
 	<p class="socios-description">
-		Nuestros Socios Estratégicos forman parte fundamental para maximizar el resultado de nuestro esfuerzo e impulsar juntos la mejora de las condiciones de vida en la Comarca Lagunera. <a href="/socios" class="more-link">Más…</a>
+		Nuestros Socios Estratégicos forman parte fundamental para maximizar el resultado de nuestro
+		esfuerzo e impulsar juntos la mejora de las condiciones de vida en la Comarca Lagunera. <a
+			href="/socios"
+			class="more-link">Más…</a
+		>
 	</p>
 
 	<div class="logo-grid">
@@ -25,18 +32,51 @@
 
 <style>
 	.socios {
-		padding: 60px 50px;
+		padding: 40px 50px;
+		padding-top: 70px;
 		background: var(--bg-about);
 		text-align: center;
 		transition: background 0.3s ease;
+		overflow: visible;
+	}
+
+	.title-section {
+		background: #caddff;
+		height: 80px;
+		padding: 5px 50px 5px 50px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 20px;
+		position: relative;
+		margin: -70px -50px 65px -50px;
+		transition: background 0.3s ease;
+		overflow: visible;
+	}
+
+	:global([data-theme='dark']) .title-section {
+		background: #414a5e;
 	}
 
 	.socios h2 {
-		color: var(--text-color);
+		color: #000000;
 		font-size: 42px;
-		font-weight: 400;
-		margin-bottom: 20px;
+		font-weight: 600;
+		margin: 0;
 		transition: color 0.3s ease;
+	}
+
+	:global([data-theme='dark']) .socios h2 {
+		color: #ffa100;
+	}
+
+	.sticker {
+		height: 180px;
+		width: auto;
+		object-fit: contain;
+		position: relative;
+		top: -35px;
+		margin-bottom: -60px;
 	}
 
 	.socios-description {
@@ -115,10 +155,23 @@
 	@media (max-width: 768px) {
 		.socios {
 			padding: 40px 20px;
+			padding-top: 60px;
+		}
+
+		.title-section {
+			padding: 30px 20px;
+			margin: -60px -20px 40px -20px;
+			gap: 15px;
 		}
 
 		.socios h2 {
 			font-size: 32px;
+		}
+
+		.sticker {
+			height: 140px;
+			top: -30px;
+			margin-bottom: -50px;
 		}
 
 		.logo-grid {
@@ -128,6 +181,28 @@
 
 		.logo-item {
 			padding: 15px;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.socios {
+			padding-top: 50px;
+		}
+
+		.title-section {
+			padding: 20px 15px;
+			margin: -50px -20px 30px -20px;
+			gap: 10px;
+		}
+
+		.socios h2 {
+			font-size: 24px;
+		}
+
+		.sticker {
+			height: 110px;
+			top: -40px;
+			margin-bottom: -40px;
 		}
 	}
 </style>

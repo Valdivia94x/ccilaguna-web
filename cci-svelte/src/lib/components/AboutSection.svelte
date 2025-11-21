@@ -17,7 +17,7 @@
 <style>
 	.about-section {
 		background: var(--bg-about);
-		padding: 60px 70px;
+		padding: 10px 50px 90px 50px;
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		gap: 60px;
@@ -37,10 +37,12 @@
 	}
 
 	.about-content h2 {
-		color: var(--text-primary);
+		color: var(--text-sub);
 		font-size: 42px;
 		margin-bottom: 20px;
-		font-weight: 400;
+		font-weight: 500;
+		text-align: center;
+		max-width: 700px;
 	}
 
 	.about-content p {
@@ -48,11 +50,13 @@
 		line-height: 1.8;
 		color: var(--text-primary);
 		transition: color 0.3s ease;
+		text-align: center;
+		max-width: 700px;
 	}
 
 	@media (max-width: 1024px) {
 		.about-section {
-			padding: 50px 40px;
+			padding: 50px 40px 80px 40px;
 			gap: 40px;
 		}
 
@@ -63,7 +67,7 @@
 
 	@media (max-width: 768px) {
 		.about-section {
-			padding: 40px 20px;
+			padding: 40px 20px 80px 20px;
 			grid-template-columns: 1fr;
 			gap: 30px;
 		}
@@ -84,6 +88,11 @@
 
 		.about-content h2 {
 			font-size: 28px;
+			padding-right: 0px;
+		}
+
+		.about-content p {
+			padding-right: 0px;
 		}
 	}
 </style>

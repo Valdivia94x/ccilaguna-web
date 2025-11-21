@@ -49,7 +49,7 @@
 
 	// Datos de la red de adherentes
 	const adherentesData = $derived({
-		title: 'Red de Adherentes',
+		title: 'RED DE ADHERENTES',
 		logos: logosReales
 	});
 
@@ -79,11 +79,6 @@
 				title: 'Establecer procesos de comunicación',
 				description:
 					'y colaboración que faciliten la participación ciudadana en las políticas y asuntos públicos.'
-			},
-			{
-				number: 5,
-				title: 'Alentar y promover acciones',
-				description: 'para la recomposición del tejido social'
 			}
 		]
 	};

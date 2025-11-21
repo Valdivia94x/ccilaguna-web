@@ -19,7 +19,10 @@
 </script>
 
 <section id="contacto" class="contact-section" aria-labelledby="contact-heading">
-	<h2 id="contact-heading">Contacto</h2>
+	<!-- Título Contacto con banda -->
+	<div class="title-section">
+		<h2 id="contact-heading" class="contact-title">Contacto</h2>
+	</div>
 
 	<p class="contact-description">{contactData.description}</p>
 
@@ -128,19 +131,44 @@
 
 <style>
 	.contact-section {
-		padding: 30px 50px;
-		background: var(--bg-primary);
+		padding: 40px 50px 100px 50px;
+		padding-top: 70px;
+		background: var(--bg-about);
 		text-align: center;
 		transition: background 0.3s ease;
+		overflow: visible;
 	}
 
-	h2 {
-		color: var(--text-primary);
+	/* Banda horizontal del título */
+	.title-section {
+		background: #caddff;
+		height: 80px;
+		padding: 5px 50px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		position: relative;
+		margin: -70px -50px 40px -50px;
+		transition: background 0.3s ease;
+		overflow: visible;
+	}
+
+	:global([data-theme='dark']) .title-section {
+		background: #414a5e;
+	}
+
+	.contact-title {
+		color: #000000;
 		font-size: 48px;
-		font-weight: 400;
+		font-weight: 600;
 		text-transform: uppercase;
-		margin-bottom: 30px;
-		letter-spacing: 2px;
+		margin: 0;
+		text-align: center;
+		transition: color 0.3s ease;
+	}
+
+	:global([data-theme='dark']) .contact-title {
+		color: #ffa100;
 	}
 
 	.contact-description {
@@ -259,12 +287,17 @@
 	/* Responsive */
 	@media (max-width: 768px) {
 		.contact-section {
-			padding: 60px 30px;
+			padding: 40px 20px;
+			padding-top: 60px;
 		}
 
-		h2 {
+		.title-section {
+			padding: 5px 20px;
+			margin: -60px -20px 40px -20px;
+		}
+
+		.contact-title {
 			font-size: 36px;
-			margin-bottom: 20px;
 		}
 
 		.contact-description {
@@ -314,9 +347,15 @@
 	@media (max-width: 480px) {
 		.contact-section {
 			padding: 40px 20px;
+			padding-top: 50px;
 		}
 
-		h2 {
+		.title-section {
+			padding: 5px 15px;
+			margin: -50px -20px 30px -20px;
+		}
+
+		.contact-title {
 			font-size: 28px;
 		}
 

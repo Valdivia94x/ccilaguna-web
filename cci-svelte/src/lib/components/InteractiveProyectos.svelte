@@ -216,7 +216,7 @@
 
 <style>
 	.proyectos-interactive {
-		width: 100%;
+		width: 70%;
 		max-width: 1200px;
 		margin: 0 auto;
 		padding: 20px;

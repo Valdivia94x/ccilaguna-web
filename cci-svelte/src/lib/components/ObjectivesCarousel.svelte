@@ -13,6 +13,33 @@
 	let isPaused = $state(false);
 	let intervalId: number | undefined;
 
+	function animarAlEntrar(node: HTMLElement) {
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					// Si el elemento es visible (aunque sea un poquito)
+					if (entry.isIntersecting) {
+						node.classList.add('visible');
+						// Dejamos de observar para ahorrar recursos
+						observer.unobserve(node);
+					}
+				});
+			},
+			{
+				threshold: 0.2, // Se activa cuando el 20% del elemento se ve
+				rootMargin: '0px'
+			}
+		);
+
+		observer.observe(node);
+
+		return {
+			destroy() {
+				observer.disconnect();
+			}
+		};
+	}
+
 	function nextSlide() {
 		currentIndex = (currentIndex + 1) % objectives.length;
 	}
@@ -60,13 +87,16 @@
 
 <section id="objetivos" class="objectives-section" aria-labelledby="objectives-heading">
 	<!-- Misión -->
-	<div class="mission-container">
+	<div class="mission-container" use:animarAlEntrar>
 		<div class="quote-icon" aria-hidden="true">"</div>
 		<p class="mission-text">{mission}</p>
 	</div>
 
-	<!-- Título de Objetivos -->
-	<h2 id="objectives-heading" class="objectives-title">Objetivos</h2>
+	<!-- Título de Objetivos con banda -->
+	<div class="title-section">
+		<img src="/images/stickers/objetivosSticker.png" alt="Objetivos Sticker" class="sticker" />
+		<h2 id="objectives-heading" class="objectives-title">Objetivos</h2>
+	</div>
 
 	<!-- Carrusel de Objetivos -->
 	<div
@@ -76,11 +106,7 @@
 		role="region"
 		aria-label="Carrusel de objetivos"
 	>
-		<button
-			class="carousel-btn prev"
-			onclick={prevSlide}
-			aria-label="Objetivo anterior"
-		>
+		<button class="carousel-btn prev" onclick={prevSlide} aria-label="Objetivo anterior">
 			&#10094;
 		</button>
 
@@ -91,20 +117,27 @@
 					class:active={index === currentIndex}
 					aria-hidden={index !== currentIndex}
 				>
-					<div class="objective-number">
-						<span>{objective.number}</span>
-					</div>
+					{#if index < 4}
+						<div class="objective-image">
+							<img
+								src="/images/objetivos/{['constituirse', 'generar', 'crear', 'establecer'][
+									index
+								]}.svg"
+								alt="Objetivo {objective.number}"
+							/>
+						</div>
+					{:else}
+						<div class="objective-number">
+							<span>{objective.number}</span>
+						</div>
+					{/if}
 					<h3 class="objective-title">{objective.title}</h3>
 					<p class="objective-description">{objective.description}</p>
 				</div>
 			{/each}
 		</div>
 
-		<button
-			class="carousel-btn next"
-			onclick={nextSlide}
-			aria-label="Objetivo siguiente"
-		>
+		<button class="carousel-btn next" onclick={nextSlide} aria-label="Objetivo siguiente">
 			&#10095;
 		</button>
 	</div>
@@ -126,51 +159,108 @@
 
 <style>
 	.objectives-section {
-		padding: 30px 50px;
+		padding: 30px 50px 100px 50px;
+		padding-top: 70px;
 		background: var(--bg-objectives);
 		transition: background 0.3s ease;
-		overflow: hidden;
+		overflow: visible;
 	}
 
 	/* Misión */
 	.mission-container {
-		max-width: 900px;
-		margin: 0 auto 60px;
+		/* Estado Inicial: Invisible, pequeño y desplazado abajo */
+		opacity: 0;
+		transform: scale(0.9) translateY(30px);
+
+		/* Suavidad de la animación */
+		transition:
+			opacity 1.5s ease-out,
+			transform 1.5s cubic-bezier(0.22, 1, 0.36, 1); /* Efecto rebote suave */
+
+		/* Aseguramos que no ocupe espacio raro mientras está invisible */
+		will-change: opacity, transform;
+		transition-delay: 0.4s;
+
+		max-width: 900px; /* 1. Limita el ancho para que no se estire demasiado */
+		margin: 0 auto; /* 2. Centra la caja horizontalmente */
 		text-align: center;
-		position: relative;
+	}
+
+	.mission-container:global(.visible) {
+		/* Estado Final: Visible, tamaño normal y en su lugar */
+		opacity: 1;
+		transform: scale(1) translateY(0);
 	}
 
 	.quote-icon {
 		font-size: 120px;
 		line-height: 1;
-		color: #4a7ba7;
+		color: #000000;
 		font-family: Georgia, serif;
-		margin-bottom: -40px;
-		opacity: 0.3;
+		margin-bottom: -70px;
+		opacity: 0.8;
+	}
+
+	:global([data-theme='dark']) .quote-icon {
+		color: #ffffff;
 	}
 
 	.mission-text {
-		font-size: 20px;
+		font-size: 25px;
 		font-weight: 600;
 		color: var(--text-primary);
 		line-height: 1.6;
 		padding: 0 20px;
+		margin-bottom: 220px;
 	}
 
 	.mission-text::before {
 		content: 'MISIÓN: ';
-		font-weight: 400;
+		font-weight: 600;
 		color: var(--text-primary);
+	}
+
+	/* Banda horizontal del título */
+	.title-section {
+		background: #caddff;
+		height: 80px;
+		padding: 5px 50px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 20px;
+		position: relative;
+		margin: -70px -50px 40px -50px;
+		transition: background 0.3s ease;
+		overflow: visible;
+	}
+
+	:global([data-theme='dark']) .title-section {
+		background: #414a5e;
+	}
+
+	.sticker {
+		height: 160px;
+		width: auto;
+		object-fit: contain;
+		position: relative;
+		top: -35px;
+		margin-bottom: -60px;
 	}
 
 	/* Título Objetivos */
 	.objectives-title {
-		color: var(--text-primary);
+		color: #000000;
 		font-size: 48px;
-		font-weight: 400;
+		font-weight: 600;
 		text-transform: uppercase;
-		margin-bottom: 40px;
+		margin: 0;
 		text-align: center;
+		transition: color 0.3s ease;
+	}
+
+	:global([data-theme='dark']) .objectives-title {
+		color: #ffa100;
 	}
 
 	/* Carrusel */
@@ -178,7 +268,7 @@
 		position: relative;
 		max-width: 800px;
 		margin: 0 auto;
-		padding: 40px 80px;
+		padding: 20px 80px;
 	}
 
 	.objectives-carousel {
@@ -195,7 +285,9 @@
 		width: 100%;
 		opacity: 0;
 		transform: scale(0.8);
-		transition: opacity 0.5s ease, transform 0.5s ease;
+		transition:
+			opacity 0.5s ease,
+			transform 0.5s ease;
 		pointer-events: none;
 		text-align: center;
 		padding: 40px;
@@ -209,6 +301,26 @@
 		transform: scale(1);
 		pointer-events: auto;
 		z-index: 1;
+	}
+
+	.objective-image {
+		width: 100px;
+		height: 100px;
+		margin: 0 auto 30px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		position: relative;
+	}
+
+	.objective-image img {
+		width: 100%;
+		height: 100%;
+		object-fit: contain;
+	}
+
+	:global([data-theme='dark']) .objective-image img {
+		filter: invert(1) brightness(100%);
 	}
 
 	.objective-number {
@@ -228,7 +340,7 @@
 		position: absolute;
 		width: 110px;
 		height: 110px;
-		border: 3px solid #4a7ba7;
+		border: 3px solid #ffa100;
 		border-radius: 50%;
 		opacity: 0.3;
 	}
@@ -320,7 +432,8 @@
 	/* Responsive */
 	@media (max-width: 768px) {
 		.objectives-section {
-			padding: 40px 20px;
+			padding: 40px 20px 80px 20px;
+			padding-top: 60px;
 		}
 
 		.mission-text {
@@ -332,9 +445,20 @@
 			margin-bottom: -30px;
 		}
 
+		.title-section {
+			padding: 5px 20px;
+			margin: -60px -20px 40px -20px;
+			gap: 15px;
+		}
+
+		.sticker {
+			height: 140px;
+			top: -30px;
+			margin-bottom: -50px;
+		}
+
 		.objectives-title {
 			font-size: 36px;
-			margin-bottom: 30px;
 		}
 
 		.carousel-container {
@@ -347,6 +471,12 @@
 
 		.objective-card {
 			padding: 30px 20px;
+		}
+
+		.objective-image {
+			width: 80px;
+			height: 80px;
+			margin-bottom: 20px;
 		}
 
 		.objective-number {
@@ -381,6 +511,26 @@
 	}
 
 	@media (max-width: 480px) {
+		.objectives-section {
+			padding-top: 50px;
+		}
+
+		.title-section {
+			padding: 5px 15px;
+			margin: -50px -20px 30px -20px;
+			gap: 10px;
+		}
+
+		.sticker {
+			height: 110px;
+			top: -40px;
+			margin-bottom: -40px;
+		}
+
+		.objectives-title {
+			font-size: 28px;
+		}
+
 		.carousel-container {
 			padding: 20px 50px;
 		}

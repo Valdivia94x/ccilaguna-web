@@ -97,7 +97,7 @@
 		background: var(--footer-bg, #1a2332);
 		color: var(--footer-text, #f8fafc);
 		padding: 60px 50px 40px;
-		margin-top: 60px;
+		margin-top: 0px;
 		transition: all 0.3s ease;
 	}
 
