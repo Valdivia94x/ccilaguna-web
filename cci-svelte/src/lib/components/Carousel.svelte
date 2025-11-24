@@ -90,7 +90,11 @@
 				aria-roledescription="slide"
 				aria-hidden={index !== currentSlide}
 			>
-				<img src={slide.image} alt={slide.alt} />
+				<img
+					src={slide.image}
+					alt={slide.alt}
+					class="absolute inset-0 h-full w-full object-cover"
+				/>
 			</div>
 		{/each}
 

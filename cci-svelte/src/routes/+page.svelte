@@ -20,6 +20,10 @@
 		{
 			image: '/images/imagenCarrusel2.png',
 			alt: 'Ciudad de Torreón'
+		},
+		{
+			image: '/images/imagenCarrusel3.png',
+			alt: 'Reunión de trabajo del Consejo Cívico de Laguna'
 		}
 	];
 
