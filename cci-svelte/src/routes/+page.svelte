@@ -140,8 +140,35 @@
 <Navbar />
 <ThemeToggle />
 <Carousel slides={carouselSlides} />
-<AboutSection title={aboutData.title} content={aboutData.content} image={aboutData.image} />
-<LogoGrid title={adherentesData.title} logos={adherentesData.logos} />
-<ObjectivesCarousel mission={objectivesData.mission} objectives={objectivesData.objectives} />
-<ContactSection {contactData} />
-<Footer />
+<div class="carousel-spacer"></div>
+<div class="content-wrapper">
+	<AboutSection title={aboutData.title} content={aboutData.content} image={aboutData.image} />
+	<LogoGrid title={adherentesData.title} logos={adherentesData.logos} />
+	<ObjectivesCarousel mission={objectivesData.mission} objectives={objectivesData.objectives} />
+	<ContactSection {contactData} />
+	<Footer />
+</div>
+
+<style>
+	.carousel-spacer {
+		height: 550px;
+	}
+
+	.content-wrapper {
+		position: relative;
+		z-index: 10;
+		background: var(--bg-primary);
+	}
+
+	@media (max-width: 768px) {
+		.carousel-spacer {
+			height: 400px;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.carousel-spacer {
+			height: 350px;
+		}
+	}
+</style>

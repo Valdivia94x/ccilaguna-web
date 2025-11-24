@@ -132,10 +132,13 @@
 
 <style>
 	.hero-carousel {
-		position: relative;
+		position: fixed;
+		top: 0;
+		left: 0;
 		width: 100%;
-		height: 500px;
+		height: 625px;
 		overflow: hidden;
+		z-index: 1;
 	}
 
 	.carousel-container {
@@ -266,15 +269,14 @@
 
 	@media (max-width: 768px) {
 		.hero-carousel {
-			height: 400px;
+			height: 500px;
 		}
 
 		.carousel-overlay {
 			padding: 0 40px;
 			background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.4) 100%);
 			justify-content: center;
-			align-items: flex-start;
-			padding-top: 60px;
+			align-items: center;
 		}
 
 		.overlay-content {
@@ -312,11 +314,10 @@
 
 		.carousel-overlay {
 			padding: 0 25px;
-			padding-top: 50px;
 		}
 
 		.overlay-title {
-			font-size: 20px;
+			font-size: 18px;
 			margin-bottom: 15px;
 		}
 
