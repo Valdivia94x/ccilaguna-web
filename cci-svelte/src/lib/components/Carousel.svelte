@@ -9,7 +9,7 @@
 	let { slides }: { slides: Slide[] } = $props();
 
 	let currentSlide = $state(0);
-	let carouselInterval: number | undefined;
+	let carouselInterval: ReturnType<typeof setInterval> | undefined;
 	let isPaused = $state(false);
 
 	function showSlide(n: number) {
@@ -93,6 +93,16 @@
 				<img src={slide.image} alt={slide.alt} />
 			</div>
 		{/each}
+
+		<!-- Text Overlay -->
+		<div class="carousel-overlay">
+			<div class="overlay-content">
+				<h1 class="overlay-title">
+					CCI CONSEJO CÍVICO DE LAS<br />
+					INSTITUCIONES LAGUNA
+				</h1>
+			</div>
+		</div>
 	</div>
 
 	<button class="carousel-nav prev" aria-label="Imagen anterior" onclick={handlePrev}>
@@ -124,6 +134,12 @@
 		overflow: hidden;
 	}
 
+	.carousel-container {
+		position: relative;
+		width: 100%;
+		height: 100%;
+	}
+
 	.carousel-slide {
 		width: 100%;
 		height: 100%;
@@ -138,6 +154,45 @@
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
+	}
+
+	/* Text Overlay */
+	.carousel-overlay {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: left;
+		padding: 0 80px;
+		background: linear-gradient(
+			to right,
+			rgba(0, 0, 0, 0.5) 0%,
+			rgba(0, 0, 0, 0.3) 50%,
+			transparent 100%
+		);
+		z-index: 5;
+		pointer-events: none;
+	}
+
+	.overlay-content {
+		max-width: 600px;
+		color: white;
+		text-align: center;
+		margin-left: 80px;
+	}
+
+	.overlay-title {
+		font-size: 36px;
+		font-weight: 700;
+		line-height: 1.2;
+		margin-bottom: 25px;
+		text-transform: uppercase;
+		letter-spacing: 1.5px;
+		text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+		text-align: left;
 	}
 
 	.carousel-nav {
@@ -207,7 +262,72 @@
 
 	@media (max-width: 768px) {
 		.hero-carousel {
-			height: 300px;
+			height: 400px;
+		}
+
+		.carousel-overlay {
+			padding: 0 40px;
+			background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.4) 100%);
+			justify-content: center;
+			align-items: flex-start;
+			padding-top: 60px;
+		}
+
+		.overlay-content {
+			max-width: 100%;
+			text-align: center;
+			margin-left: 0;
+		}
+
+		.overlay-title {
+			font-size: 24px;
+			margin-bottom: 20px;
+			letter-spacing: 1px;
+			text-align: center;
+		}
+
+		.carousel-nav {
+			width: 40px;
+			height: 40px;
+			font-size: 16px;
+		}
+
+		.carousel-nav.prev {
+			left: 15px;
+		}
+
+		.carousel-nav.next {
+			right: 15px;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.hero-carousel {
+			height: 350px;
+		}
+
+		.carousel-overlay {
+			padding: 0 25px;
+			padding-top: 50px;
+		}
+
+		.overlay-title {
+			font-size: 20px;
+			margin-bottom: 15px;
+		}
+
+		.carousel-nav {
+			width: 35px;
+			height: 35px;
+			font-size: 14px;
+		}
+
+		.carousel-nav.prev {
+			left: 10px;
+		}
+
+		.carousel-nav.next {
+			right: 10px;
 		}
 	}
 </style>

@@ -10,8 +10,10 @@ export async function load() {
 				_id,
 				title,
 				slug,
+				author,
 				publishedAt,
 				category,
+				body,
 				mainImage {
 					asset->{
 						_id,

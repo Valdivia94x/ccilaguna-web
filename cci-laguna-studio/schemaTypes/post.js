@@ -13,6 +13,13 @@ export default defineType({
       validation: rule => rule.required().error('El título es obligatorio')
     }),
     defineField({
+      name: 'author',
+      title: 'Autor',
+      type: 'string',
+      description: 'Nombre de la persona que escribió el artículo (Ej: Lic. Juan Pérez).',
+      initialValue: 'Consejo Cívico' // Valor por defecto para ahorrar tiempo
+    }),
+    defineField({
       name: 'category',
       title: 'Categoría',
       type: 'string', // <--- Esto permite escribir libremente

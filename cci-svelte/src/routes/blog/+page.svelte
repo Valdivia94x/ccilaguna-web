@@ -4,25 +4,64 @@
 	import Footer from '$lib/components/Footer.svelte';
 	import { urlFor } from '$lib/sanity'; // <--- IMPORTANTE
 
+	// Tipos
+	interface Article {
+		id: string;
+		slug: string;
+		title: string;
+		excerpt: string;
+		author: string;
+		date: string;
+		image: any;
+		category: string;
+	}
+
 	// Recibimos los datos del servidor (+page.server.js)
 	let { data } = $props();
 
 	// Estado para el filtro activo
 	let activeCategory = $state<string>('Todos');
 
+	// Función para extraer el primer párrafo del body de Sanity
+	function extractFirstParagraph(body: any): string {
+		if (!body || !Array.isArray(body)) {
+			return 'Haz clic para leer el artículo completo y conocer los detalles de esta noticia del Consejo Cívico.';
+		}
+
+		// Buscar el primer bloque de texto tipo 'block' con estilo 'normal'
+		const firstParagraph = body.find(
+			(block: any) => block._type === 'block' && block.style === 'normal'
+		);
+
+		if (firstParagraph && firstParagraph.children) {
+			// Concatenar todo el texto de los children
+			const text = firstParagraph.children
+				.map((child: any) => child.text || '')
+				.join('')
+				.trim();
+
+			// Limitar a 200 caracteres aproximadamente
+			if (text.length > 200) {
+				return text.substring(0, 200) + '...';
+			}
+			return text;
+		}
+
+		return 'Haz clic para leer el artículo completo y conocer los detalles de esta noticia del Consejo Cívico.';
+	}
+
 	// --- AQUÍ ESTÁ LA MAGIA ---
 	// Transformamos los datos crudos de Sanity para que coincidan con tu diseño
-	let articles = $derived(
+	let articles = $derived<Article[]>(
 		data.posts
 			? data.posts.map((post: any) => ({
 					id: post.slug.current,
 					slug: post.slug.current,
 					title: post.title,
-					// Como aún no tenemos 'excerpt' en Sanity, usamos un texto genérico o cortamos el body si quisieras
-					excerpt:
-						'Haz clic para leer el artículo completo y conocer los detalles de esta noticia del Consejo Cívico.',
+					// Extraer el primer párrafo del body como excerpt
+					excerpt: extractFirstParagraph(post.body),
 					// Como aún no tenemos 'author' en Sanity
-					author: 'Equipo CCI',
+					author: post.author || 'Equipo CCI',
 					date: post.publishedAt,
 					// Pasamos la imagen cruda de Sanity
 					image: post.mainImage,
@@ -45,15 +84,15 @@
 
 	// Obtener categorías únicas dinámicamente de los artículos existentes
 	let categories = $derived.by(() => {
-		const uniqueCategories = new Set(articles.map((article) => article.category));
+		const uniqueCategories = new Set(articles.map((article: Article) => article.category));
 		return ['Todos', ...Array.from(uniqueCategories).sort()];
 	});
 
 	// Filtrar artículos por categoría
-	let filteredArticles = $derived(
+	let filteredArticles = $derived<Article[]>(
 		activeCategory === 'Todos'
 			? articles
-			: articles.filter((article) => article.category === activeCategory)
+			: articles.filter((article: Article) => article.category === activeCategory)
 	);
 </script>
 
@@ -93,7 +132,7 @@
 					<button
 						class="category-btn"
 						class:active={activeCategory === category}
-						onclick={() => (activeCategory = category)}
+						onclick={() => (activeCategory = category as string)}
 					>
 						{category}
 					</button>
@@ -369,6 +408,7 @@
 		margin-bottom: 20px;
 		display: -webkit-box;
 		-webkit-line-clamp: 3;
+		line-clamp: 3;
 		-webkit-box-orient: vertical;
 		overflow: hidden;
 	}

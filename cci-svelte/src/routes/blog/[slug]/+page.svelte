@@ -15,7 +15,7 @@
 			? {
 					title: data.post.title,
 					// Como aún no tenemos autor en Sanity, ponemos uno por defecto
-					author: 'Consejo Cívico',
+					author: data.post.author || 'Equipo CCI',
 					date: data.post.publishedAt,
 					// Generamos la URL de la imagen
 					image: data.post.mainImage
@@ -27,6 +27,46 @@
 					content: data.post.body
 				}
 			: null
+	);
+
+	// Función para extraer el primer párrafo del body de Sanity
+	function extractFirstParagraph(body: any): string {
+		if (!body || !Array.isArray(body)) {
+			return 'Haz clic para leer el artículo completo.';
+		}
+
+		const firstParagraph = body.find(
+			(block: any) => block._type === 'block' && block.style === 'normal'
+		);
+
+		if (firstParagraph && firstParagraph.children) {
+			const text = firstParagraph.children
+				.map((child: any) => child.text || '')
+				.join('')
+				.trim();
+
+			if (text.length > 150) {
+				return text.substring(0, 150) + '...';
+			}
+			return text;
+		}
+
+		return 'Haz clic para leer el artículo completo.';
+	}
+
+	// Transformar artículos relacionados
+	let relatedArticles = $derived(
+		data.relatedPosts
+			? data.relatedPosts.map((post: any) => ({
+					id: post._id,
+					slug: post.slug.current,
+					title: post.title,
+					excerpt: extractFirstParagraph(post.body),
+					image: post.mainImage,
+					category: post.category || 'General',
+					date: post.publishedAt
+				}))
+			: []
 	);
 
 	// Función para formatear fecha (La conservamos igual)
@@ -114,6 +154,46 @@
 				</a>
 			</footer>
 		</article>
+
+		<!-- Sección de Artículos Relacionados -->
+		{#if relatedArticles.length > 0}
+			<section class="related-articles">
+				<h2 class="related-title">Artículos Relacionados</h2>
+				<div class="related-grid">
+					{#each relatedArticles as related (related.id)}
+						<article class="related-card">
+							<a href="/blog/{related.slug}" class="related-link">
+								<div class="related-image">
+									{#if related.image}
+										<img
+											src={urlFor(related.image).width(400).height(250).url()}
+											alt={related.title}
+										/>
+									{:else}
+										<div class="related-image-placeholder">
+											<span>Sin imagen</span>
+										</div>
+									{/if}
+									<div class="related-category">{related.category}</div>
+								</div>
+								<div class="related-content">
+									<h3 class="related-card-title">{related.title}</h3>
+									<p class="related-excerpt">{related.excerpt}</p>
+									<span class="related-read-more">
+										Leer más
+										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor">
+											<path
+												d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"
+											/>
+										</svg>
+									</span>
+								</div>
+							</a>
+						</article>
+					{/each}
+				</div>
+			</section>
+		{/if}
 	{:else}
 		<section class="not-found">
 			<div class="not-found-content">
@@ -362,6 +442,163 @@
 		box-shadow: 0 5px 15px rgba(74, 123, 167, 0.3);
 	}
 
+	/* Related Articles Section */
+	.related-articles {
+		max-width: 1200px;
+		margin: 60px auto 0;
+		padding-top: 60px;
+		border-top: 2px solid rgba(74, 123, 167, 0.2);
+	}
+
+	.related-title {
+		font-size: 32px;
+		font-weight: 600;
+		color: var(--text-secondary);
+		text-align: center;
+		margin-bottom: 40px;
+	}
+
+	.related-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+		gap: 30px;
+	}
+
+	.related-card {
+		background: var(--card-bg);
+		border-radius: 12px;
+		overflow: hidden;
+		box-shadow: 0 4px 15px var(--card-shadow);
+		transition: all 0.3s ease;
+	}
+
+	.related-card:hover {
+		transform: translateY(-8px);
+		box-shadow: 0 12px 30px var(--card-shadow);
+	}
+
+	.related-link {
+		text-decoration: none;
+		color: inherit;
+		display: block;
+	}
+
+	.related-image {
+		position: relative;
+		width: 100%;
+		height: 200px;
+		overflow: hidden;
+		background: var(--card-bg);
+	}
+
+	.related-image img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transition: transform 0.3s ease;
+	}
+
+	.related-card:hover .related-image img {
+		transform: scale(1.1);
+	}
+
+	.related-image-placeholder {
+		width: 100%;
+		height: 100%;
+		background: #eee;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	:global([data-theme='dark']) .related-image-placeholder {
+		background: #333;
+	}
+
+	.related-image-placeholder span {
+		color: #999;
+		font-size: 14px;
+	}
+
+	.related-category {
+		position: absolute;
+		top: 12px;
+		right: 12px;
+		background: rgba(74, 123, 167, 0.9);
+		color: white;
+		padding: 6px 12px;
+		border-radius: 15px;
+		font-size: 11px;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+	}
+
+	:global([data-theme='dark']) .related-category {
+		background: rgba(0, 212, 255, 0.9);
+	}
+
+	.related-content {
+		padding: 20px;
+	}
+
+	.related-card-title {
+		font-size: 18px;
+		font-weight: 600;
+		color: var(--text-secondary);
+		margin-bottom: 12px;
+		line-height: 1.4;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		transition: color 0.3s ease;
+	}
+
+	.related-card:hover .related-card-title {
+		color: #4a7ba7;
+	}
+
+	:global([data-theme='dark']) .related-card:hover .related-card-title {
+		color: #00d4ff;
+	}
+
+	.related-excerpt {
+		font-size: 14px;
+		line-height: 1.6;
+		color: var(--text-primary);
+		margin-bottom: 15px;
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		line-clamp: 3;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	.related-read-more {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		color: #4a7ba7;
+		font-weight: 600;
+		font-size: 14px;
+		transition: gap 0.3s ease;
+	}
+
+	:global([data-theme='dark']) .related-read-more {
+		color: #00d4ff;
+	}
+
+	.related-card:hover .related-read-more {
+		gap: 10px;
+	}
+
+	.related-read-more svg {
+		width: 14px;
+		height: 14px;
+	}
+
 	/* Responsive */
 	@media (max-width: 768px) {
 		.article-page {
@@ -387,6 +624,25 @@
 		.featured-image {
 			max-height: 350px;
 		}
+
+		.related-articles {
+			margin-top: 40px;
+			padding-top: 40px;
+		}
+
+		.related-title {
+			font-size: 26px;
+			margin-bottom: 30px;
+		}
+
+		.related-grid {
+			grid-template-columns: 1fr;
+			gap: 25px;
+		}
+
+		.related-image {
+			height: 180px;
+		}
 	}
 
 	@media (max-width: 480px) {
@@ -409,6 +665,36 @@
 
 		.not-found-content h2 {
 			font-size: 28px;
+		}
+
+		.related-articles {
+			margin-top: 30px;
+			padding-top: 30px;
+		}
+
+		.related-title {
+			font-size: 22px;
+			margin-bottom: 25px;
+		}
+
+		.related-grid {
+			gap: 20px;
+		}
+
+		.related-image {
+			height: 160px;
+		}
+
+		.related-content {
+			padding: 15px;
+		}
+
+		.related-card-title {
+			font-size: 16px;
+		}
+
+		.related-excerpt {
+			font-size: 13px;
 		}
 	}
 </style>

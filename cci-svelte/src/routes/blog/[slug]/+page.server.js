@@ -8,10 +8,12 @@ export async function load({ params }) {
   // Query de GROQ: Trae el post que coincida con el slug
   const query = `*[_type == "post" && slug.current == $slug][0]{
     title,
+    author,
     mainImage,
     publishedAt,
     body,
-    category
+    category,
+    slug
   }`;
 
   const post = await client.fetch(query, { slug });
@@ -24,7 +26,24 @@ export async function load({ params }) {
     };
   }
 
+  // Query para obtener artículos relacionados (misma categoría, excluyendo el actual)
+  const relatedQuery = `*[_type == "post" && category == $category && slug.current != $slug] | order(publishedAt desc) [0...3]{
+    _id,
+    title,
+    slug,
+    mainImage,
+    publishedAt,
+    category,
+    body
+  }`;
+
+  const relatedPosts = await client.fetch(relatedQuery, {
+    category: post.category,
+    slug
+  });
+
   return {
-    post
+    post,
+    relatedPosts: relatedPosts || []
   };
 }

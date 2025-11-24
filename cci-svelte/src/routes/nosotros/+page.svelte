@@ -48,56 +48,102 @@
 	<section class="timeline-section">
 		<h2>Línea del Tiempo</h2>
 		<div class="timeline-container">
-			<img
-				src="/images/linea_del_tiempo.png"
-				alt="Línea del tiempo del Consejo Cívico de Laguna"
-				class="timeline-image"
-			/>
+			<div class="timeline-line"></div>
+
+			<div class="timeline-item">
+				<div class="timeline-content">
+					<div class="timeline-year">2013</div>
+					<div class="timeline-text">Fundación del Consejo Cívico de Laguna</div>
+				</div>
+			</div>
+
+			<div class="timeline-item">
+				<div class="timeline-content">
+					<div class="timeline-year">2014</div>
+					<div class="timeline-text">Primera encuesta de percepción ciudadana</div>
+				</div>
+			</div>
+
+			<div class="timeline-item">
+				<div class="timeline-content">
+					<div class="timeline-year">2015</div>
+					<div class="timeline-text">Lanzamiento del observatorio ciudadano</div>
+				</div>
+			</div>
+
+			<div class="timeline-item">
+				<div class="timeline-content">
+					<div class="timeline-year">2017</div>
+					<div class="timeline-text">Creación de la Red de Adherentes</div>
+				</div>
+			</div>
+
+			<div class="timeline-item">
+				<div class="timeline-content">
+					<div class="timeline-year">2019</div>
+					<div class="timeline-text">Expansión de programas de transparencia</div>
+				</div>
+			</div>
+
+			<div class="timeline-item">
+				<div class="timeline-content">
+					<div class="timeline-year">2021</div>
+					<div class="timeline-text">Implementación de nuevas tecnologías digitales</div>
+				</div>
+			</div>
+
+			<div class="timeline-item">
+				<div class="timeline-content">
+					<div class="timeline-year">2023</div>
+					<div class="timeline-text">10 años promoviendo la participación ciudadana</div>
+				</div>
+			</div>
 		</div>
 	</section>
 
-	<!-- Sección Objetivos -->
-	<section class="objectives-section">
-		<!-- Título con banda -->
-		<div class="title-section">
-			<img
-				src="/images/stickers/nuestrosObjetivosSticker.png"
-				alt="Nuestros Objetivos Sticker"
-				class="sticker"
-			/>
-			<h2 class="objectives-title">Nuestros Objetivos</h2>
-		</div>
-		<div class="objectives-content">
-			<p>
-				A través de la generación y análisis de indicadores técnicos y de percepción ciudadana,
-				buscamos generar evidencia y dialogar con los tomadores de decisión para atender y mejorar
-				las áreas de oportunidad, además de aportar información de utilidad para el monitoreo y
-				seguimiento permanente a las políticas públicas estatales y municipales.
-			</p>
-			<p>
-				Buscamos incidir en políticas públicas eficientes y contribuir a transformar, desde la
-				sociedad civil organizada, el bienestar y la calidad de vida de nuestra comunidad.
-			</p>
-		</div>
-	</section>
+	<!-- Sección Grid Objetivos y Visión -->
+	<section class="objectives-vision-section">
+		<div class="cards-grid">
+			<!-- Tarjeta Nuestros Objetivos -->
+			<div class="card card-objective">
+				<h3 class="card-title">Nuestros Objetivos</h3>
+				<div class="card-text">
+					<p>
+						A través de la generación y análisis de indicadores técnicos y de percepción ciudadana,
+						buscamos generar evidencia y dialogar con los tomadores de decisión para atender y
+						mejorar las áreas de oportunidad, además de aportar información de utilidad para el
+						monitoreo y seguimiento permanente a las políticas públicas estatales y municipales.
+					</p>
+					<p>
+						Buscamos incidir en políticas públicas eficientes y contribuir a transformar, desde la
+						sociedad civil organizada, el bienestar y la calidad de vida de nuestra comunidad.
+					</p>
+				</div>
+				<!-- Imagen decorativa -->
+				<img
+					src="/images/stickers/nuestrosObjetivosSticker.png"
+					alt="Nuestros Objetivos"
+					class="card-icon"
+				/>
+			</div>
 
-	<!-- Sección Visión -->
-	<section class="vision-section">
-		<!-- Título con banda -->
-		<div class="title-section">
-			<h2 class="vision-title">Nuestra Visión</h2>
-			<img
-				src="/images/stickers/nuestraVisionSticker.png"
-				alt="Nuestra Visión Sticker"
-				class="sticker"
-			/>
-		</div>
-		<div class="vision-content">
-			<p>
-				Consolidarnos como el referente ciudadano que representa a los diferentes sectores de la
-				sociedad, que articula esfuerzos orientados a generar conocimiento y métricas de evaluación
-				que logren mejorar el diseño de políticas públicas en la región.
-			</p>
+			<!-- Tarjeta Nuestra Visión -->
+			<div class="card card-vision">
+				<h3 class="card-title">Nuestra Visión</h3>
+				<div class="card-text">
+					<p>
+						Consolidarnos como el referente ciudadano que representa a los diferentes sectores de la
+						sociedad, que articula esfuerzos orientados a generar conocimiento y métricas de
+						evaluación que logren mejorar el diseño de políticas públicas en la región.
+					</p>
+				</div>
+				<!-- Imagen decorativa -->
+				<img
+					src="/images/stickers/nuestraVisionSticker.png"
+					alt="Nuestra Visión"
+					class="card-icon"
+				/>
+			</div>
 		</div>
 	</section>
 
@@ -179,15 +225,44 @@
 		min-height: calc(100vh - 200px);
 	}
 
-	/* Hero Section */
+	/* Hero Section con efecto parallax fijo */
 	.hero-section {
-		background: linear-gradient(135deg, #e8f4f8 0%, #d4e9f7 100%);
+		position: relative;
+		background-image: url('/images/backgroundTorreon.png');
+		background-size: cover;
+		background-position: center center;
+		background-repeat: no-repeat;
+		background-attachment: fixed;
 		padding: 80px 50px;
-		transition: background 0.3s ease;
+		min-height: 60vh;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
 	}
 
-	:global([data-theme='dark']) .hero-section {
-		background: linear-gradient(135deg, #0f1419 0%, #0f1419 100%);
+	/* Overlay sobre la imagen de fondo */
+	.hero-section::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba(232, 244, 248, 0.85);
+		z-index: 0;
+		pointer-events: none;
+	}
+
+	:global([data-theme='dark']) .hero-section::before {
+		background: rgba(15, 20, 25, 0.85);
+	}
+
+	/* Asegurar que el contenido esté por encima del overlay */
+	.hero-section h1,
+	.hero-section .hero-content {
+		position: relative;
+		z-index: 1;
 	}
 
 	.hero-section h1 {
@@ -250,163 +325,243 @@
 		font-weight: 500;
 		color: var(--text-sub);
 		text-align: center;
-		margin-bottom: 50px;
+		margin-bottom: 60px;
 		text-transform: uppercase;
 		letter-spacing: 1.5px;
 	}
 
 	.timeline-container {
-		max-width: 1200px;
+		max-width: 1000px;
 		margin: 0 auto;
+		position: relative;
+		padding: 40px 0;
+	}
+
+	/* Línea vertical central */
+	.timeline-line {
+		position: absolute;
+		left: 50%;
+		top: 0;
+		bottom: 0;
+		width: 4px;
+		background: linear-gradient(180deg, #4a7ba7, #c9a961);
+		transform: translateX(-50%);
+	}
+
+	/* Items de la timeline */
+	.timeline-item {
+		position: relative;
+		margin-bottom: 30px;
 		display: flex;
-		justify-content: center;
-		align-items: center;
-		padding: 20px;
+		justify-content: flex-end;
+		width: 100%;
+	}
+
+	/* Items impares (izquierda) */
+	.timeline-item:nth-child(odd) {
+		justify-content: flex-start;
+	}
+
+	.timeline-item:nth-child(odd) .timeline-content {
+		margin-right: calc(50% + 20px);
+	}
+
+	/* Items pares (derecha) */
+	.timeline-item:nth-child(even) .timeline-content {
+		margin-left: calc(50% + 20px);
+	}
+
+	/* Contenido de cada evento */
+	.timeline-content {
 		background: var(--card-bg);
-		border-radius: 15px;
-		box-shadow: 0 10px 30px var(--card-shadow);
+		border-radius: 12px;
+		padding: 25px 30px;
+		box-shadow: 0 4px 15px var(--card-shadow);
+		max-width: 400px;
+		position: relative;
 		transition: all 0.3s ease;
 	}
 
-	.timeline-image {
-		width: 100%;
-		height: auto;
-		display: block;
-		border-radius: 10px;
+	.timeline-content:hover {
+		transform: translateY(-5px);
+		box-shadow: 0 8px 25px var(--card-shadow);
 	}
 
-	/* Objectives Section */
-	.objectives-section {
-		padding: 40px 50px;
-		padding-top: 70px;
+	/* Círculo en la línea central */
+	.timeline-content::before {
+		content: '';
+		position: absolute;
+		width: 20px;
+		height: 20px;
+		background: #4a7ba7;
+		border: 4px solid var(--bg-primary);
+		border-radius: 50%;
+		top: 30px;
+	}
+
+	.timeline-item:nth-child(odd) .timeline-content::before {
+		right: -52px;
+	}
+
+	.timeline-item:nth-child(even) .timeline-content::before {
+		left: -52px;
+	}
+
+	/* Año */
+	.timeline-year {
+		font-size: 28px;
+		font-weight: 700;
+		color: #4a7ba7;
+		margin-bottom: 10px;
+	}
+
+	:global([data-theme='dark']) .timeline-year {
+		color: #ffa100;
+	}
+
+	/* Texto del evento */
+	.timeline-text {
+		font-size: 16px;
+		line-height: 1.6;
+		color: var(--text-primary);
+		font-weight: 400;
+	}
+
+	/* Objectives & Vision Grid Section */
+	.objectives-vision-section {
+		padding: 80px 50px;
 		background: var(--bg-primary);
 		transition: background 0.3s ease;
-		overflow: visible;
 	}
 
-	/* Banda horizontal del título */
-	.objectives-section .title-section {
-		background: linear-gradient(135deg, #e8f4f8 0%, #d4e9f7 100%);
-		height: 80px;
-		padding: 5px 50px;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		gap: 20px;
-		position: relative;
-		margin: -70px -50px 40px -50px;
-		transition: background 0.3s ease;
-		overflow: visible;
-	}
-
-	:global([data-theme='dark']) .objectives-section .title-section {
-		background: #414a5e;
-	}
-
-	.objectives-section .sticker {
-		height: 130px;
-		width: auto;
-		object-fit: contain;
-		position: relative;
-		top: -35px;
-		margin-bottom: -60px;
-	}
-
-	.objectives-title {
-		font-size: 42px;
-		font-weight: 600;
-		color: #000000;
-		text-align: center;
-		margin: 0;
-		text-transform: uppercase;
-		letter-spacing: 1.5px;
-		transition: color 0.3s ease;
-	}
-
-	:global([data-theme='dark']) .objectives-title {
-		color: #ffa100;
-	}
-
-	.objectives-content {
-		max-width: 900px;
+	/* Grid de Tarjetas */
+	.cards-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 40px;
+		max-width: 1200px;
 		margin: 0 auto;
 	}
 
-	.objectives-content p {
-		font-size: 18px;
-		line-height: 1.8;
+	/* Tarjetas base */
+	.card {
+		position: relative;
+		border-radius: 16px;
+		padding: 50px 40px;
+		min-height: 550px;
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		transition: all 0.3s ease;
+	}
+
+	.card:hover {
+		transform: translateY(-5px);
+	}
+
+	/* Tarjeta Nuestros Objetivos - Fondo oscuro azul institucional */
+	.card-objective {
+		background: linear-gradient(135deg, #2c5f8d 0%, #4a7ba7 100%);
+		color: white;
+		box-shadow: 0 8px 25px rgba(44, 95, 141, 0.3);
+	}
+
+	.card-objective:hover {
+		box-shadow: 0 15px 40px rgba(44, 95, 141, 0.5);
+	}
+
+	.card-objective .card-title {
+		color: #ffa100;
+	}
+
+	/* Tarjeta Nuestra Visión - Fondo blanco con borde y sombra */
+	.card-vision {
+		background: var(--card-bg);
 		color: var(--text-primary);
+		border: 2px solid #e0e0e0;
+		box-shadow: 0 8px 25px var(--card-shadow);
+	}
+
+	:global([data-theme='dark']) .card-vision {
+		border-color: #414a5e;
+	}
+
+	.card-vision:hover {
+		box-shadow: 0 15px 40px rgba(44, 95, 141, 0.5);
+	}
+
+	.card-vision .card-title {
+		color: #4a7ba7;
+	}
+
+	:global([data-theme='dark']) .card-vision .card-title {
+		color: #ffa100;
+	}
+
+	/* Títulos de las tarjetas */
+	.card-title {
+		font-size: 32px;
+		font-weight: 700;
+		text-transform: uppercase;
 		margin-bottom: 25px;
-		text-align: justify;
-	}
-
-	/* Vision Section */
-	.vision-section {
-		padding: 40px 50px;
-		padding-top: 70px;
-		background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
-		transition: background 0.3s ease;
-		overflow: visible;
-	}
-
-	:global([data-theme='dark']) .vision-section {
-		background: #0f1419;
-	}
-
-	/* Banda horizontal del título */
-	.vision-section .title-section {
-		background: linear-gradient(135deg, #e8f4f8 0%, #d4e9f7 100%);
-		height: 80px;
-		padding: 5px 50px;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		gap: 20px;
-		position: relative;
-		margin: -70px -50px 40px -50px;
-		transition: background 0.3s ease;
-		overflow: visible;
-	}
-
-	:global([data-theme='dark']) .vision-section .title-section {
-		background: #414a5e;
-	}
-
-	.vision-section .sticker {
-		height: 140px;
-		width: auto;
-		object-fit: contain;
-		position: relative;
-		top: -35px;
-		margin-bottom: -60px;
-	}
-
-	.vision-title {
-		font-size: 42px;
-		font-weight: 600;
-		color: #000000;
-		text-align: center;
-		margin: 0;
-		text-transform: uppercase;
 		letter-spacing: 1.5px;
-		transition: color 0.3s ease;
 	}
 
-	:global([data-theme='dark']) .vision-title {
-		color: #ffa100;
+	/* Texto de las tarjetas */
+	.card-text {
+		flex-grow: 1;
 	}
 
-	.vision-content {
-		max-width: 900px;
-		margin: 0 auto;
-	}
-
-	.vision-content p {
-		font-size: 20px;
+	.card-text p {
+		font-size: 17px;
 		line-height: 1.8;
-		color: var(--text-primary);
-		text-align: center;
-		font-weight: 500;
+		margin-bottom: 20px;
+	}
+
+	.card-text p:last-child {
+		margin-bottom: 0;
+	}
+
+	.card-objective .card-text p {
+		color: rgba(255, 255, 255, 0.95);
+	}
+
+	/* Imágenes decorativas (stickers) */
+	.card-icon {
+		position: absolute;
+		bottom: 15px;
+		right: 15px;
+		width: 120px;
+		height: auto;
+		opacity: 0.2;
+		pointer-events: none;
+		object-fit: contain;
+	}
+
+	.card-objective .card-icon {
+		opacity: 0.25;
+		transition: opacity 0.3s ease;
+	}
+
+	.card-objective:hover .card-icon {
+		opacity: 0.7;
+	}
+
+	.card-vision .card-icon {
+		opacity: 0.2;
+		transition: opacity 0.3s ease;
+	}
+
+	.card-vision:hover .card-icon {
+		opacity: 0.9;
+	}
+
+	:global([data-theme='dark']) .card-vision .card-icon {
+		opacity: 0.3;
+	}
+
+	:global([data-theme='dark']) .card-vision:hover .card-icon {
+		opacity: 0.8;
 	}
 
 	/* Team Section */
@@ -418,7 +573,7 @@
 
 	.team-section h2 {
 		font-size: 40px;
-		font-weight: 400;
+		font-weight: 500;
 		color: var(--text-sub);
 		text-align: center;
 		margin-bottom: 60px;
@@ -450,18 +605,49 @@
 		width: 150px;
 		height: 150px;
 		border-radius: 50%;
-		overflow: hidden;
+		overflow: visible;
 		margin-bottom: 20px;
-		box-shadow: 0 5px 20px var(--card-shadow);
-		transition: all 0.3s ease;
 		background: var(--card-bg);
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		position: relative;
+		transition: transform 0.3s ease;
 	}
 
+	/* Anillo de acento (pseudo-elemento) */
+	.member-photo::after {
+		content: '';
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: calc(100% + 12px);
+		height: calc(100% + 12px);
+		border: 3px solid #000;
+		border-radius: 50%;
+		transform: translate(-50%, -50%) rotate(0deg);
+		transition: all 0.4s ease;
+		z-index: -1;
+	}
+
+	/* Anillo en modo oscuro */
+	:global([data-theme='dark']) .member-photo::after {
+		border-color: #fff;
+	}
+
+	/* Hover en el miembro completo - Anillo y rotación */
+	.team-member:hover .member-photo::after {
+		border-color: #4a7ba7;
+		transform: translate(-50%, -50%) rotate(45deg);
+	}
+
+	/* Hover en modo oscuro - Verde neón */
+	:global([data-theme='dark']) .team-member:hover .member-photo::after {
+		border-color: #00ff88;
+	}
+
+	/* Hover - Zoom en la foto */
 	.team-member:hover .member-photo {
-		box-shadow: 0 10px 30px var(--card-shadow);
 		transform: scale(1.05);
 	}
 
@@ -469,6 +655,9 @@
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
+		border-radius: 50%;
+		position: relative;
+		z-index: 1;
 	}
 
 	.member-name {
@@ -477,6 +666,17 @@
 		color: var(--text-primary);
 		margin-bottom: 8px;
 		line-height: 1.4;
+		transition: color 0.3s ease;
+	}
+
+	/* Hover - Nombre en azul institucional (modo claro) */
+	.team-member:hover .member-name {
+		color: #4a7ba7;
+	}
+
+	/* Hover - Nombre en verde neón (modo oscuro) */
+	:global([data-theme='dark']) .team-member:hover .member-name {
+		color: #00ff88;
 	}
 
 	.member-role {
@@ -521,68 +721,78 @@
 
 		.timeline-section h2 {
 			font-size: 32px;
-			margin-bottom: 30px;
+			margin-bottom: 40px;
 		}
 
 		.timeline-container {
-			padding: 15px;
+			padding: 20px 0 20px 30px;
 		}
 
-		.objectives-section,
-		.vision-section {
-			padding: 40px 20px;
+		/* En móvil, la línea pasa por el costado izquierdo */
+		.timeline-line {
+			left: 15px;
 		}
 
-		.objectives-section {
-			padding-top: 60px;
+		/* Todos los items se alinean a la izquierda */
+		.timeline-item,
+		.timeline-item:nth-child(odd),
+		.timeline-item:nth-child(even) {
+			justify-content: flex-start;
 		}
 
-		.objectives-section .title-section {
-			padding: 5px 20px;
-			margin: -60px -20px 40px -20px;
-			gap: 15px;
+		.timeline-item:nth-child(odd) .timeline-content,
+		.timeline-item:nth-child(even) .timeline-content {
+			margin-left: 35px;
+			margin-right: 0;
+			max-width: 100%;
 		}
 
-		.objectives-section .sticker {
-			height: 140px;
-			top: -30px;
-			margin-bottom: -50px;
+		/* Círculos a la izquierda */
+		.timeline-item:nth-child(odd) .timeline-content::before,
+		.timeline-item:nth-child(even) .timeline-content::before {
+			left: -46px;
+			right: auto;
 		}
 
-		.objectives-title {
-			font-size: 32px;
-			margin-bottom: 0;
+		.timeline-content {
+			padding: 20px 25px;
 		}
 
-		.vision-section {
-			padding-top: 60px;
+		.timeline-year {
+			font-size: 24px;
 		}
 
-		.vision-section .title-section {
-			padding: 5px 20px;
-			margin: -60px -20px 40px -20px;
-			gap: 15px;
+		.timeline-text {
+			font-size: 15px;
 		}
 
-		.vision-section .sticker {
-			height: 140px;
-			top: -30px;
-			margin-bottom: -50px;
+		.objectives-vision-section {
+			padding: 60px 20px;
 		}
 
-		.vision-title {
-			font-size: 32px;
-			margin-bottom: 0;
+		/* Grid en tablet/móvil: 1 columna */
+		.cards-grid {
+			grid-template-columns: 1fr;
+			gap: 30px;
 		}
 
-		.objectives-content p {
+		.card {
+			padding: 40px 30px;
+			min-height: 410px;
+		}
+
+		.card-title {
+			font-size: 28px;
+		}
+
+		.card-text p {
 			font-size: 16px;
-			text-align: left;
 		}
 
-		.vision-content p {
-			font-size: 18px;
-			text-align: justify;
+		.card-icon {
+			width: 100px;
+			bottom: 12px;
+			right: 12px;
 		}
 
 		.team-section {
@@ -641,60 +851,60 @@
 
 		.timeline-section h2 {
 			font-size: 28px;
+			margin-bottom: 30px;
 		}
 
 		.timeline-container {
-			padding: 10px;
+			padding: 20px 0 20px 25px;
 		}
 
-		.objectives-section,
-		.vision-section {
+		.timeline-line {
+			left: 12px;
+		}
+
+		.timeline-item:nth-child(odd) .timeline-content,
+		.timeline-item:nth-child(even) .timeline-content {
+			margin-left: 32px;
+		}
+
+		.timeline-item:nth-child(odd) .timeline-content::before,
+		.timeline-item:nth-child(even) .timeline-content::before {
+			left: -43px;
+		}
+
+		.timeline-content {
+			padding: 18px 20px;
+		}
+
+		.timeline-year {
+			font-size: 22px;
+		}
+
+		.timeline-text {
+			font-size: 14px;
+		}
+
+		.objectives-vision-section {
 			padding: 40px 20px;
 		}
 
-		.objectives-section {
-			padding-top: 50px;
+		.card {
+			padding: 35px 25px;
+			min-height: 470px;
 		}
 
-		.objectives-section .title-section {
-			padding: 5px 15px;
-			margin: -50px -20px 30px -20px;
-			gap: 10px;
+		.card-title {
+			font-size: 26px;
 		}
 
-		.objectives-section .sticker {
-			height: 110px;
-			top: -40px;
-			margin-bottom: -40px;
-		}
-
-		.objectives-title {
-			font-size: 28px;
-		}
-
-		.vision-section {
-			padding-top: 50px;
-		}
-
-		.vision-section .title-section {
-			padding: 5px 15px;
-			margin: -50px -20px 30px -20px;
-			gap: 10px;
-		}
-
-		.vision-section .sticker {
-			height: 110px;
-			top: -40px;
-			margin-bottom: -40px;
-		}
-
-		.vision-title {
-			font-size: 28px;
-		}
-
-		.objectives-content p,
-		.vision-content p {
+		.card-text p {
 			font-size: 15px;
+		}
+
+		.card-icon {
+			width: 80px;
+			bottom: 10px;
+			right: 10px;
 		}
 
 		.team-section {
