@@ -22,6 +22,9 @@
 	// Estado para el filtro activo
 	let activeCategory = $state<string>('Todos');
 
+	// Estado para la búsqueda
+	let searchQuery = $state<string>('');
+
 	// Función para extraer el primer párrafo del body de Sanity
 	function extractFirstParagraph(body: any): string {
 		if (!body || !Array.isArray(body)) {
@@ -88,12 +91,25 @@
 		return ['Todos', ...Array.from(uniqueCategories).sort()];
 	});
 
-	// Filtrar artículos por categoría
-	let filteredArticles = $derived<Article[]>(
-		activeCategory === 'Todos'
-			? articles
-			: articles.filter((article: Article) => article.category === activeCategory)
-	);
+	// Filtrar artículos por categoría y búsqueda
+	let filteredArticles = $derived.by(() => {
+		let result = articles;
+
+		// Filtrar por búsqueda
+		if (searchQuery.trim()) {
+			const query = searchQuery.toLowerCase().trim();
+			result = result.filter((article: Article) =>
+				article.title.toLowerCase().includes(query)
+			);
+		}
+
+		// Filtrar por categoría
+		if (activeCategory !== 'Todos') {
+			result = result.filter((article: Article) => article.category === activeCategory);
+		}
+
+		return result;
+	});
 </script>
 
 <svelte:head>
@@ -126,6 +142,17 @@
 
 	<section class="filter-section">
 		<div class="filter-container">
+			<div class="search-container">
+				<svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor">
+					<path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/>
+				</svg>
+				<input
+					type="text"
+					class="search-input"
+					placeholder="Buscar por título..."
+					bind:value={searchQuery}
+				/>
+			</div>
 			<h2 class="filter-title">Filtrar por tema:</h2>
 			<div class="category-filters">
 				{#each categories as category}
@@ -255,6 +282,47 @@
 	.filter-container {
 		max-width: 1400px;
 		margin: 0 auto;
+	}
+	.search-container {
+		position: relative;
+		max-width: 500px;
+		margin: 0 auto 30px;
+	}
+	.search-icon {
+		position: absolute;
+		left: 18px;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 18px;
+		height: 18px;
+		color: var(--text-primary);
+		opacity: 0.5;
+	}
+	.search-input {
+		width: 100%;
+		padding: 14px 20px 14px 50px;
+		border: 2px solid #4a7ba7;
+		border-radius: 30px;
+		font-size: 16px;
+		background: var(--card-bg);
+		color: var(--text-primary);
+		transition: all 0.3s ease;
+	}
+	.search-input::placeholder {
+		color: var(--text-primary);
+		opacity: 0.5;
+	}
+	.search-input:focus {
+		outline: none;
+		border-color: #2c5f8d;
+		box-shadow: 0 4px 12px rgba(74, 123, 167, 0.2);
+	}
+	:global([data-theme='dark']) .search-input {
+		border-color: #00d4ff;
+	}
+	:global([data-theme='dark']) .search-input:focus {
+		border-color: #00d4ff;
+		box-shadow: 0 4px 12px rgba(0, 212, 255, 0.2);
 	}
 	.filter-title {
 		font-size: 18px;
@@ -445,6 +513,13 @@
 		.hero-description {
 			font-size: 18px;
 		}
+		.search-container {
+			margin-bottom: 25px;
+		}
+		.search-input {
+			padding: 12px 18px 12px 45px;
+			font-size: 15px;
+		}
 		.filter-title {
 			font-size: 16px;
 		}
@@ -473,6 +548,18 @@
 		}
 		.hero-description {
 			font-size: 16px;
+		}
+		.search-container {
+			margin-bottom: 20px;
+		}
+		.search-input {
+			padding: 10px 15px 10px 42px;
+			font-size: 14px;
+		}
+		.search-icon {
+			width: 16px;
+			height: 16px;
+			left: 15px;
 		}
 		.filter-title {
 			font-size: 15px;

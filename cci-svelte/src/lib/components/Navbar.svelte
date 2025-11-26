@@ -76,6 +76,8 @@
 
 	<div class="navbar-right-content" class:active={isMenuOpen}>
 		<ul class="nav-menu" role="menubar">
+			<li role="none"><a href="/" role="menuitem" onclick={closeMenu}>INICIO</a></li>
+			<li class="nav-separator" aria-hidden="true">|</li>
 			<li role="none"><a href="/nosotros" role="menuitem" onclick={closeMenu}>NOSOTROS</a></li>
 			<li class="nav-separator" aria-hidden="true">|</li>
 			<li role="none"><a href="/blog" role="menuitem" onclick={closeMenu}>BLOG</a></li>

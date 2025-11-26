@@ -32,6 +32,9 @@
 	// Estado para el tema activo
 	let activeTheme = $state<'seguridad' | 'empleo'>('seguridad');
 
+	// Estado para la búsqueda
+	let searchQuery = $state('');
+
 	// Estado para los filtros de fecha
 	let filterStartDate = $state('');
 	let filterEndDate = $state('');
@@ -60,21 +63,30 @@
 	// Filtrar boletines (Lógica original pero usando la variable reactiva 'boletines')
 	let boletinesFiltrados = $derived(() => {
 		// Usamos la lista procesada de Sanity
-		let filtered = boletines.filter((b) => b.category === activeTheme);
+		let filtered = boletines.filter((b: Boletin) => b.category === activeTheme);
+
+		// Aplicar filtro de búsqueda por título
+		if (searchQuery.trim()) {
+			const query = searchQuery.toLowerCase().trim();
+			filtered = filtered.filter((b: Boletin) => b.title.toLowerCase().includes(query));
+		}
 
 		// Aplicar filtro de fechas
 		if (filterStartDate) {
-			filtered = filtered.filter((b) => b.date >= filterStartDate);
+			filtered = filtered.filter((b: Boletin) => b.date >= filterStartDate);
 		}
 		if (filterEndDate) {
-			filtered = filtered.filter((b) => b.date <= filterEndDate);
+			filtered = filtered.filter((b: Boletin) => b.date <= filterEndDate);
 		}
 
 		// Ordenar por fecha descendente
-		return filtered.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+		return filtered.sort(
+			(a: Boletin, b: Boletin) => new Date(b.date).getTime() - new Date(a.date).getTime()
+		);
 	});
 
 	function clearFilters() {
+		searchQuery = '';
 		filterStartDate = '';
 		filterEndDate = '';
 	}
@@ -109,6 +121,28 @@
 		<p class="header-description">
 			Accede a nuestros informes y análisis sobre seguridad y empleo en la Comarca Lagunera
 		</p>
+	</section>
+
+	<!-- Buscador -->
+	<section class="search-section">
+		<div class="search-container">
+			<svg
+				class="search-icon"
+				xmlns="http://www.w3.org/2000/svg"
+				viewBox="0 0 512 512"
+				fill="currentColor"
+			>
+				<path
+					d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"
+				/>
+			</svg>
+			<input
+				type="text"
+				class="search-input"
+				placeholder="Buscar por título..."
+				bind:value={searchQuery}
+			/>
+		</div>
 	</section>
 
 	<!-- Tabs de Temas -->
@@ -206,6 +240,61 @@
 		margin: 0 auto;
 	}
 
+	/* Search Section */
+	.search-section {
+		background: var(--bg-primary);
+		padding: 40px 50px 20px;
+		transition: background 0.3s ease;
+	}
+
+	.search-container {
+		position: relative;
+		max-width: 500px;
+		margin: 0 auto;
+	}
+
+	.search-icon {
+		position: absolute;
+		left: 18px;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 18px;
+		height: 18px;
+		color: var(--text-primary);
+		opacity: 0.5;
+	}
+
+	.search-input {
+		width: 100%;
+		padding: 14px 20px 14px 50px;
+		border: 2px solid #4a7ba7;
+		border-radius: 30px;
+		font-size: 16px;
+		background: var(--card-bg);
+		color: var(--text-primary);
+		transition: all 0.3s ease;
+	}
+
+	.search-input::placeholder {
+		color: var(--text-primary);
+		opacity: 0.5;
+	}
+
+	.search-input:focus {
+		outline: none;
+		border-color: #2c5f8d;
+		box-shadow: 0 4px 12px rgba(74, 123, 167, 0.2);
+	}
+
+	:global([data-theme='dark']) .search-input {
+		border-color: #00d4ff;
+	}
+
+	:global([data-theme='dark']) .search-input:focus {
+		border-color: #00d4ff;
+		box-shadow: 0 4px 12px rgba(0, 212, 255, 0.2);
+	}
+
 	/* Themes Section */
 	.themes-section {
 		background: var(--bg-primary);
@@ -294,6 +383,9 @@
 		-webkit-mask:
 			linear-gradient(#fff 0 0) content-box,
 			linear-gradient(#fff 0 0);
+		mask:
+			linear-gradient(#fff 0 0) content-box,
+			linear-gradient(#fff 0 0);
 		-webkit-mask-composite: xor;
 		mask-composite: exclude;
 		pointer-events: none;
@@ -379,6 +471,9 @@
 		padding: 2px;
 		background: linear-gradient(to bottom right, #06b6d4, #3b82f6);
 		-webkit-mask:
+			linear-gradient(#fff 0 0) content-box,
+			linear-gradient(#fff 0 0);
+		mask:
 			linear-gradient(#fff 0 0) content-box,
 			linear-gradient(#fff 0 0);
 		-webkit-mask-composite: xor;
@@ -525,6 +620,15 @@
 			font-size: 18px;
 		}
 
+		.search-section {
+			padding: 30px 30px 15px;
+		}
+
+		.search-input {
+			padding: 12px 18px 12px 45px;
+			font-size: 15px;
+		}
+
 		.themes-section {
 			padding: 30px 20px;
 		}
@@ -588,6 +692,21 @@
 
 		.header-description {
 			font-size: 16px;
+		}
+
+		.search-section {
+			padding: 20px 20px 10px;
+		}
+
+		.search-input {
+			padding: 10px 15px 10px 42px;
+			font-size: 14px;
+		}
+
+		.search-icon {
+			width: 16px;
+			height: 16px;
+			left: 15px;
 		}
 
 		.theme-tab-seguridad {

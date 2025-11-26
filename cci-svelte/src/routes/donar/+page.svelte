@@ -53,16 +53,6 @@
 				mejores gobiernos en la Comarca Lagunera. Cada aportación cuenta y es deducible de
 				impuestos.
 			</p>
-			{#if donationData.deductible}
-				<div class="deductible-badge">
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor">
-						<path
-							d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"
-						/>
-					</svg>
-					<span>Donativo Deducible de Impuestos</span>
-				</div>
-			{/if}
 		</div>
 	</section>
 
@@ -162,8 +152,7 @@
 						<a href="mailto:{donationData.invoicing.email}">{donationData.invoicing.email}</a>
 					</p>
 					<p class="invoicing-note">
-						Envía tu comprobante de pago y tus datos fiscales a este correo para recibir tu
-						factura.
+						Envía tu comprobante de pago y tus datos fiscales a este correo para recibir tu factura.
 					</p>
 				</div>
 			</div>
@@ -193,9 +182,9 @@
 			<div>
 				<h4>Importante</h4>
 				<p>
-					Para obtener tu recibo deducible de impuestos, por favor envía el comprobante de pago junto
-					con tus datos fiscales completos (RFC, razón social, código postal, régimen fiscal y uso de
-					CFDI) al correo de facturación.
+					Para obtener tu recibo deducible de impuestos, por favor envía el comprobante de pago
+					junto con tus datos fiscales completos (RFC, razón social, código postal, régimen fiscal y
+					uso de CFDI) al correo de facturación.
 				</p>
 			</div>
 		</div>
@@ -240,24 +229,6 @@
 		line-height: 1.8;
 		color: var(--text-primary);
 		margin-bottom: 30px;
-	}
-
-	.deductible-badge {
-		display: inline-flex;
-		align-items: center;
-		gap: 12px;
-		background: linear-gradient(135deg, #4caf50, #45a049);
-		color: white;
-		padding: 15px 30px;
-		border-radius: 50px;
-		font-weight: 600;
-		font-size: 18px;
-		box-shadow: 0 5px 20px rgba(76, 175, 80, 0.3);
-	}
-
-	.deductible-badge svg {
-		width: 24px;
-		height: 24px;
 	}
 
 	/* Bank Info Section */
@@ -505,11 +476,6 @@
 			font-size: 18px;
 		}
 
-		.deductible-badge {
-			font-size: 16px;
-			padding: 12px 24px;
-		}
-
 		.bank-info-section h2,
 		.invoicing-section h2 {
 			font-size: 32px;
@@ -541,11 +507,6 @@
 
 		.hero-description {
 			font-size: 16px;
-		}
-
-		.deductible-badge {
-			font-size: 14px;
-			padding: 10px 20px;
 		}
 
 		.bank-info-section h2,

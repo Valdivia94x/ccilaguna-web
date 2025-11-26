@@ -6,10 +6,7 @@
 
 <svelte:head>
 	<title>MIDLag | Consejo Cívico de Laguna</title>
-	<meta
-		name="description"
-		content="MIDLag - Municipio Inteligente Digital Laguna"
-	/>
+	<meta name="description" content="MIDLag - Municipio Inteligente Digital Laguna" />
 </svelte:head>
 
 <Navbar />
@@ -23,9 +20,20 @@
 		</div>
 
 		<div class="content-section">
-			<p>
-				Contenido de MIDLag pendiente de agregar.
-			</p>
+			<div class="content-wrapper">
+				<div class="text-content">
+					<h2>¿Qué es MIDLag?</h2>
+					<p>
+						Es un producto que tiene como finalidad medir de manera sistemática y rigurosa la
+						manifestación delictiva en la Zona Metropolitana de La Laguna (ZML) a fin de informar
+						objetivamente a la ciudadanía sobre la situación en materia de seguridad, buscando incidir
+						en mejores políticas públicas.
+					</p>
+				</div>
+				<div class="image-section">
+					<img src="/images/midlag.png" alt="MIDLag - Municipio Inteligente Digital Laguna" />
+				</div>
+			</div>
 		</div>
 	</div>
 </section>
@@ -70,10 +78,35 @@
 		box-shadow: 0 4px 12px var(--card-shadow);
 	}
 
-	.content-section p {
+	.content-wrapper {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 40px;
+		align-items: center;
+	}
+
+	.text-content h2 {
+		color: var(--text-primary);
+		font-size: 28px;
+		margin-bottom: 20px;
+	}
+
+	.text-content p {
 		color: var(--text-primary);
 		font-size: 18px;
 		line-height: 1.8;
+	}
+
+	.image-section {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.image-section img {
+		max-width: 100%;
+		height: auto;
+		border-radius: 12px;
 	}
 
 	@media (max-width: 768px) {
@@ -87,6 +120,19 @@
 
 		.content-section {
 			padding: 30px 20px;
+		}
+
+		.content-wrapper {
+			grid-template-columns: 1fr;
+			gap: 30px;
+		}
+
+		.text-content {
+			order: 1;
+		}
+
+		.image-section {
+			order: 2;
 		}
 	}
 </style>
