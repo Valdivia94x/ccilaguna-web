@@ -141,6 +141,11 @@
 		transition: filter 0.3s ease;
 	}
 
+	:global([data-theme='dark']) .logo-item img {
+		background-color: #f4f6f8;
+		border-radius: 10px;
+	}
+
 	.logo-item:hover img {
 		filter: grayscale(0%) brightness(1.1);
 	}
