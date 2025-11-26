@@ -46,11 +46,11 @@
 
 /* Modo oscuro elegante y moderno */
 [data-theme='dark'] {
-	--bg-primary: #0f1419;
-	--bg-secondary: #0f1419;
-	--bg-about: #0f1419;
-	--bg-objectives: #0f1419;
-	--bg-softbrown: #0f1419;
+	--bg-primary: #1e293b;
+	--bg-secondary: #1e293b;
+	--bg-about: #1e293b;
+	--bg-objectives: #1e293b;
+	--bg-softbrown: #1e293b;
 	--text-primary: #ffffff;
 	--text-secondary: #ffffff;
 	--text-color: #ffffff;
@@ -58,7 +58,7 @@
 	--text-title: #FFA100;
 	--nav-text: #ffffff;
 	--nav-text-hover: #60a5fa;
-	--card-bg: #111727;
+	--card-bg: #334155;
 	--card-shadow: rgba(0, 0, 0, 0.4);
 
 	/* Navbar Glassmorphic - Modo Oscuro */
