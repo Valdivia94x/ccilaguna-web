@@ -177,8 +177,9 @@
 	}
 
 	:global([data-theme='dark']) .partners-row img {
-		border-radius: 100px;
+		border-radius: 12px;
 		background-color: #f4f6f8;
+		padding: 15px;
 	}
 
 	@media (max-width: 768px) {
