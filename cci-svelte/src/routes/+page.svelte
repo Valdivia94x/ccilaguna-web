@@ -168,7 +168,7 @@
 
 	@media (max-width: 480px) {
 		.carousel-spacer {
-			height: 350px;
+			height: 275px;
 		}
 	}
 </style>

@@ -82,7 +82,7 @@
 		},
 		{
 			id: 'hotspot_midlag',
-			href: 'https://www.oics.ccilaguna.org.mx/',
+			href: '/midlag',
 			x: 5.6,
 			y: 44.9,
 			width: 28.5,
