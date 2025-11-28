@@ -868,7 +868,7 @@
 		}
 
 		.hero-image img {
-			max-width: 100px;
+			display: none;
 		}
 
 		.timeline-section {
