@@ -17,10 +17,10 @@
 <style>
 	.about-section {
 		background: var(--bg-about);
-		padding: 10px 50px 90px 50px;
+		padding: 5px 50px 20px 50px;
 		display: grid;
 		grid-template-columns: 1fr 1fr;
-		gap: 60px;
+		gap: 20px;
 		align-items: center;
 		transition: background 0.3s ease;
 	}
@@ -46,7 +46,7 @@
 	}
 
 	.about-content p {
-		font-size: 18px;
+		font-size: 25px;
 		line-height: 1.8;
 		color: var(--text-primary);
 		transition: color 0.3s ease;
@@ -56,7 +56,7 @@
 
 	@media (max-width: 1024px) {
 		.about-section {
-			padding: 50px 40px 80px 40px;
+			padding: 20px 40px 80px 40px;
 			gap: 40px;
 		}
 

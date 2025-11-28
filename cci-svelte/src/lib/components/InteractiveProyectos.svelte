@@ -19,7 +19,7 @@
 			id: 'hotspot_home',
 			href: '/',
 			x: 34.2,
-			y: 34.6,
+			y: 17.6,
 			width: 32.3,
 			height: 32.3,
 			title: 'CCI Laguna',
@@ -28,50 +28,10 @@
 			description: 'Organización ciudadana que promueve la participación cívica y transparencia'
 		},
 		{
-			id: 'hotspot_midlag',
-			href: '/midlag',
-			x: 12.7,
-			y: 3.5,
-			width: 27.9,
-			height: 27.9,
-			title: 'MIDLag',
-			image: '/images/proyectos/midlag-hotspot.png',
-			clipPath:
-				'polygon(2.03% 49.80%, 1.78% 52.64%, 4.22% 56.69%, 55.23% 96.59%, 60.83% 98.62%, 65.53% 97.16%, 76.72% 87.92%, 95.70% 75.67%, 97.57% 71.37%, 97.65% 68.13%, 76.80% 5.68%, 76.07% 4.14%, 73.97% 2.27%, 70.56% 0.73%, 66.75% 0.81%, 58.64% 4.46%, 33.66% 18.41%, 25.06% 24.98%, 9.73% 39.01%, 3.65% 45.66%, 2.03% 49.80%)',
-			description: 'Municipio Inteligente Digital - Plataforma de datos abiertos'
-		},
-		{
-			id: 'hotspot_observatorio',
-			href: 'https://observatoriodelalaguna.org.mx/',
-			x: 36.5,
-			y: -1,
-			width: 26.5,
-			height: 26.5,
-			title: 'Observatorio de la Laguna',
-			external: true,
-			image: '/images/proyectos/observatorio-hotspot.png',
-			clipPath:
-				'polygon(0.81% 18.57%, 1.46% 23.20%, 22.63% 89.54%, 26.60% 94.97%, 31.39% 96.43%, 47.61% 95.05%, 72.59% 95.62%, 77.86% 92.05%, 78.99% 90.02%, 99.11% 18.90%, 98.05% 14.44%, 95.38% 10.79%, 91.57% 9.08%, 73.64% 6.57%, 56.20% 5.11%, 43.96% 5.19%, 27.33% 7.14%, 8.52% 10.62%, 6.41% 11.52%, 2.11% 14.84%, 1.22% 16.14%, 0.81% 18.57%)',
-			description: 'Análisis y seguimiento de indicadores de seguridad ciudadana'
-		},
-		{
-			id: 'hotspot_mesa',
-			href: '/mesa-seguridad',
-			x: 59.6,
-			y: 4.1,
-			width: 27.5,
-			height: 27.5,
-			title: 'Mesa de Seguridad y Justicia',
-			image: '/images/proyectos/mesa-hotspot.png',
-			clipPath:
-				'polygon(1.95% 67.96%, 2.03% 74.37%, 5.03% 78.18%, 17.92% 85.48%, 36.33% 99.03%, 42.34% 99.19%, 44.28% 98.30%, 96.84% 55.39%, 98.54% 51.34%, 98.46% 47.04%, 96.51% 43.71%, 86.05% 33.90%, 70.15% 20.68%, 63.58% 16.22%, 52.15% 9.89%, 36.98% 2.60%, 30.98% 0.65%, 26.12% 0.81%, 24.41% 1.38%, 21.49% 5.11%, 1.95% 67.96%)',
-			description: 'Espacio de coordinación para mejorar la seguridad en Torreón'
-		},
-		{
 			id: 'hotspot_karewa',
 			href: 'https://www.karewalaguna.org/select-organization?redirectTo=%2F',
-			x: 67.8,
-			y: 60.4,
+			x: 68,
+			y: 43.1,
 			width: 28,
 			height: 28,
 			title: 'Karewa Laguna',
@@ -82,14 +42,14 @@
 			description: 'Liderazgo juvenil y empoderamiento ciudadano'
 		},
 		{
-			id: 'hotspot_labor',
-			href: '/labor-civica',
-			x: 50.08,
-			y: 71.8,
+			id: 'hotspot_mesa',
+			href: '/mesa-seguridad',
+			x: 50.1,
+			y: 54.8,
 			width: 28,
 			height: 28,
-			title: 'Labor Cívica',
-			image: '/images/proyectos/laborCivica-hotspot.png',
+			title: 'Mesa de Seguridad y Justicia',
+			image: '/images/proyectos/mesa-hotspot.png',
 			clipPath:
 				'polygon(7.30% 21.17%, 6.89% 22.55%, 11.92% 91.65%, 14.27% 95.13%, 16.87% 97.08%, 19.14% 97.81%, 21.57% 97.73%, 33.01% 95.46%, 51.50% 90.67%, 62.12% 87.02%, 78.10% 79.16%, 92.05% 71.13%, 94.97% 68.61%, 97.57% 64.56%, 97.57% 60.99%, 95.54% 57.02%, 56.12% 6.00%, 51.01% 2.51%, 45.90% 2.84%, 32.04% 9.33%, 10.71% 16.46%, 7.30% 21.17%)',
 			description: 'Fortalecimiento de la cultura cívica y participación ciudadana'
@@ -97,10 +57,10 @@
 		{
 			id: 'hotspot_regidor',
 			href: '/regidor-mx',
-			x: 24.8,
-			y: 73.1,
-			width: 27,
-			height: 27,
+			x: 24.6,
+			y: 55.9,
+			width: 27.5,
+			height: 27.5,
 			title: 'Regidor MX Laguna',
 			image: '/images/proyectos/regidor-hotspot.png',
 			clipPath:
@@ -110,10 +70,10 @@
 		{
 			id: 'hotspot_agenda',
 			href: '/agenda-anticorrupcion',
-			x: 73.4,
-			y: 37.5,
-			width: 27,
-			height: 27,
+			x: 73.6,
+			y: 20.2,
+			width: 27.6,
+			height: 27.6,
 			title: 'Agenda Anticorrupción',
 			image: '/images/proyectos/agenda-hotspot.png',
 			clipPath:
@@ -121,29 +81,29 @@
 			description: 'Estrategias locales contra la corrupción y la impunidad'
 		},
 		{
-			id: 'hotspot_tableros',
+			id: 'hotspot_midlag',
 			href: 'https://www.oics.ccilaguna.org.mx/',
-			x: 6,
-			y: 62,
-			width: 28,
-			height: 28,
-			title: 'Tableros OICS',
+			x: 5.6,
+			y: 44.9,
+			width: 28.5,
+			height: 28.5,
+			title: 'MIDLAG',
 			external: true,
-			image: '/images/proyectos/tablero-hotspot.png',
+			image: '/images/proyectos/midlag-hotspot.png',
 			clipPath:
 				'polygon(1.70% 32.68%, 2.03% 36.50%, 5.68% 43.47%, 21.90% 68.53%, 34.31% 81.91%, 47.28% 93.84%, 51.18% 96.35%, 55.56% 97.49%, 57.34% 97.40%, 61.15% 94.73%, 97.24% 41.93%, 98.95% 36.17%, 97.24% 31.55%, 87.35% 21.09%, 74.13% 3.24%, 68.78% 1.46%, 67.07% 1.54%, 5.43% 26.60%, 3.00% 29.28%, 1.70% 32.68%)',
 			description: 'Indicadores de corrupción y sistema local anticorrupción'
 		},
 		{
-			id: 'hotspot_monitor',
-			href: 'https://monitorcpc.ccilaguna.org.mx/',
-			x: 0.1,
-			y: 40.2,
-			width: 27,
-			height: 27,
-			title: 'Monitor CPC',
+			id: 'hotspot_observatorio',
+			href: 'https://observatoriodelalaguna.org.mx/',
+			x: -1.5,
+			y: 22.9,
+			width: 27.5,
+			height: 27.5,
+			title: 'Observatorio de la Laguna',
 			external: true,
-			image: '/images/proyectos/monitor-hotspot.png',
+			image: '/images/proyectos/observatorio-hotspot.png',
 			clipPath:
 				'polygon(6.20% 35.00%, 6.40% 55.00%, 9.20% 72.60%, 13.60% 91.00%, 19.00% 97.20%, 24.60% 97.20%, 90.00% 73.00%, 95.40% 68.20%, 96.20% 63.00%, 94.00% 46.00%, 93.60% 24.00%, 88.60% 18.20%, 16.60% 1.80%, 10.60% 4.80%, 8.80% 8.40%, 6.20% 35.00%)',
 			description: 'Monitoreo ciudadano del Comité de Participación Ciudadana'
@@ -153,7 +113,7 @@
 
 <section class="proyectos-interactive">
 	<div class="svg-container">
-		<img src="/images/proyectosGroup.svg" alt="Proyectos CCI Laguna" />
+		<img src="/images/proyectos.png" alt="Proyectos CCI Laguna" />
 
 		<!-- Áreas interactivas superpuestas -->
 		{#each hotspots as hotspot}

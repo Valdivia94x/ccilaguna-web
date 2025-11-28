@@ -35,7 +35,7 @@
 			promover y organizar la participación ciudadana para
 			desarrollar buenos gobiernos y mejores ciudadanos en la
 			Comarca Lagunera.`,
-		image: '/images/proyectosGroup.svg'
+		image: '/images/proyectos.png'
 	};
 
 	// --- TRANSFORMAR LOGOS DE SANITY ---
