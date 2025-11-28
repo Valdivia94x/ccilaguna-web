@@ -211,10 +211,14 @@
 		.partners-row {
 			flex-direction: column;
 			gap: 30px;
+			padding: 10px 20px;
 		}
 
 		.partners-row img {
-			max-width: 60%;
+			flex: none;
+			max-width: 200px;
+			width: auto;
+			height: auto;
 		}
 	}
 </style>
