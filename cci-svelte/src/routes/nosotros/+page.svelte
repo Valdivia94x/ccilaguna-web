@@ -44,6 +44,8 @@
 		</div>
 	</section>
 
+	<div class="spacer"></div>
+
 	<!-- Sección Línea del Tiempo -->
 	<section class="timeline-section">
 		<h2>Línea del Tiempo</h2>
@@ -227,18 +229,24 @@
 
 	/* Hero Section con efecto parallax fijo */
 	.hero-section {
-		position: relative;
+		position: fixed;
 		background-image: url('/images/backgroundTorreon.png');
 		background-size: cover;
 		background-position: center center;
 		background-repeat: no-repeat;
 		background-attachment: fixed;
-		padding: 80px 50px;
-		min-height: 60vh;
+		padding: 20px 50px;
+		min-height: 50vh;
+		width: 100%;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
+		z-index: 1;
+	}
+
+	.spacer {
+		height: 50vh;
 	}
 
 	/* Overlay sobre la imagen de fondo */
@@ -318,6 +326,8 @@
 		padding: 80px 50px;
 		background: var(--bg-primary);
 		transition: background 0.3s ease;
+		position: relative;
+		z-index: 10;
 	}
 
 	.timeline-section h2 {
@@ -432,6 +442,8 @@
 		padding: 80px 50px;
 		background: var(--bg-primary);
 		transition: background 0.3s ease;
+		position: relative;
+		z-index: 10;
 	}
 
 	/* Grid de Tarjetas */
@@ -569,6 +581,8 @@
 		padding: 80px 50px;
 		background: var(--bg-primary);
 		transition: background 0.3s ease;
+		position: relative;
+		z-index: 10;
 	}
 
 	.team-section h2 {
@@ -690,17 +704,22 @@
 	/* Responsive */
 	@media (max-width: 768px) {
 		.hero-section {
-			padding: 60px 30px;
+			padding: 40px 30px;
+			min-height: 40vh;
+		}
+
+		.spacer {
+			height: 40vh;
 		}
 
 		.hero-section h1 {
-			font-size: 40px;
-			margin-bottom: 30px;
+			font-size: 30px;
+			margin-bottom: 20px;
 		}
 
 		.hero-content {
 			grid-template-columns: 1fr;
-			gap: 30px;
+			gap: 20px;
 		}
 
 		.hero-text {
@@ -708,11 +727,12 @@
 		}
 
 		.hero-description {
-			font-size: 18px;
+			font-size: 14px;
+			line-height: 1.6;
 		}
 
 		.hero-image img {
-			max-width: 200px;
+			max-width: 120px;
 		}
 
 		.timeline-section {
@@ -825,24 +845,30 @@
 
 	@media (max-width: 480px) {
 		.hero-section {
-			padding: 40px 20px;
+			padding: 30px 20px;
+			min-height: 35vh;
+		}
+
+		.spacer {
+			height: 35vh;
 		}
 
 		.hero-section h1 {
-			font-size: 32px;
-			margin-bottom: 25px;
+			font-size: 26px;
+			margin-bottom: 15px;
 		}
 
 		.hero-content {
-			gap: 25px;
+			gap: 15px;
 		}
 
 		.hero-description {
-			font-size: 16px;
+			font-size: 14px;
+			line-height: 1.5;
 		}
 
 		.hero-image img {
-			max-width: 150px;
+			max-width: 100px;
 		}
 
 		.timeline-section {

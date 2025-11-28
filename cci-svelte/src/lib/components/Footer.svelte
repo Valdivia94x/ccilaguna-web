@@ -99,6 +99,8 @@
 		padding: 60px 50px 40px;
 		margin-top: 0px;
 		transition: all 0.3s ease;
+		position: relative;
+		z-index: 10;
 	}
 
 	:global([data-theme='dark']) .footer {
