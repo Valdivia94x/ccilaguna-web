@@ -36,20 +36,60 @@
 <Navbar />
 <ThemeToggle />
 
-<main class="regidor-page">
-	<!-- Header -->
-	<section class="header-section">
+<div class="hero">
+	<div class="hero-overlay"></div>
+	<div class="hero-content">
 		<h1>Regidor MX Laguna</h1>
-		<p class="header-description">
-			RegidorMX es una red nacional de contraloría social que tiene como objetivo vigilar las
-			acciones de gobierno a través del monitoreo y la exigencia a la autoridad Municipal para el
-			cumplimiento de las funciones que marca la ley.
-		</p>
-	</section>
+		<p class="subtitle">Red Nacional de Contraloría Social</p>
+	</div>
+</div>
 
-	<!-- Grid de Informes -->
-	<section class="reports-section">
-		<div class="reports-container">
+<div class="spacer"></div>
+
+<section class="page-content">
+	<div class="container">
+		<div class="content-section">
+			<div class="content-wrapper">
+				<div class="text-content">
+					<p>
+						RegidorMX es una red nacional de contraloría social que tiene como objetivo vigilar las
+						acciones de gobierno a través del monitoreo y la exigencia a la autoridad Municipal para
+						el cumplimiento de las funciones que marca la ley.
+					</p>
+				</div>
+				<div class="image-section">
+					<img src="/images/regidormx.png" alt="Regidor MX Laguna" />
+				</div>
+			</div>
+		</div>
+
+		<!-- Filtro por ciudad -->
+		<div class="city-filter">
+			<span class="filter-label">Filtrar por ciudad:</span>
+			<div class="filter-buttons">
+				<a
+					href="/regidor-mx"
+					class="filter-btn"
+					class:active={!data.selectedCity}
+					data-sveltekit-noscroll
+				>
+					Todas
+				</a>
+				{#each data.cities as city}
+					<a
+						href="/regidor-mx?city={encodeURIComponent(city)}"
+						class="filter-btn"
+						class:active={data.selectedCity === city}
+						data-sveltekit-noscroll
+					>
+						{city}
+					</a>
+				{/each}
+			</div>
+		</div>
+
+		<!-- Grid de Informes -->
+		<div class="reports-section">
 			{#if data.reports && data.reports.length > 0}
 				<div class="reports-grid">
 					{#each data.reports as report (report._id)}
@@ -89,10 +129,11 @@
 
 				<!-- Paginación -->
 				{#if data.pagination.totalPages > 1}
+					{@const cityParam = data.selectedCity ? `&city=${encodeURIComponent(data.selectedCity)}` : ''}
 					<nav class="pagination" aria-label="Paginación de informes">
 						{#if data.pagination.hasPrevPage}
 							<a
-								href="/regidor-mx?page={data.pagination.currentPage - 1}"
+								href="/regidor-mx?page={data.pagination.currentPage - 1}{cityParam}"
 								class="pagination-btn prev"
 							>
 								<svg
@@ -113,7 +154,7 @@
 						<div class="pagination-numbers">
 							{#each Array(data.pagination.totalPages) as _, i}
 								<a
-									href="/regidor-mx?page={i + 1}"
+									href="/regidor-mx?page={i + 1}{cityParam}"
 									class="pagination-number"
 									class:active={data.pagination.currentPage === i + 1}
 								>
@@ -124,7 +165,7 @@
 
 						{#if data.pagination.hasNextPage}
 							<a
-								href="/regidor-mx?page={data.pagination.currentPage + 1}"
+								href="/regidor-mx?page={data.pagination.currentPage + 1}{cityParam}"
 								class="pagination-btn next"
 							>
 								Siguiente
@@ -161,56 +202,153 @@
 				</div>
 			{/if}
 		</div>
-	</section>
-</main>
+	</div>
+</section>
 
 <Footer />
 
 <style>
-	.regidor-page {
+	.page-content {
+		background: var(--bg-about);
 		min-height: calc(100vh - 200px);
-	}
-
-	/* Header Section */
-	.header-section {
-		background: linear-gradient(135deg, #e8f4f8 0%, #d4e9f7 100%);
-		padding: 100px 50px 60px;
-		text-align: center;
+		padding: 50px 20px 60px;
 		transition: background 0.3s ease;
+		position: relative;
+		z-index: 10;
 	}
 
-	:global([data-theme='dark']) .header-section {
-		background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%);
+	.spacer {
+		height: 300px;
 	}
 
-	.header-section h1 {
-		font-size: 56px;
-		font-weight: 600;
-		color: var(--text-primary);
-		margin-bottom: 20px;
-		text-transform: uppercase;
-		letter-spacing: 2px;
-	}
-
-	.header-description {
-		font-size: 20px;
-		line-height: 1.6;
-		color: var(--text-primary);
-		max-width: 800px;
+	.container {
+		max-width: 1400px;
 		margin: 0 auto;
-		opacity: 0.85;
+	}
+
+	.hero {
+		position: fixed;
+		text-align: center;
+		background-image: url('/images/proyectosBanner.png');
+		background-size: cover;
+		background-position: center;
+		overflow: hidden;
+		min-height: 300px;
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.hero-overlay {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: rgba(0, 0, 0, 0.5);
+	}
+
+	.hero-content {
+		position: relative;
+		z-index: 1;
+		padding: 40px;
+	}
+
+	.hero h1 {
+		color: #ffffff;
+		font-size: 48px;
+		font-weight: 600;
+		margin-bottom: 16px;
+	}
+
+	.subtitle {
+		color: #ffffff;
+		font-size: 24px;
+		opacity: 0.9;
+	}
+
+	.content-section {
+		background: var(--card-bg);
+		padding: 40px;
+		border-radius: 16px;
+		box-shadow: 0 4px 12px var(--card-shadow);
+		margin-bottom: 40px;
+	}
+
+	.content-wrapper {
+		display: grid;
+		grid-template-columns: 2fr 1fr;
+		gap: 40px;
+		align-items: center;
+	}
+
+	.text-content p {
+		color: var(--text-primary);
+		font-size: 18px;
+		line-height: 1.8;
+	}
+
+	.image-section {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.image-section img {
+		max-width: 100%;
+		height: auto;
+		border-radius: 12px;
+	}
+
+	/* City Filter */
+	.city-filter {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 20px;
+		margin-bottom: 30px;
+		flex-wrap: wrap;
+	}
+
+	.filter-label {
+		color: var(--text-primary);
+		font-weight: 600;
+		font-size: 16px;
+	}
+
+	.filter-buttons {
+		display: flex;
+		gap: 10px;
+		flex-wrap: wrap;
+	}
+
+	.filter-btn {
+		padding: 10px 20px;
+		background: var(--card-bg);
+		color: var(--text-primary);
+		border: 2px solid var(--navbar-border);
+		border-radius: 8px;
+		font-weight: 500;
+		text-decoration: none;
+		transition: all 0.3s ease;
+	}
+
+	.filter-btn:hover {
+		background: #3b82f6;
+		color: white;
+		border-color: #3b82f6;
+	}
+
+	.filter-btn.active {
+		background: #3b82f6;
+		color: white;
+		border-color: #3b82f6;
 	}
 
 	/* Reports Section */
 	.reports-section {
-		background: var(--bg-primary);
-		padding: 60px 50px;
-		transition: background 0.3s ease;
-	}
-
-	.reports-container {
-		max-width: 1400px;
-		margin: 0 auto;
+		margin-top: 20px;
 	}
 
 	.reports-grid {
@@ -284,18 +422,10 @@
 		color: var(--text-primary);
 		line-height: 1.4;
 		margin: 0;
-		/* Limitar a 2 líneas */
 		display: -webkit-box;
 		-webkit-line-clamp: 3;
 		-webkit-box-orient: vertical;
 		overflow: hidden;
-	}
-
-	.report-period {
-		font-size: 13px;
-		color: var(--text-primary);
-		opacity: 0.6;
-		text-transform: capitalize;
 	}
 
 	/* Paginación */
@@ -390,20 +520,40 @@
 	}
 
 	@media (max-width: 768px) {
-		.header-section {
-			padding: 80px 30px 50px;
+		.hero h1 {
+			font-size: 36px;
 		}
 
-		.header-section h1 {
-			font-size: 40px;
+		.subtitle {
+			font-size: 20px;
 		}
 
-		.header-description {
-			font-size: 18px;
+		.content-section {
+			padding: 30px 20px;
 		}
 
-		.reports-section {
-			padding: 40px 20px;
+		.content-wrapper {
+			grid-template-columns: 1fr;
+			gap: 30px;
+		}
+
+		.text-content {
+			order: 1;
+		}
+
+		.image-section {
+			order: 2;
+		}
+
+		.city-filter {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 15px;
+		}
+
+		.filter-btn {
+			padding: 8px 16px;
+			font-size: 14px;
 		}
 
 		.reports-grid {
@@ -436,16 +586,20 @@
 	}
 
 	@media (max-width: 480px) {
-		.header-section {
-			padding: 70px 20px 40px;
+		.hero h1 {
+			font-size: 28px;
 		}
 
-		.header-section h1 {
-			font-size: 32px;
-		}
-
-		.header-description {
+		.subtitle {
 			font-size: 16px;
+		}
+
+		.spacer {
+			height: 250px;
+		}
+
+		.page-content {
+			padding: 40px 15px 50px;
 		}
 
 		.reports-grid {
@@ -456,10 +610,6 @@
 
 		.report-title {
 			font-size: 15px;
-		}
-
-		.report-period {
-			font-size: 12px;
 		}
 	}
 </style>

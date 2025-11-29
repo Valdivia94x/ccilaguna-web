@@ -27,9 +27,8 @@
 		<div class="content-section">
 			<div class="content-wrapper">
 				<div class="text-content">
-					<h2>¿Qué es MIDLag?</h2>
 					<p>
-						Es un producto que tiene como finalidad medir de manera sistemática y rigurosa la
+						MIDLAG es un producto que tiene como finalidad medir de manera sistemática y rigurosa la
 						manifestación delictiva en la Zona Metropolitana de La Laguna (ZML) a fin de informar
 						objetivamente a la ciudadanía sobre la situación en materia de seguridad, buscando
 						incidir en mejores políticas públicas.
@@ -47,7 +46,7 @@
 			<img src="/images/midlag/red_Observatorios.png" alt="Red de Observatorios" />
 		</div>
 
-		<div class="text-content">
+		<div class="body-content">
 			<p>
 				El CCI Laguna forma parte de la Red Nacional de Observatorios, Seguridad, Justicia y
 				Legalidad, es considerado el primer Observatorio certificado del país, cumpliendo bajo los
@@ -82,7 +81,7 @@
 	.hero {
 		position: fixed;
 		text-align: center;
-		background-image: url('/images/midlagBanner.png');
+		background-image: url('/images/proyectosBanner.png');
 		background-size: cover;
 		background-position: center;
 		overflow: hidden;
@@ -135,16 +134,18 @@
 		align-items: center;
 	}
 
-	.text-content h2 {
-		color: var(--text-primary);
-		font-size: 28px;
-		margin-bottom: 20px;
-	}
-
 	.text-content p {
 		color: var(--text-primary);
 		font-size: 18px;
 		line-height: 1.8;
+	}
+
+	.body-content p {
+		color: var(--text-primary);
+		font-size: 18px;
+		line-height: 1.8;
+		align-items: center;
+		padding: 0 40px;
 	}
 
 	.image-section {
