@@ -87,9 +87,12 @@
 
 <section id="objetivos" class="objectives-section" aria-labelledby="objectives-heading">
 	<!-- Misión -->
-	<div class="mission-container" use:animarAlEntrar>
-		<div class="quote-icon" aria-hidden="true">"</div>
-		<p class="mission-text">{mission}</p>
+	<div class="mission-wrapper">
+		<div class="mission-card" use:animarAlEntrar>
+			<span class="quote-watermark">"</span>
+			<span class="mission-label">NUESTRA MISIÓN</span>
+			<p class="mission-text">{mission}</p>
+		</div>
 	</div>
 
 	<!-- Título de Objetivos con banda -->
@@ -167,7 +170,19 @@
 	}
 
 	/* Misión */
-	.mission-container {
+	.mission-wrapper {
+		background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+		padding: 30px 50px;
+		margin: -70px -50px 0 -50px;
+		margin-bottom: 150px;
+		transition: background 0.3s ease;
+	}
+
+	:global([data-theme='dark']) .mission-wrapper {
+		background: #1e293b;
+	}
+
+	.mission-card {
 		/* Estado Inicial: Invisible, pequeño y desplazado abajo */
 		opacity: 0;
 		transform: scale(0.9) translateY(30px);
@@ -175,49 +190,98 @@
 		/* Suavidad de la animación */
 		transition:
 			opacity 1.5s ease-out,
-			transform 1.5s cubic-bezier(0.22, 1, 0.36, 1); /* Efecto rebote suave */
+			transform 1.5s cubic-bezier(0.22, 1, 0.36, 1);
 
-		/* Aseguramos que no ocupe espacio raro mientras está invisible */
 		will-change: opacity, transform;
-		transition-delay: 0.4s;
+		transition-delay: 0.2s;
 
-		max-width: 900px; /* 1. Limita el ancho para que no se estire demasiado */
-		margin: 0 auto; /* 2. Centra la caja horizontalmente */
+		max-width: 900px;
+		margin: 0 auto;
 		text-align: center;
+		position: relative;
+		overflow: hidden;
+
+		/* Tarjeta azul */
+		background: linear-gradient(135deg, #d4e9f7 0%, #e8f4f8 100%);
+		padding: 50px 60px;
+		border-radius: 16px;
+		box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 	}
 
-	.mission-container:global(.visible) {
-		/* Estado Final: Visible, tamaño normal y en su lugar */
+	:global([data-theme='dark']) .mission-card {
+		background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+		box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+	}
+
+	.mission-card:global(.visible) {
 		opacity: 1;
 		transform: scale(1) translateY(0);
 	}
 
-	.quote-icon {
-		font-size: 120px;
-		line-height: 1;
-		color: #000000;
-		font-family: Georgia, serif;
-		margin-bottom: -70px;
-		opacity: 0.8;
+	.mission-card::before {
+		content: '';
+		position: absolute;
+		top: 85px;
+		left: 800px;
+		right: 0;
+		bottom: 0;
+		background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg stroke='%23000000' stroke-width='0.5'%3E%3Ccircle cx='10' cy='10' r='2'/%3E%3Ccircle cx='50' cy='10' r='2'/%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3Ccircle cx='10' cy='50' r='2'/%3E%3Ccircle cx='50' cy='50' r='2'/%3E%3Cline x1='10' y1='10' x2='30' y2='30'/%3E%3Cline x1='50' y1='10' x2='30' y2='30'/%3E%3Cline x1='10' y1='50' x2='30' y2='30'/%3E%3Cline x1='50' y1='50' x2='30' y2='30'/%3E%3Cline x1='10' y1='10' x2='50' y2='10'/%3E%3Cline x1='10' y1='50' x2='50' y2='50'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+		background-size: 600px 600px;
+		opacity: 0.1;
+		pointer-events: none;
+		border-radius: 16px;
 	}
 
-	:global([data-theme='dark']) .quote-icon {
-		color: #ffffff;
+	:global([data-theme='dark']) .mission-card::before {
+		background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg stroke='%23ffffff' stroke-width='0.5'%3E%3Ccircle cx='10' cy='10' r='2'/%3E%3Ccircle cx='50' cy='10' r='2'/%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3Ccircle cx='10' cy='50' r='2'/%3E%3Ccircle cx='50' cy='50' r='2'/%3E%3Cline x1='10' y1='10' x2='30' y2='30'/%3E%3Cline x1='50' y1='10' x2='30' y2='30'/%3E%3Cline x1='10' y1='50' x2='30' y2='30'/%3E%3Cline x1='50' y1='50' x2='30' y2='30'/%3E%3Cline x1='10' y1='10' x2='50' y2='10'/%3E%3Cline x1='10' y1='50' x2='50' y2='50'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+		opacity: 0.08;
+	}
+
+	.quote-watermark {
+		position: absolute;
+		top: -20px;
+		left: 20px;
+		font-size: 180px;
+		font-family: Georgia, serif;
+		color: rgba(0, 0, 0, 0.02);
+		line-height: 1;
+		pointer-events: none;
+		user-select: none;
+	}
+
+	:global([data-theme='dark']) .quote-watermark {
+		color: rgba(255, 255, 255, 0.05);
+	}
+
+	.mission-label {
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: 3px;
+		text-transform: uppercase;
+		color: rgba(0, 0, 0);
+		margin-bottom: 20px;
+		display: block;
+		position: relative;
+		z-index: 1;
+	}
+
+	:global([data-theme='dark']) .mission-label {
+		color: rgba(255, 255, 255, 0.7);
 	}
 
 	.mission-text {
-		font-size: 25px;
-		font-weight: 600;
-		color: var(--text-primary);
-		line-height: 1.6;
-		padding: 0 20px;
-		margin-bottom: 220px;
+		font-size: 22px;
+		font-weight: 500;
+		color: #000000;
+		line-height: 1.7;
+		padding: 0;
+		margin: 0;
+		position: relative;
+		z-index: 1;
 	}
 
-	.mission-text::before {
-		content: 'MISIÓN: ';
-		font-weight: 600;
-		color: var(--text-primary);
+	:global([data-theme='dark']) .mission-text {
+		color: #e2e8f0;
 	}
 
 	/* Banda horizontal del título */
@@ -436,13 +500,24 @@
 			padding-top: 60px;
 		}
 
-		.mission-text {
-			font-size: 16px;
+		.mission-wrapper {
+			padding: 40px 20px;
+			margin: -60px -20px 0 -20px;
+			margin-bottom: 100px;
 		}
 
-		.quote-icon {
-			font-size: 80px;
-			margin-bottom: -30px;
+		.mission-card {
+			padding: 40px 30px;
+		}
+
+		.quote-watermark {
+			font-size: 120px;
+			top: -10px;
+			left: 10px;
+		}
+
+		.mission-text {
+			font-size: 18px;
 		}
 
 		.title-section {
@@ -554,8 +629,23 @@
 			height: 12px;
 		}
 
+		.mission-wrapper {
+			padding: 30px 20px;
+			margin-bottom: 80px;
+		}
+
+		.mission-card {
+			padding: 35px 25px;
+		}
+
+		.quote-watermark {
+			font-size: 100px;
+			top: -5px;
+			left: 5px;
+		}
+
 		.mission-text {
-			margin-bottom: 140px;
+			font-size: 16px;
 		}
 	}
 </style>

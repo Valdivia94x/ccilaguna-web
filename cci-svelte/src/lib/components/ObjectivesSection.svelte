@@ -11,7 +11,7 @@
 
 <style>
 	.objectives-section {
-		padding: 60px 50px;
+		padding: 40px 50px;
 		background: var(--bg-objectives);
 		text-align: center;
 		transition: background 0.3s ease;
