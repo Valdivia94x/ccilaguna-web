@@ -3,8 +3,30 @@
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import { urlFor } from '$lib/sanity';
+	import { goto } from '$app/navigation';
 
 	let { data } = $props();
+
+	// Manejar cambio de filtros con navegación
+	function handleCityChange(event: Event) {
+		const select = event.target as HTMLSelectElement;
+		const city = select.value;
+		const params = new URLSearchParams();
+		if (city) params.set('city', city);
+		if (data.selectedYear) params.set('year', data.selectedYear);
+		const queryString = params.toString();
+		goto(queryString ? `/regidor-mx?${queryString}` : '/regidor-mx', { noScroll: true });
+	}
+
+	function handleYearChange(event: Event) {
+		const select = event.target as HTMLSelectElement;
+		const year = select.value;
+		const params = new URLSearchParams();
+		if (data.selectedCity) params.set('city', data.selectedCity);
+		if (year) params.set('year', year);
+		const queryString = params.toString();
+		goto(queryString ? `/regidor-mx?${queryString}` : '/regidor-mx', { noScroll: true });
+	}
 
 	// Generar título del informe
 	function getReportTitle(report: any): string {
@@ -63,28 +85,36 @@
 			</div>
 		</div>
 
-		<!-- Filtro por ciudad -->
-		<div class="city-filter">
-			<span class="filter-label">Filtrar por ciudad:</span>
-			<div class="filter-buttons">
-				<a
-					href="/regidor-mx"
-					class="filter-btn"
-					class:active={!data.selectedCity}
-					data-sveltekit-noscroll
+		<!-- Filtros -->
+		<div class="filters-container">
+			<div class="filter-group">
+				<label for="city-filter" class="filter-label">Ciudad:</label>
+				<select
+					id="city-filter"
+					class="filter-select"
+					onchange={handleCityChange}
+					value={data.selectedCity}
 				>
-					Todas
-				</a>
-				{#each data.cities as city}
-					<a
-						href="/regidor-mx?city={encodeURIComponent(city)}"
-						class="filter-btn"
-						class:active={data.selectedCity === city}
-						data-sveltekit-noscroll
-					>
-						{city}
-					</a>
-				{/each}
+					<option value="">Todas</option>
+					{#each data.cities as city}
+						<option value={city}>{city}</option>
+					{/each}
+				</select>
+			</div>
+
+			<div class="filter-group">
+				<label for="year-filter" class="filter-label">Año:</label>
+				<select
+					id="year-filter"
+					class="filter-select"
+					onchange={handleYearChange}
+					value={data.selectedYear}
+				>
+					<option value="">Todos</option>
+					{#each data.years as year}
+						<option value={String(year)}>{year}</option>
+					{/each}
+				</select>
 			</div>
 		</div>
 
@@ -129,11 +159,13 @@
 
 				<!-- Paginación -->
 				{#if data.pagination.totalPages > 1}
-					{@const cityParam = data.selectedCity ? `&city=${encodeURIComponent(data.selectedCity)}` : ''}
+					{@const filterParams =
+						(data.selectedCity ? `&city=${encodeURIComponent(data.selectedCity)}` : '') +
+						(data.selectedYear ? `&year=${encodeURIComponent(data.selectedYear)}` : '')}
 					<nav class="pagination" aria-label="Paginación de informes">
 						{#if data.pagination.hasPrevPage}
 							<a
-								href="/regidor-mx?page={data.pagination.currentPage - 1}{cityParam}"
+								href="/regidor-mx?page={data.pagination.currentPage - 1}{filterParams}"
 								class="pagination-btn prev"
 							>
 								<svg
@@ -154,7 +186,7 @@
 						<div class="pagination-numbers">
 							{#each Array(data.pagination.totalPages) as _, i}
 								<a
-									href="/regidor-mx?page={i + 1}{cityParam}"
+									href="/regidor-mx?page={i + 1}{filterParams}"
 									class="pagination-number"
 									class:active={data.pagination.currentPage === i + 1}
 								>
@@ -165,7 +197,7 @@
 
 						{#if data.pagination.hasNextPage}
 							<a
-								href="/regidor-mx?page={data.pagination.currentPage + 1}{cityParam}"
+								href="/regidor-mx?page={data.pagination.currentPage + 1}{filterParams}"
 								class="pagination-btn next"
 							>
 								Siguiente
@@ -270,7 +302,7 @@
 
 	.content-section {
 		background: var(--card-bg);
-		padding: 40px;
+		padding: 20px 40px 20px 80px;
 		border-radius: 16px;
 		box-shadow: 0 4px 12px var(--card-shadow);
 		margin-bottom: 40px;
@@ -301,14 +333,20 @@
 		border-radius: 12px;
 	}
 
-	/* City Filter */
-	.city-filter {
+	/* Filters Container */
+	.filters-container {
 		display: flex;
-		align-items: center;
+		flex-direction: row;
 		justify-content: center;
-		gap: 20px;
+		gap: 40px;
 		margin-bottom: 30px;
 		flex-wrap: wrap;
+	}
+
+	.filter-group {
+		display: flex;
+		align-items: center;
+		gap: 12px;
 	}
 
 	.filter-label {
@@ -317,33 +355,31 @@
 		font-size: 16px;
 	}
 
-	.filter-buttons {
-		display: flex;
-		gap: 10px;
-		flex-wrap: wrap;
-	}
-
-	.filter-btn {
-		padding: 10px 20px;
+	.filter-select {
+		padding: 10px 36px 10px 16px;
 		background: var(--card-bg);
 		color: var(--text-primary);
 		border: 2px solid var(--navbar-border);
 		border-radius: 8px;
 		font-weight: 500;
-		text-decoration: none;
+		font-size: 15px;
+		cursor: pointer;
 		transition: all 0.3s ease;
+		appearance: none;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+		background-repeat: no-repeat;
+		background-position: right 12px center;
+		min-width: 160px;
 	}
 
-	.filter-btn:hover {
-		background: #3b82f6;
-		color: white;
+	.filter-select:hover {
 		border-color: #3b82f6;
 	}
 
-	.filter-btn.active {
-		background: #3b82f6;
-		color: white;
+	.filter-select:focus {
+		outline: none;
 		border-color: #3b82f6;
+		box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 	}
 
 	/* Reports Section */
@@ -545,14 +581,12 @@
 			order: 2;
 		}
 
-		.city-filter {
-			flex-direction: column;
-			align-items: flex-start;
-			gap: 15px;
+		.filters-container {
+			gap: 20px;
 		}
 
-		.filter-btn {
-			padding: 8px 16px;
+		.filter-select {
+			min-width: 140px;
 			font-size: 14px;
 		}
 

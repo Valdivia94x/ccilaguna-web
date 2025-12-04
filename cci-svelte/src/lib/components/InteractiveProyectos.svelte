@@ -18,10 +18,10 @@
 		{
 			id: 'hotspot_home',
 			href: '/',
-			x: 34.2,
-			y: 17.6,
-			width: 32.3,
-			height: 32.3,
+			x: 33.8,
+			y: 17.3,
+			width: 33,
+			height: 33,
 			title: 'CCI Laguna',
 			image: '/images/proyectos/CCI-central.png',
 			clipPath: 'circle(50% at 50% 50%)',
@@ -209,7 +209,7 @@
 		height: 100%;
 		object-fit: contain;
 		transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-		filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+		filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0));
 	}
 
 	.hotspot-overlay {
@@ -224,7 +224,7 @@
 
 	.area-interactiva:hover .hotspot-image {
 		transform: scale(1.3);
-		filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.2)) brightness(1.05);
+		filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0)) brightness(1.05);
 	}
 
 	.area-interactiva:hover .hotspot-overlay {

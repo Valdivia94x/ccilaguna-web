@@ -7,14 +7,22 @@ export async function load({ url }) {
   try {
     const page = parseInt(url.searchParams.get('page') || '1');
     const city = url.searchParams.get('city') || '';
+    const year = url.searchParams.get('year') || '';
     const offset = (page - 1) * ITEMS_PER_PAGE;
 
     // Filtro de ciudad si está presente
     const cityFilter = city && VALID_CITIES.includes(city) ? ` && city == "${city}"` : '';
 
+    // Filtro de año: usa semesterYear para semestrales, periodEndYear para otros
+    const yearNum = parseInt(year);
+    const yearFilter = year && !isNaN(yearNum)
+      ? ` && ((periodType == "semester" && semesterYear == ${yearNum}) || (periodType != "semester" && periodEndYear == ${yearNum}))`
+      : '';
+
     // Query para obtener informes con paginación y filtro opcional
+    // Ordenar por año descendente usando select para manejar ambos tipos de período
     const query = `{
-      "reports": *[_type == "regidorReport"${cityFilter}] | order(periodStartYear desc) [$offset...$limit] {
+      "reports": *[_type == "regidorReport"${cityFilter}${yearFilter}] | order(select(periodType == "semester" => semesterYear, periodEndYear) desc) [$offset...$limit] {
         _id,
         city,
         periodType,
@@ -28,13 +36,17 @@ export async function load({ url }) {
         coverImage,
         "pdfUrl": pdfFile.asset->url
       },
-      "total": count(*[_type == "regidorReport"${cityFilter}])
+      "total": count(*[_type == "regidorReport"${cityFilter}${yearFilter}]),
+      "years": array::unique(*[_type == "regidorReport"].semesterYear + *[_type == "regidorReport"].periodEndYear) | order(@ desc)
     }`;
 
-    const { reports, total } = await client.fetch(query, {
+    const { reports, total, years } = await client.fetch(query, {
       offset,
       limit: offset + ITEMS_PER_PAGE
     });
+
+    // Filtrar años válidos (no null) y ordenar descendente
+    const validYears = (years || []).filter((y) => y != null).sort((a, b) => b - a);
 
     const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
 
@@ -48,7 +60,9 @@ export async function load({ url }) {
         hasPrevPage: page > 1
       },
       selectedCity: city,
-      cities: VALID_CITIES
+      selectedYear: year,
+      cities: VALID_CITIES,
+      years: validYears
     };
   } catch (error) {
     console.error('Error fetching regidor reports:', error);
@@ -62,7 +76,9 @@ export async function load({ url }) {
         hasPrevPage: false
       },
       selectedCity: '',
-      cities: VALID_CITIES
+      selectedYear: '',
+      cities: VALID_CITIES,
+      years: []
     };
   }
 }
