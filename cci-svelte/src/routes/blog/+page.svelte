@@ -2,7 +2,8 @@
 	import Navbar from '$lib/components/Navbar.svelte';
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 	import Footer from '$lib/components/Footer.svelte';
-	import { urlFor } from '$lib/sanity'; // <--- IMPORTANTE
+	import { urlFor } from '$lib/sanity';
+	import { goto } from '$app/navigation';
 
 	// Tipos
 	interface Article {
@@ -19,11 +20,44 @@
 	// Recibimos los datos del servidor (+page.server.js)
 	let { data } = $props();
 
-	// Estado para el filtro activo
-	let activeCategory = $state<string>('Todos');
+	// Estado local para el input de búsqueda
+	let searchInput = $state<string>(data.selectedSearch || '');
+	let searchInputRef: HTMLInputElement;
 
-	// Estado para la búsqueda
-	let searchQuery = $state<string>('');
+	// Debounce timer para búsqueda en tiempo real
+	let searchTimeout: ReturnType<typeof setTimeout>;
+
+	// Función para construir URL con filtros
+	function buildFilterUrl(category?: string, search?: string): string {
+		const params = new URLSearchParams();
+		if (category) params.set('category', category);
+		if (search) params.set('search', search);
+		const queryString = params.toString();
+		return queryString ? `/blog?${queryString}` : '/blog';
+	}
+
+	// Manejar cambio de categoría desde dropdown
+	function handleCategoryChange(event: Event) {
+		const select = event.target as HTMLSelectElement;
+		const cat = select.value;
+		goto(buildFilterUrl(cat, searchInput.trim()), { noScroll: true });
+	}
+
+	// Manejar búsqueda en tiempo real con debounce
+	async function handleSearchInput() {
+		clearTimeout(searchTimeout);
+		searchTimeout = setTimeout(async () => {
+			await goto(buildFilterUrl(data.selectedCategory, searchInput.trim()), { noScroll: true });
+			// Restaurar foco después de la navegación
+			setTimeout(() => {
+				if (searchInputRef) {
+					searchInputRef.focus();
+					const len = searchInputRef.value.length;
+					searchInputRef.setSelectionRange(len, len);
+				}
+			}, 0);
+		}, 300);
+	}
 
 	// Función para extraer el primer párrafo del body de Sanity
 	function extractFirstParagraph(body: any): string {
@@ -31,19 +65,16 @@
 			return 'Haz clic para leer el artículo completo y conocer los detalles de esta noticia del Consejo Cívico.';
 		}
 
-		// Buscar el primer bloque de texto tipo 'block' con estilo 'normal'
 		const firstParagraph = body.find(
 			(block: any) => block._type === 'block' && block.style === 'normal'
 		);
 
 		if (firstParagraph && firstParagraph.children) {
-			// Concatenar todo el texto de los children
 			const text = firstParagraph.children
 				.map((child: any) => child.text || '')
 				.join('')
 				.trim();
 
-			// Limitar a 200 caracteres aproximadamente
 			if (text.length > 200) {
 				return text.substring(0, 200) + '...';
 			}
@@ -53,7 +84,6 @@
 		return 'Haz clic para leer el artículo completo y conocer los detalles de esta noticia del Consejo Cívico.';
 	}
 
-	// --- AQUÍ ESTÁ LA MAGIA ---
 	// Transformamos los datos crudos de Sanity para que coincidan con tu diseño
 	let articles = $derived<Article[]>(
 		data.posts
@@ -61,14 +91,10 @@
 					id: post.slug.current,
 					slug: post.slug.current,
 					title: post.title,
-					// Extraer el primer párrafo del body como excerpt
 					excerpt: extractFirstParagraph(post.body),
-					// Como aún no tenemos 'author' en Sanity
 					author: post.author || 'Equipo CCI',
 					date: post.publishedAt,
-					// Pasamos la imagen cruda de Sanity
 					image: post.mainImage,
-					// Como aún no tenemos 'category' en Sanity, asignamos una por defecto
 					category: post.category || 'General'
 				}))
 			: []
@@ -84,32 +110,6 @@
 			day: 'numeric'
 		});
 	}
-
-	// Obtener categorías únicas dinámicamente de los artículos existentes
-	let categories = $derived.by(() => {
-		const uniqueCategories = new Set(articles.map((article: Article) => article.category));
-		return ['Todos', ...Array.from(uniqueCategories).sort()];
-	});
-
-	// Filtrar artículos por categoría y búsqueda
-	let filteredArticles = $derived.by(() => {
-		let result = articles;
-
-		// Filtrar por búsqueda
-		if (searchQuery.trim()) {
-			const query = searchQuery.toLowerCase().trim();
-			result = result.filter((article: Article) =>
-				article.title.toLowerCase().includes(query)
-			);
-		}
-
-		// Filtrar por categoría
-		if (activeCategory !== 'Todos') {
-			result = result.filter((article: Article) => article.category === activeCategory);
-		}
-
-		return result;
-	});
 </script>
 
 <svelte:head>
@@ -142,36 +142,50 @@
 
 	<section class="filter-section">
 		<div class="filter-container">
-			<div class="search-container">
-				<svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor">
-					<path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/>
-				</svg>
-				<input
-					type="text"
-					class="search-input"
-					placeholder="Buscar por título..."
-					bind:value={searchQuery}
-				/>
-			</div>
-			<h2 class="filter-title">Filtrar por tema:</h2>
-			<div class="category-filters">
-				{#each categories as category}
-					<button
-						class="category-btn"
-						class:active={activeCategory === category}
-						onclick={() => (activeCategory = category as string)}
+			<div class="filters-row">
+				<div class="search-container">
+					<svg
+						class="search-icon"
+						xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 512 512"
+						fill="currentColor"
 					>
-						{category}
-					</button>
-				{/each}
+						<path
+							d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"
+						/>
+					</svg>
+					<input
+						bind:this={searchInputRef}
+						type="text"
+						class="search-input"
+						placeholder="Buscar por título..."
+						bind:value={searchInput}
+						oninput={handleSearchInput}
+					/>
+				</div>
+
+				<div class="filter-group">
+					<label for="category-filter" class="filter-label">Tema:</label>
+					<select
+						id="category-filter"
+						class="filter-select"
+						onchange={handleCategoryChange}
+						value={data.selectedCategory}
+					>
+						<option value="">Todos</option>
+						{#each data.categories as category}
+							<option value={category}>{category}</option>
+						{/each}
+					</select>
+				</div>
 			</div>
 		</div>
 	</section>
 
 	<section class="articles-section">
 		<div class="articles-grid">
-			{#if filteredArticles.length > 0}
-				{#each filteredArticles as article (article.id)}
+			{#if articles.length > 0}
+				{#each articles as article (article.id)}
 					<article class="article-card">
 						<a href="/blog/{article.slug}" class="article-link">
 							<div class="article-image">
@@ -238,6 +252,66 @@
 				</div>
 			{/if}
 		</div>
+
+		<!-- Paginación -->
+		{#if data.pagination.totalPages > 1}
+			{@const filterParams =
+				(data.selectedCategory ? `&category=${encodeURIComponent(data.selectedCategory)}` : '') +
+				(data.selectedSearch ? `&search=${encodeURIComponent(data.selectedSearch)}` : '')}
+			<nav class="pagination" aria-label="Paginación del blog">
+				{#if data.pagination.hasPrevPage}
+					<a
+						href="/blog?page={data.pagination.currentPage - 1}{filterParams}"
+						class="pagination-btn prev"
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="20"
+							height="20"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+						>
+							<polyline points="15 18 9 12 15 6"></polyline>
+						</svg>
+						Anterior
+					</a>
+				{/if}
+
+				<div class="pagination-numbers">
+					{#each Array(data.pagination.totalPages) as _, i}
+						<a
+							href="/blog?page={i + 1}{filterParams}"
+							class="pagination-number"
+							class:active={data.pagination.currentPage === i + 1}
+						>
+							{i + 1}
+						</a>
+					{/each}
+				</div>
+
+				{#if data.pagination.hasNextPage}
+					<a
+						href="/blog?page={data.pagination.currentPage + 1}{filterParams}"
+						class="pagination-btn next"
+					>
+						Siguiente
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="20"
+							height="20"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+						>
+							<polyline points="9 18 15 12 9 6"></polyline>
+						</svg>
+					</a>
+				{/if}
+			</nav>
+		{/if}
 	</section>
 </main>
 
@@ -249,13 +323,17 @@
 		min-height: calc(100vh - 200px);
 	}
 	.hero-section {
-		background: linear-gradient(135deg, #e8f4f8 0%, #d4e9f7 100%);
+		background:
+			linear-gradient(135deg, rgba(43, 74, 105, 0.8) 0%, rgba(30, 59, 89, 0.8) 100%),
+			url('/images/backgroundTorreon.png') center/cover no-repeat;
 		padding: 80px 50px;
 		text-align: center;
 		transition: background 0.3s ease;
 	}
 	:global([data-theme='dark']) .hero-section {
-		background: linear-gradient(135deg, #0f1419 0%, #0f1419 100%);
+		background:
+			linear-gradient(135deg, rgba(15, 20, 25, 0.9) 0%, rgba(15, 20, 25, 0.9) 100%),
+			url('/images/backgroundTorreon.png') center/cover no-repeat;
 	}
 	.hero-content {
 		max-width: 900px;
@@ -264,15 +342,17 @@
 	h1 {
 		font-size: 56px;
 		font-weight: 400;
-		color: var(--text-secondary);
+		color: #ffffff;
 		margin-bottom: 20px;
 		text-transform: uppercase;
 		letter-spacing: 2px;
+		text-shadow: #000000 0px 4px 6px;
 	}
 	.hero-description {
 		font-size: 20px;
 		line-height: 1.6;
-		color: var(--text-primary);
+		color: #ffffff;
+		text-shadow: #000000 0px 4px 6px;
 	}
 	.filter-section {
 		background: var(--bg-primary);
@@ -283,10 +363,18 @@
 		max-width: 1400px;
 		margin: 0 auto;
 	}
+	.filters-row {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 30px;
+		flex-wrap: wrap;
+	}
 	.search-container {
 		position: relative;
-		max-width: 500px;
-		margin: 0 auto 30px;
+		flex: 1;
+		max-width: 400px;
+		min-width: 250px;
 	}
 	.search-icon {
 		position: absolute;
@@ -324,52 +412,48 @@
 		border-color: #00d4ff;
 		box-shadow: 0 4px 12px rgba(0, 212, 255, 0.2);
 	}
-	.filter-title {
-		font-size: 18px;
-		font-weight: 600;
-		color: var(--text-primary);
-		margin-bottom: 20px;
-		text-align: center;
-	}
-	.category-filters {
+	.filter-group {
 		display: flex;
-		flex-wrap: wrap;
-		gap: 15px;
-		justify-content: center;
 		align-items: center;
+		gap: 12px;
 	}
-	.category-btn {
-		padding: 12px 24px;
-		border: 2px solid #4a7ba7;
-		background: transparent;
+	.filter-label {
 		color: var(--text-primary);
-		border-radius: 25px;
-		font-size: 15px;
+		font-weight: 600;
+		font-size: 16px;
+	}
+	.filter-select {
+		padding: 14px 40px 14px 20px;
+		background: var(--card-bg);
+		color: var(--text-primary);
+		border: 2px solid #4a7ba7;
+		border-radius: 30px;
 		font-weight: 500;
+		font-size: 15px;
 		cursor: pointer;
 		transition: all 0.3s ease;
-		text-transform: capitalize;
+		appearance: none;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%234a7ba7' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+		background-repeat: no-repeat;
+		background-position: right 16px center;
+		min-width: 180px;
 	}
-	.category-btn:hover {
-		background: rgba(74, 123, 167, 0.1);
-		transform: translateY(-2px);
+	.filter-select:hover {
+		border-color: #2c5f8d;
 	}
-	.category-btn.active {
-		background: linear-gradient(135deg, #4a7ba7, #2c5f8d);
-		color: white;
-		border-color: #4a7ba7;
-		box-shadow: 0 4px 12px rgba(74, 123, 167, 0.3);
+	.filter-select:focus {
+		outline: none;
+		border-color: #2c5f8d;
+		box-shadow: 0 4px 12px rgba(74, 123, 167, 0.2);
 	}
-	:global([data-theme='dark']) .category-btn {
+	:global([data-theme='dark']) .filter-select {
 		border-color: #00d4ff;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2300d4ff' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
 	}
-	:global([data-theme='dark']) .category-btn:hover {
-		background: rgba(0, 212, 255, 0.1);
-	}
-	:global([data-theme='dark']) .category-btn.active {
-		background: linear-gradient(135deg, #00d4ff, #0099cc);
+	:global([data-theme='dark']) .filter-select:hover,
+	:global([data-theme='dark']) .filter-select:focus {
 		border-color: #00d4ff;
-		box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+		box-shadow: 0 4px 12px rgba(0, 212, 255, 0.2);
 	}
 	.articles-section {
 		padding: 80px 50px;
@@ -513,18 +597,19 @@
 		.hero-description {
 			font-size: 18px;
 		}
+		.filters-row {
+			gap: 20px;
+		}
 		.search-container {
-			margin-bottom: 25px;
+			min-width: 100%;
 		}
 		.search-input {
 			padding: 12px 18px 12px 45px;
 			font-size: 15px;
 		}
-		.filter-title {
-			font-size: 16px;
-		}
-		.category-btn {
-			padding: 10px 20px;
+		.filter-select {
+			min-width: 150px;
+			padding: 12px 36px 12px 16px;
 			font-size: 14px;
 		}
 		.articles-grid {
@@ -549,9 +634,6 @@
 		.hero-description {
 			font-size: 16px;
 		}
-		.search-container {
-			margin-bottom: 20px;
-		}
 		.search-input {
 			padding: 10px 15px 10px 42px;
 			font-size: 14px;
@@ -561,16 +643,12 @@
 			height: 16px;
 			left: 15px;
 		}
-		.filter-title {
-			font-size: 15px;
-			margin-bottom: 15px;
-		}
-		.category-filters {
-			gap: 10px;
-		}
-		.category-btn {
-			padding: 8px 16px;
+		.filter-select {
+			min-width: 130px;
 			font-size: 13px;
+		}
+		.filter-label {
+			font-size: 14px;
 		}
 		.article-content {
 			padding: 20px;
@@ -580,6 +658,104 @@
 		}
 		.article-image {
 			height: 200px;
+		}
+	}
+
+	/* Paginación */
+	.pagination {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 15px;
+		margin-top: 60px;
+		flex-wrap: wrap;
+	}
+
+	.pagination-btn {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 12px 24px;
+		background: var(--card-bg);
+		color: var(--text-primary);
+		border: 2px solid #4a7ba7;
+		border-radius: 8px;
+		font-weight: 600;
+		text-decoration: none;
+		transition: all 0.3s ease;
+	}
+
+	.pagination-btn:hover {
+		background: linear-gradient(135deg, #4a7ba7, #2c5f8d);
+		color: white;
+		border-color: #4a7ba7;
+	}
+
+	:global([data-theme='dark']) .pagination-btn {
+		border-color: #00d4ff;
+	}
+
+	:global([data-theme='dark']) .pagination-btn:hover {
+		background: linear-gradient(135deg, #00d4ff, #0099cc);
+		border-color: #00d4ff;
+	}
+
+	.pagination-numbers {
+		display: flex;
+		gap: 8px;
+	}
+
+	.pagination-number {
+		width: 40px;
+		height: 40px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: var(--card-bg);
+		color: var(--text-primary);
+		border: 2px solid #4a7ba7;
+		border-radius: 8px;
+		font-weight: 600;
+		text-decoration: none;
+		transition: all 0.3s ease;
+	}
+
+	.pagination-number:hover {
+		background: linear-gradient(135deg, #4a7ba7, #2c5f8d);
+		color: white;
+		border-color: #4a7ba7;
+	}
+
+	.pagination-number.active {
+		background: linear-gradient(135deg, #4a7ba7, #2c5f8d);
+		color: white;
+		border-color: #4a7ba7;
+	}
+
+	:global([data-theme='dark']) .pagination-number {
+		border-color: #00d4ff;
+	}
+
+	:global([data-theme='dark']) .pagination-number:hover,
+	:global([data-theme='dark']) .pagination-number.active {
+		background: linear-gradient(135deg, #00d4ff, #0099cc);
+		border-color: #00d4ff;
+	}
+
+	@media (max-width: 768px) {
+		.pagination {
+			gap: 10px;
+		}
+
+		.pagination-btn {
+			padding: 10px 18px;
+			font-size: 14px;
+		}
+
+		.pagination-number {
+			width: 36px;
+			height: 36px;
+			font-size: 14px;
 		}
 	}
 </style>
