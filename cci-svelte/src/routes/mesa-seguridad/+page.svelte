@@ -145,7 +145,7 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		background: rgba(0, 0, 0, 0.5);
+		background: var(--bannerPages);
 	}
 
 	.hero-content {
@@ -155,14 +155,14 @@
 	}
 
 	.hero h1 {
-		color: #ffffff;
+		color: var(--titlePages);
 		font-size: 48px;
 		font-weight: 600;
 		margin-bottom: 16px;
 	}
 
 	.subtitle {
-		color: #ffffff;
+		color: var(--subtitlePages);
 		font-size: 24px;
 		opacity: 0.9;
 	}

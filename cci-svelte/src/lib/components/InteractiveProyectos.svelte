@@ -315,4 +315,11 @@
 			font-size: 11px;
 		}
 	}
+
+	@media (max-width: 480px) {
+		.proyectos-interactive {
+			width: 100%;
+			padding: 5px;
+		}
+	}
 </style>

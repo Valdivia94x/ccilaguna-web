@@ -115,13 +115,17 @@
 <ThemeToggle />
 
 <main class="boletines-page">
-	<!-- Header -->
-	<section class="header-section">
-		<h1>Boletines Informativos</h1>
-		<p class="header-description">
-			Accede a nuestros informes y análisis sobre seguridad y empleo en la Comarca Lagunera
-		</p>
+	<!-- Hero Section -->
+	<section class="hero-section">
+		<div class="hero-content">
+			<h1>Boletines Informativos</h1>
+			<p class="hero-description">
+				Accede a nuestros informes y análisis sobre seguridad y empleo en la Comarca Lagunera
+			</p>
+		</div>
 	</section>
+
+	<div class="spacer"></div>
 
 	<!-- Buscador -->
 	<section class="search-section">
@@ -211,33 +215,56 @@
 		min-height: calc(100vh - 200px);
 	}
 
-	/* Header Section */
-	.header-section {
-		background: linear-gradient(135deg, #e8f4f8 0%, #d4e9f7 100%);
-		padding: 80px 50px 20px;
+	/* Hero Section con efecto parallax fijo */
+	.hero-section {
+		position: fixed;
+		background:
+			linear-gradient(135deg, rgba(43, 74, 105, 0.8) 0%, rgba(30, 59, 89, 0.8) 100%),
+			url('/images/backgroundTorreon.png') center/cover no-repeat;
+		background-attachment: fixed;
+		min-height: 400px;
+		width: 100%;
+		padding: 80px 50px;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
 		text-align: center;
+		z-index: 1;
 		transition: background 0.3s ease;
 	}
 
-	:global([data-theme='dark']) .header-section {
-		background: linear-gradient(135deg, #0f1419 0%, #0f1419 100%);
+	:global([data-theme='dark']) .hero-section {
+		background:
+			linear-gradient(135deg, rgba(15, 20, 25, 0.9) 0%, rgba(15, 20, 25, 0.9) 100%),
+			url('/images/backgroundTorreon.png') center/cover no-repeat;
+		background-attachment: fixed;
 	}
 
-	.header-section h1 {
+	.spacer {
+		height: 50vh;
+	}
+
+	.hero-content {
+		max-width: 900px;
+		margin: 0 auto;
+	}
+
+	.hero-section h1 {
 		font-size: 56px;
 		font-weight: 400;
-		color: var(--text-primary);
+		color: #ffffff;
 		margin-bottom: 20px;
 		text-transform: uppercase;
 		letter-spacing: 2px;
+		text-shadow: #000000 0px 4px 6px;
 	}
 
-	.header-description {
+	.hero-description {
 		font-size: 20px;
 		line-height: 1.6;
-		color: var(--text-primary);
-		max-width: 800px;
-		margin: 0 auto;
+		color: #ffffff;
+		text-shadow: #000000 0px 4px 6px;
 	}
 
 	/* Search Section */
@@ -245,6 +272,8 @@
 		background: var(--bg-primary);
 		padding: 40px 50px 20px;
 		transition: background 0.3s ease;
+		position: relative;
+		z-index: 10;
 	}
 
 	.search-container {
@@ -301,6 +330,8 @@
 		padding: 40px 50px;
 		transition: background 0.3s ease;
 		border-bottom: 1px solid var(--navbar-border);
+		position: relative;
+		z-index: 10;
 	}
 
 	.themes-container {
@@ -582,6 +613,8 @@
 		background: var(--bg-primary);
 		padding: 60px 50px;
 		transition: background 0.3s ease;
+		position: relative;
+		z-index: 10;
 	}
 
 	.boletines-container {
@@ -608,15 +641,20 @@
 
 	/* Responsive */
 	@media (max-width: 768px) {
-		.header-section {
-			padding: 60px 30px 40px;
+		.hero-section {
+			padding: 60px 30px;
+			min-height: 40vh;
 		}
 
-		.header-section h1 {
+		.spacer {
+			height: 40vh;
+		}
+
+		.hero-section h1 {
 			font-size: 40px;
 		}
 
-		.header-description {
+		.hero-description {
 			font-size: 18px;
 		}
 
@@ -682,15 +720,20 @@
 	}
 
 	@media (max-width: 480px) {
-		.header-section {
-			padding: 40px 20px 30px;
+		.hero-section {
+			padding: 40px 20px;
+			min-height: 35vh;
 		}
 
-		.header-section h1 {
+		.spacer {
+			height: 35vh;
+		}
+
+		.hero-section h1 {
 			font-size: 32px;
 		}
 
-		.header-description {
+		.hero-description {
 			font-size: 16px;
 		}
 

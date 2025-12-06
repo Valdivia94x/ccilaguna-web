@@ -29,18 +29,13 @@
 <main class="nosotros-page">
 	<!-- Sección Hero -->
 	<section class="hero-section">
-		<h1>Nosotros</h1>
 		<div class="hero-content">
-			<div class="hero-text">
-				<p class="hero-description">
-					El CCI Laguna es una organización de la sociedad civil, apartidista, sin fines de lucro e
-					independiente, que busca promover y organizar la participación ciudadana para desarrollar
-					buenos gobiernos y mejores ciudadanos en la Comarca Lagunera.
-				</p>
-			</div>
-			<div class="hero-image">
-				<img src="/images/logoNosotros.png" alt="Logo CCI Laguna" />
-			</div>
+			<h1>Nosotros</h1>
+			<p class="hero-description">
+				El CCI Laguna es una organización de la sociedad civil, apartidista, sin fines de lucro e
+				independiente, que busca promover y organizar la participación ciudadana para desarrollar
+				buenos gobiernos y mejores ciudadanos en la Comarca Lagunera.
+			</p>
 		</div>
 	</section>
 
@@ -227,98 +222,56 @@
 		min-height: calc(100vh - 200px);
 	}
 
-	/* Hero Section con efecto parallax fijo */
+	/* Hero Section con efecto parallax fijo + estilo blog */
 	.hero-section {
 		position: fixed;
-		background-image: url('/images/backgroundTorreon.png');
-		background-size: cover;
-		background-position: center center;
-		background-repeat: no-repeat;
+		background:
+			linear-gradient(135deg, rgba(43, 74, 105, 0.8) 0%, rgba(30, 59, 89, 0.8) 100%),
+			url('/images/backgroundTorreon.png') center/cover no-repeat;
 		background-attachment: fixed;
-		padding: 20px 50px;
-		min-height: 50vh;
+		min-height: 400px;
 		width: 100%;
+		padding: 80px 50px;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
+		text-align: center;
 		z-index: 1;
+		transition: background 0.3s ease;
+	}
+
+	:global([data-theme='dark']) .hero-section {
+		background:
+			linear-gradient(135deg, rgba(15, 20, 25, 0.9) 0%, rgba(15, 20, 25, 0.9) 100%),
+			url('/images/backgroundTorreon.png') center/cover no-repeat;
+		background-attachment: fixed;
 	}
 
 	.spacer {
 		height: 50vh;
 	}
 
-	/* Overlay sobre la imagen de fondo */
-	.hero-section::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		background: rgba(232, 244, 248, 0.85);
-		z-index: 0;
-		pointer-events: none;
-	}
-
-	:global([data-theme='dark']) .hero-section::before {
-		background: rgba(15, 20, 25, 0.85);
-	}
-
-	/* Asegurar que el contenido esté por encima del overlay */
-	.hero-section h1,
-	.hero-section .hero-content {
-		position: relative;
-		z-index: 1;
+	.hero-content {
+		max-width: 900px;
+		margin: 0 auto;
 	}
 
 	.hero-section h1 {
-		font-size: 42px;
-		font-weight: 600;
-		color: var(--text-primary);
-		margin-bottom: 40px;
+		font-size: 56px;
+		font-weight: 400;
+		color: #ffffff;
+		margin-bottom: 20px;
 		text-transform: uppercase;
 		letter-spacing: 2px;
-		text-align: center;
-	}
-
-	:global([data-theme='dark']) .hero-section h1 {
-		color: #ffa100;
-	}
-
-	.hero-content {
-		max-width: 1200px;
-		margin: 0 auto;
-		display: grid;
-		grid-template-columns: 3fr 1fr;
-		gap: 40px;
-		align-items: center;
-	}
-
-	.hero-text {
-		text-align: left;
+		text-shadow: #000000 0px 4px 6px;
 	}
 
 	.hero-description {
 		font-size: 20px;
-		line-height: 1.8;
-		color: var(--text-primary);
-		font-weight: 400;
-		margin: 0;
-	}
-
-	.hero-image {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
-
-	.hero-image img {
-		width: 100%;
-		max-width: 200px;
-		height: auto;
-		object-fit: contain;
+		line-height: 1.6;
+		color: #ffffff;
+		text-shadow: #000000 0px 4px 6px;
 	}
 
 	/* Timeline Section */
@@ -704,7 +657,7 @@
 	/* Responsive */
 	@media (max-width: 768px) {
 		.hero-section {
-			padding: 40px 30px;
+			padding: 60px 30px;
 			min-height: 40vh;
 		}
 
@@ -713,26 +666,11 @@
 		}
 
 		.hero-section h1 {
-			font-size: 30px;
-			margin-bottom: 20px;
-		}
-
-		.hero-content {
-			grid-template-columns: 1fr;
-			gap: 20px;
-		}
-
-		.hero-text {
-			text-align: justify;
+			font-size: 40px;
 		}
 
 		.hero-description {
-			font-size: 14px;
-			line-height: 1.6;
-		}
-
-		.hero-image img {
-			max-width: 120px;
+			font-size: 18px;
 		}
 
 		.timeline-section {
@@ -845,7 +783,7 @@
 
 	@media (max-width: 480px) {
 		.hero-section {
-			padding: 10px 20px;
+			padding: 40px 20px;
 			min-height: 35vh;
 		}
 
@@ -854,21 +792,11 @@
 		}
 
 		.hero-section h1 {
-			font-size: 26px;
-			margin-bottom: 15px;
-		}
-
-		.hero-content {
-			gap: 15px;
+			font-size: 32px;
 		}
 
 		.hero-description {
-			font-size: 14px;
-			line-height: 1.5;
-		}
-
-		.hero-image img {
-			display: none;
+			font-size: 16px;
 		}
 
 		.timeline-section {

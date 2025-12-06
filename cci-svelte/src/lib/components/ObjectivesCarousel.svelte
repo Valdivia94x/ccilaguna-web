@@ -254,7 +254,7 @@
 	}
 
 	.mission-label {
-		font-size: 12px;
+		font-size: 18px;
 		font-weight: 600;
 		letter-spacing: 3px;
 		text-transform: uppercase;
@@ -270,7 +270,7 @@
 	}
 
 	.mission-text {
-		font-size: 22px;
+		font-size: 26px;
 		font-weight: 500;
 		color: #000000;
 		line-height: 1.7;

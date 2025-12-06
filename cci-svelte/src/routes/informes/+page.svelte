@@ -70,6 +70,8 @@
 		</div>
 	</section>
 
+	<div class="spacer"></div>
+
 	<section class="informes-section">
 		{#if informes.length > 0}
 			<div class="informes-grid">
@@ -143,16 +145,34 @@
 		min-height: calc(100vh - 200px);
 	}
 
-	/* Hero Section */
+	/* Hero Section con efecto parallax fijo */
 	.hero-section {
-		background: linear-gradient(135deg, #e8f4f8 0%, #d4e9f7 100%);
+		position: fixed;
+		background:
+			linear-gradient(135deg, rgba(43, 74, 105, 0.8) 0%, rgba(30, 59, 89, 0.8) 100%),
+			url('/images/backgroundTorreon.png') center/cover no-repeat;
+		background-attachment: fixed;
+		min-height: 400px;
+		width: 100%;
 		padding: 80px 50px;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
 		text-align: center;
+		z-index: 1;
 		transition: background 0.3s ease;
 	}
 
 	:global([data-theme='dark']) .hero-section {
-		background: linear-gradient(135deg, #0f1419 0%, #0f1419 100%);
+		background:
+			linear-gradient(135deg, rgba(15, 20, 25, 0.9) 0%, rgba(15, 20, 25, 0.9) 100%),
+			url('/images/backgroundTorreon.png') center/cover no-repeat;
+		background-attachment: fixed;
+	}
+
+	.spacer {
+		height: 50vh;
 	}
 
 	.hero-content {
@@ -163,16 +183,18 @@
 	h1 {
 		font-size: 56px;
 		font-weight: 400;
-		color: var(--text-secondary);
+		color: #ffffff;
 		margin-bottom: 20px;
 		text-transform: uppercase;
 		letter-spacing: 2px;
+		text-shadow: #000000 0px 4px 6px;
 	}
 
 	.hero-description {
 		font-size: 20px;
 		line-height: 1.6;
-		color: var(--text-primary);
+		color: #ffffff;
+		text-shadow: #000000 0px 4px 6px;
 	}
 
 	/* Informes Section */
@@ -180,6 +202,8 @@
 		padding: 80px 50px;
 		background: var(--bg-primary);
 		transition: background 0.3s ease;
+		position: relative;
+		z-index: 10;
 	}
 
 	.informes-grid {
@@ -360,7 +384,15 @@
 
 	/* Responsive */
 	@media (max-width: 768px) {
-		.hero-section,
+		.hero-section {
+			padding: 60px 30px;
+			min-height: 40vh;
+		}
+
+		.spacer {
+			height: 40vh;
+		}
+
 		.informes-section {
 			padding: 60px 30px;
 		}
@@ -384,7 +416,15 @@
 	}
 
 	@media (max-width: 480px) {
-		.hero-section,
+		.hero-section {
+			padding: 40px 20px;
+			min-height: 35vh;
+		}
+
+		.spacer {
+			height: 35vh;
+		}
+
 		.informes-section {
 			padding: 40px 20px;
 		}
