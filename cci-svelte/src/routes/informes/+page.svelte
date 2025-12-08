@@ -16,9 +16,9 @@
 					title: report.title,
 					description: report.description || 'Sin descripción disponible.',
 					year: report.year,
-					// Generamos la URL de la imagen ajustada al contenedor (350x280 ratio)
+					// Generamos la URL de la imagen con proporción A4 (210x297mm = 1:1.414)
 					thumbnail: report.coverImage
-						? urlFor(report.coverImage).width(350).height(280).fit('fill').url()
+						? urlFor(report.coverImage).width(280).height(396).fit('crop').url()
 						: '',
 					pdfUrl: report.pdfUrl,
 					// Usamos los campos manuales o valores por defecto
@@ -232,8 +232,10 @@
 	.informe-thumbnail {
 		position: relative;
 		width: 100%;
-		height: 280px;
-		overflow: hidden;
+		padding: 25px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 		background: linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%);
 	}
 
@@ -242,14 +244,17 @@
 	}
 
 	.informe-thumbnail img {
-		width: 100%;
-		height: 100%;
+		width: 200px;
+		height: 283px; /* Proporción A4: 200 * 1.414 */
 		object-fit: cover;
-		transition: transform 0.3s ease;
+		border-radius: 4px;
+		box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+		transition: transform 0.3s ease, box-shadow 0.3s ease;
 	}
 
 	.informe-card:hover .informe-thumbnail img {
-		transform: scale(1.1);
+		transform: scale(1.05);
+		box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
 	}
 
 	.year-badge {
@@ -410,8 +415,9 @@
 			gap: 30px;
 		}
 
-		.informe-thumbnail {
-			height: 250px;
+		.informe-thumbnail img {
+			width: 180px;
+			height: 255px;
 		}
 	}
 
@@ -446,7 +452,12 @@
 		}
 
 		.informe-thumbnail {
-			height: 220px;
+			padding: 20px;
+		}
+
+		.informe-thumbnail img {
+			width: 160px;
+			height: 226px;
 		}
 
 		.informe-meta {
