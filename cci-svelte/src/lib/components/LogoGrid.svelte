@@ -5,6 +5,32 @@
 	}
 
 	let { title, logos }: { title: string; logos: Logo[] } = $props();
+
+	function animarAlEntrar(node: HTMLElement) {
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						node.classList.add('visible');
+					} else {
+						node.classList.remove('visible');
+					}
+				});
+			},
+			{
+				threshold: 0.1,
+				rootMargin: '0px'
+			}
+		);
+
+		observer.observe(node);
+
+		return {
+			destroy() {
+				observer.disconnect();
+			}
+		};
+	}
 </script>
 
 <section class="socios">
@@ -21,7 +47,7 @@
 		>
 	</p>
 
-	<div class="logo-grid">
+	<div class="logo-grid" use:animarAlEntrar>
 		{#each logos as logo}
 			<div class="logo-item">
 				<img src={logo.src} alt={logo.alt} />
@@ -115,6 +141,18 @@
 		max-width: 100%;
 		margin: 0 auto;
 		padding: 0 50px;
+
+		/* Estado inicial para animación */
+		opacity: 0;
+		transform: translateY(50px);
+		transition:
+			opacity 0.8s ease-out,
+			transform 0.8s ease-out;
+	}
+
+	.logo-grid:global(.visible) {
+		opacity: 1;
+		transform: translateY(0);
 	}
 
 	.logo-item {

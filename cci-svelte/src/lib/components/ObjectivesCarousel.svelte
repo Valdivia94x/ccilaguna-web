@@ -13,20 +13,21 @@
 	let isPaused = $state(false);
 	let intervalId: number | undefined;
 
-	function animarAlEntrar(node: HTMLElement) {
+	function animarAlEntrar(node: HTMLElement, options?: { threshold?: number }) {
+		const threshold = options?.threshold ?? 0.15;
+
 		const observer = new IntersectionObserver(
 			(entries) => {
 				entries.forEach((entry) => {
-					// Si el elemento es visible (aunque sea un poquito)
 					if (entry.isIntersecting) {
 						node.classList.add('visible');
-						// Dejamos de observar para ahorrar recursos
-						observer.unobserve(node);
+					} else {
+						node.classList.remove('visible');
 					}
 				});
 			},
 			{
-				threshold: 0.2, // Se activa cuando el 20% del elemento se ve
+				threshold,
 				rootMargin: '0px'
 			}
 		);
@@ -104,6 +105,7 @@
 	<!-- Carrusel de Objetivos -->
 	<div
 		class="carousel-container"
+		use:animarAlEntrar={{ threshold: 0.3 }}
 		onmouseenter={handleMouseEnter}
 		onmouseleave={handleMouseLeave}
 		role="region"
@@ -189,8 +191,8 @@
 
 		/* Suavidad de la animación */
 		transition:
-			opacity 1.5s ease-out,
-			transform 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+			opacity 0.8s ease-out,
+			transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
 
 		will-change: opacity, transform;
 		transition-delay: 0.2s;
@@ -333,6 +335,18 @@
 		max-width: 800px;
 		margin: 0 auto;
 		padding: 20px 80px;
+
+		/* Estado inicial para animación - más pronunciado */
+		opacity: 0;
+		transform: translateY(60px);
+		transition:
+			opacity 1s ease-out,
+			transform 1s ease-out;
+	}
+
+	.carousel-container:global(.visible) {
+		opacity: 1;
+		transform: translateY(0);
 	}
 
 	.objectives-carousel {

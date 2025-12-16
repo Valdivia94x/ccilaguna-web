@@ -2,6 +2,37 @@
 	import Navbar from '$lib/components/Navbar.svelte';
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 	import Footer from '$lib/components/Footer.svelte';
+
+	function animarAlEntrar(node: HTMLElement, options?: { delay?: number }) {
+		const delay = options?.delay ?? 0;
+		node.style.transitionDelay = `${delay}ms`;
+
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						// Entró al viewport - hacer visible
+						node.classList.add('visible');
+					} else {
+						// Salió del viewport - hacer invisible (se animará al volver a entrar)
+						node.classList.remove('visible');
+					}
+				});
+			},
+			{
+				threshold: 0.15,
+				rootMargin: '0px'
+			}
+		);
+
+		observer.observe(node);
+
+		return {
+			destroy() {
+				observer.disconnect();
+			}
+		};
+	}
 </script>
 
 <svelte:head>
@@ -102,7 +133,7 @@
 	<section class="objectives-vision-section">
 		<div class="cards-grid">
 			<!-- Tarjeta Nuestros Objetivos -->
-			<div class="card card-objective">
+			<div class="card card-objective" use:animarAlEntrar={{ delay: 0 }}>
 				<h3 class="card-title">Nuestros Objetivos</h3>
 				<div class="card-text">
 					<p>
@@ -125,7 +156,7 @@
 			</div>
 
 			<!-- Tarjeta Nuestra Visión -->
-			<div class="card card-vision">
+			<div class="card card-vision" use:animarAlEntrar={{ delay: 150 }}>
 				<h3 class="card-title">Nuestra Visión</h3>
 				<div class="card-text">
 					<p>
@@ -148,7 +179,7 @@
 	<section class="team-section">
 		<h2>Equipo de Trabajo</h2>
 		<div class="team-grid">
-			<div class="team-member">
+			<div class="team-member" use:animarAlEntrar={{ delay: 0 }}>
 				<div class="member-photo">
 					<img src="/images/team/placeholder.png" alt="Marco Antonio Zamarripa González" />
 				</div>
@@ -156,7 +187,7 @@
 				<p class="member-role">Director General</p>
 			</div>
 
-			<div class="team-member">
+			<div class="team-member" use:animarAlEntrar={{ delay: 100 }}>
 				<div class="member-photo">
 					<img src="/images/team/placeholder.png" alt="Luis Alfredo Medina López" />
 				</div>
@@ -164,7 +195,7 @@
 				<p class="member-role">Coordinador de Investigación</p>
 			</div>
 
-			<div class="team-member">
+			<div class="team-member" use:animarAlEntrar={{ delay: 200 }}>
 				<div class="member-photo">
 					<img src="/images/team/placeholder.png" alt="David Ruelas Sarmiento" />
 				</div>
@@ -172,7 +203,7 @@
 				<p class="member-role">Investigador</p>
 			</div>
 
-			<div class="team-member">
+			<div class="team-member" use:animarAlEntrar={{ delay: 300 }}>
 				<div class="member-photo">
 					<img src="/images/team/placeholder1.png" alt="Dely Ramírez Sánchez" />
 				</div>
@@ -180,7 +211,7 @@
 				<p class="member-role">Vinculación</p>
 			</div>
 
-			<div class="team-member">
+			<div class="team-member" use:animarAlEntrar={{ delay: 400 }}>
 				<div class="member-photo">
 					<img src="/images/team/placeholder.png" alt="Wolfang Arturo García Méndez" />
 				</div>
@@ -188,7 +219,7 @@
 				<p class="member-role">Sistemas</p>
 			</div>
 
-			<div class="team-member">
+			<div class="team-member" use:animarAlEntrar={{ delay: 500 }}>
 				<div class="member-photo">
 					<img src="/images/team/placeholder1.png" alt="Gabriela Zamora Álvarez" />
 				</div>
@@ -196,7 +227,7 @@
 				<p class="member-role">Diseñadora Gráfica</p>
 			</div>
 
-			<div class="team-member">
+			<div class="team-member" use:animarAlEntrar={{ delay: 600 }}>
 				<div class="member-photo">
 					<img src="/images/team/placeholder.png" alt="Enrique Lara García" />
 				</div>
@@ -204,7 +235,7 @@
 				<p class="member-role">Investigador</p>
 			</div>
 
-			<div class="team-member">
+			<div class="team-member" use:animarAlEntrar={{ delay: 700 }}>
 				<div class="member-photo">
 					<img src="/images/team/placeholder1.png" alt="Nayeli García González" />
 				</div>
@@ -249,7 +280,7 @@
 	}
 
 	.spacer {
-		height: 50vh;
+		height: 40vh;
 	}
 
 	.hero-content {
@@ -392,7 +423,7 @@
 
 	/* Objectives & Vision Grid Section */
 	.objectives-vision-section {
-		padding: 80px 50px;
+		padding: 20px 50px;
 		background: var(--bg-primary);
 		transition: background 0.3s ease;
 		position: relative;
@@ -417,10 +448,22 @@
 		display: flex;
 		flex-direction: column;
 		overflow: hidden;
-		transition: all 0.3s ease;
+
+		/* Estado inicial para animación */
+		opacity: 0;
+		transform: translateY(50px);
+		transition:
+			opacity 0.8s ease-out,
+			transform 0.8s ease-out,
+			box-shadow 0.3s ease;
 	}
 
-	.card:hover {
+	.card:global(.visible) {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	.card:global(.visible):hover {
 		transform: translateY(-5px);
 	}
 
@@ -496,7 +539,7 @@
 		position: absolute;
 		bottom: 15px;
 		right: 15px;
-		width: 120px;
+		width: 80px;
 		height: auto;
 		opacity: 0.2;
 		pointer-events: none;
@@ -561,10 +604,21 @@
 		flex-direction: column;
 		align-items: center;
 		text-align: center;
-		transition: transform 0.3s ease;
+
+		/* Estado inicial para animación */
+		opacity: 0;
+		transform: translateY(50px);
+		transition:
+			opacity 0.8s ease-out,
+			transform 0.8s ease-out;
 	}
 
-	.team-member:hover {
+	.team-member:global(.visible) {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	.team-member:global(.visible):hover {
 		transform: translateY(-10px);
 	}
 
@@ -748,7 +802,7 @@
 		}
 
 		.card-icon {
-			width: 100px;
+			width: 70px;
 			bottom: 12px;
 			right: 12px;
 		}
@@ -856,7 +910,7 @@
 		}
 
 		.card-icon {
-			width: 80px;
+			width: 60px;
 			bottom: 10px;
 			right: 10px;
 		}

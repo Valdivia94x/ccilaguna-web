@@ -242,7 +242,7 @@
 	}
 
 	.spacer {
-		height: 50vh;
+		height: 40vh;
 	}
 
 	.hero-content {

@@ -172,7 +172,7 @@
 	}
 
 	.spacer {
-		height: 50vh;
+		height: 40vh;
 	}
 
 	.hero-content {
@@ -249,7 +249,9 @@
 		object-fit: cover;
 		border-radius: 4px;
 		box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-		transition: transform 0.3s ease, box-shadow 0.3s ease;
+		transition:
+			transform 0.3s ease,
+			box-shadow 0.3s ease;
 	}
 
 	.informe-card:hover .informe-thumbnail img {

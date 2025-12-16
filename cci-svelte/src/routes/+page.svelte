@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import Navbar from '$lib/components/Navbar.svelte';
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 	import Carousel from '$lib/components/Carousel.svelte';
@@ -8,6 +9,30 @@
 	import ContactSection from '$lib/components/ContactSection.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import { urlFor } from '$lib/sanity';
+
+	let aboutSectionRef: HTMLDivElement;
+	let aboutVisible = $state(false);
+
+	onMount(() => {
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						aboutVisible = true;
+					} else {
+						aboutVisible = false;
+					}
+				});
+			},
+			{ threshold: 0.15 }
+		);
+
+		if (aboutSectionRef) {
+			observer.observe(aboutSectionRef);
+		}
+
+		return () => observer.disconnect();
+	});
 
 	let { data } = $props();
 
@@ -89,8 +114,7 @@
 
 	// Datos de contacto
 	const contactData = {
-		description:
-			'Cualquier duda o comentario llena nuestro formulario, llámanos o envíanos un correo correo electrónico.',
+		description: 'Cualquier duda o comentario llámanos o envíanos un correo correo electrónico.',
 		address: {
 			street: 'C. Río Amazonas #740',
 			colony: 'Colonia Estrella, 27010',
@@ -142,7 +166,9 @@
 <Carousel slides={carouselSlides} />
 <div class="carousel-spacer"></div>
 <div class="content-wrapper">
-	<AboutSection title={aboutData.title} content={aboutData.content} image={aboutData.image} />
+	<div bind:this={aboutSectionRef} class="fade-up" class:visible={aboutVisible}>
+		<AboutSection title={aboutData.title} content={aboutData.content} image={aboutData.image} />
+	</div>
 	<LogoGrid title={adherentesData.title} logos={adherentesData.logos} />
 	<ObjectivesCarousel mission={objectivesData.mission} objectives={objectivesData.objectives} />
 	<ContactSection {contactData} />
@@ -158,6 +184,19 @@
 		position: relative;
 		z-index: 10;
 		background: var(--bg-primary);
+	}
+
+	.fade-up {
+		opacity: 0;
+		transform: translateY(40px);
+		transition:
+			opacity 0.8s ease-out,
+			transform 0.8s ease-out;
+	}
+
+	.fade-up.visible {
+		opacity: 1;
+		transform: translateY(0);
 	}
 
 	@media (max-width: 768px) {

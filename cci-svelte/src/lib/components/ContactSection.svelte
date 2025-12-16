@@ -16,6 +16,35 @@
 	}
 
 	let { contactData }: { contactData: ContactData } = $props();
+
+	function animarAlEntrar(node: HTMLElement, options?: { delay?: number }) {
+		const delay = options?.delay ?? 0;
+		node.style.transitionDelay = `${delay}ms`;
+
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						node.classList.add('visible');
+					} else {
+						node.classList.remove('visible');
+					}
+				});
+			},
+			{
+				threshold: 0.15,
+				rootMargin: '0px'
+			}
+		);
+
+		observer.observe(node);
+
+		return {
+			destroy() {
+				observer.disconnect();
+			}
+		};
+	}
 </script>
 
 <section id="contacto" class="contact-section" aria-labelledby="contact-heading">
@@ -28,7 +57,7 @@
 
 	<div class="contact-info">
 		<!-- Dirección -->
-		<div class="contact-item">
+		<div class="contact-item" use:animarAlEntrar={{ delay: 0 }}>
 			<div class="contact-icon">
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor">
 					<path
@@ -45,7 +74,7 @@
 		</div>
 
 		<!-- Teléfono -->
-		<div class="contact-item">
+		<div class="contact-item" use:animarAlEntrar={{ delay: 150 }}>
 			<div class="contact-icon">
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor">
 					<path
@@ -62,7 +91,7 @@
 		</div>
 
 		<!-- E-mail -->
-		<div class="contact-item">
+		<div class="contact-item" use:animarAlEntrar={{ delay: 300 }}>
 			<div class="contact-icon">
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor">
 					<path
@@ -196,12 +225,22 @@
 		background: var(--card-bg);
 		border-radius: 15px;
 		box-shadow: 0 5px 20px var(--card-shadow);
+
+		/* Estado inicial para animación */
+		opacity: 0;
+		transform: translateY(50px);
 		transition:
-			transform 0.3s ease,
+			opacity 0.8s ease-out,
+			transform 0.8s ease-out,
 			box-shadow 0.3s ease;
 	}
 
-	.contact-item:hover {
+	.contact-item:global(.visible) {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	.contact-item:global(.visible):hover {
 		transform: translateY(-5px);
 		box-shadow: 0 10px 30px var(--card-shadow);
 	}

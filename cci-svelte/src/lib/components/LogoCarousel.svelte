@@ -9,7 +9,7 @@
 	let { logos }: { logos: Logo[] } = $props();
 
 	let currentIndex = $state(0);
-	let intervalId: number;
+	let intervalId: ReturnType<typeof setInterval>;
 
 	// Avanzar al siguiente conjunto de logos
 	function nextSlide() {
@@ -127,6 +127,10 @@
 		justify-content: center;
 		box-shadow: 0 4px 10px rgba(17, 23, 39, 0.05);
 		transition: all 0.3s ease;
+	}
+
+	:global([data-theme='dark']) .carousel-logo-item {
+		background: #ffffff;
 	}
 
 	.carousel-logo-item:hover {

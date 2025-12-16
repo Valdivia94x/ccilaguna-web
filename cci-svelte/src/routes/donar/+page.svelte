@@ -3,6 +3,35 @@
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 
+	function animarAlEntrar(node: HTMLElement, options?: { delay?: number }) {
+		const delay = options?.delay ?? 0;
+		node.style.transitionDelay = `${delay}ms`;
+
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						node.classList.add('visible');
+					} else {
+						node.classList.remove('visible');
+					}
+				});
+			},
+			{
+				threshold: 0.15,
+				rootMargin: '0px'
+			}
+		);
+
+		observer.observe(node);
+
+		return {
+			destroy() {
+				observer.disconnect();
+			}
+		};
+	}
+
 	// Datos de donación (ejemplo - puedes actualizarlos después)
 	const donationData = {
 		bankInfo: {
@@ -55,11 +84,13 @@
 		</div>
 	</section>
 
+	<div class="spacer"></div>
+
 	<!-- Información Bancaria -->
 	<section class="bank-info-section">
 		<h2>Información Bancaria</h2>
 		<div class="info-container">
-			<div class="info-card">
+			<div class="info-card" use:animarAlEntrar={{ delay: 0 }}>
 				<div class="info-icon">
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor">
 						<path
@@ -71,7 +102,7 @@
 				<p class="info-value">{donationData.bankInfo.bank}</p>
 			</div>
 
-			<div class="info-card">
+			<div class="info-card" use:animarAlEntrar={{ delay: 100 }}>
 				<div class="info-icon">
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="currentColor">
 						<path
@@ -83,7 +114,7 @@
 				<p class="info-value">{donationData.bankInfo.accountNumber}</p>
 			</div>
 
-			<div class="info-card">
+			<div class="info-card" use:animarAlEntrar={{ delay: 200 }}>
 				<div class="info-icon">
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor">
 						<path
@@ -95,7 +126,7 @@
 				<p class="info-value">{donationData.bankInfo.clabe}</p>
 			</div>
 
-			<div class="info-card concept-card">
+			<div class="info-card concept-card" use:animarAlEntrar={{ delay: 300 }}>
 				<div class="info-icon">
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor">
 						<path
@@ -113,7 +144,7 @@
 	<section class="invoicing-section">
 		<h2>Facturación</h2>
 		<div class="invoicing-container">
-			<div class="invoicing-card">
+			<div class="invoicing-card" use:animarAlEntrar={{ delay: 0 }}>
 				<div class="invoicing-icon">
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor">
 						<path
@@ -132,7 +163,7 @@
 				</div>
 			</div>
 
-			<div class="invoicing-card">
+			<div class="invoicing-card" use:animarAlEntrar={{ delay: 150 }}>
 				<div class="invoicing-icon">
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor">
 						<path
@@ -148,7 +179,7 @@
 			</div>
 		</div>
 
-		<div class="note-box">
+		<div class="note-box" use:animarAlEntrar={{ delay: 300 }}>
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor">
 				<path
 					d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"
@@ -173,16 +204,34 @@
 		min-height: calc(100vh - 200px);
 	}
 
-	/* Hero Section */
+	/* Hero Section con efecto parallax fijo */
 	.hero-section {
-		background: linear-gradient(135deg, #e8f4f8 0%, #d4e9f7 100%);
+		position: fixed;
+		background:
+			linear-gradient(135deg, rgba(43, 74, 105, 0.8) 0%, rgba(30, 59, 89, 0.8) 100%),
+			url('/images/backgroundTorreon.png') center/cover no-repeat;
+		background-attachment: fixed;
+		min-height: 400px;
+		width: 100%;
 		padding: 80px 50px;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
 		text-align: center;
+		z-index: 1;
 		transition: background 0.3s ease;
 	}
 
 	:global([data-theme='dark']) .hero-section {
-		background: linear-gradient(135deg, #1a2332 0%, #151e2b 100%);
+		background:
+			linear-gradient(135deg, rgba(15, 20, 25, 0.9) 0%, rgba(15, 20, 25, 0.9) 100%),
+			url('/images/backgroundTorreon.png') center/cover no-repeat;
+		background-attachment: fixed;
+	}
+
+	.spacer {
+		height: 40vh;
 	}
 
 	.hero-content {
@@ -193,17 +242,18 @@
 	h1 {
 		font-size: 56px;
 		font-weight: 400;
-		color: var(--text-secondary);
-		margin-bottom: 30px;
+		color: #ffffff;
+		margin-bottom: 20px;
 		text-transform: uppercase;
 		letter-spacing: 2px;
+		text-shadow: #000000 0px 4px 6px;
 	}
 
 	.hero-description {
 		font-size: 20px;
-		line-height: 1.8;
-		color: var(--text-primary);
-		margin-bottom: 30px;
+		line-height: 1.6;
+		color: #ffffff;
+		text-shadow: #000000 0px 4px 6px;
 	}
 
 	/* Bank Info Section */
@@ -211,6 +261,8 @@
 		padding: 80px 50px;
 		background: var(--bg-primary);
 		transition: background 0.3s ease;
+		position: relative;
+		z-index: 10;
 	}
 
 	.bank-info-section h2 {
@@ -240,11 +292,23 @@
 		padding: 30px;
 		border-radius: 15px;
 		box-shadow: 0 5px 20px var(--card-shadow);
-		transition: all 0.3s ease;
 		text-align: center;
+
+		/* Estado inicial para animación */
+		opacity: 0;
+		transform: translateY(50px);
+		transition:
+			opacity 0.4s ease-out,
+			transform 0.4s ease-out,
+			box-shadow 0.3s ease;
 	}
 
-	.info-card:hover {
+	.info-card:global(.visible) {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	.info-card:global(.visible):hover {
 		transform: translateY(-5px);
 		box-shadow: 0 10px 30px var(--card-shadow);
 	}
@@ -302,6 +366,8 @@
 		padding: 80px 50px;
 		background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
 		transition: background 0.3s ease;
+		position: relative;
+		z-index: 10;
 	}
 
 	:global([data-theme='dark']) .invoicing-section {
@@ -334,10 +400,22 @@
 		display: flex;
 		gap: 25px;
 		align-items: flex-start;
-		transition: all 0.3s ease;
+
+		/* Estado inicial para animación */
+		opacity: 0;
+		transform: translateY(50px);
+		transition:
+			opacity 0.4s ease-out,
+			transform 0.4s ease-out,
+			box-shadow 0.3s ease;
 	}
 
-	.invoicing-card:hover {
+	.invoicing-card:global(.visible) {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	.invoicing-card:global(.visible):hover {
 		transform: translateY(-5px);
 		box-shadow: 0 10px 30px var(--card-shadow);
 	}
@@ -410,6 +488,18 @@
 		display: flex;
 		gap: 20px;
 		align-items: flex-start;
+
+		/* Estado inicial para animación */
+		opacity: 0;
+		transform: translateY(50px);
+		transition:
+			opacity 0.4s ease-out,
+			transform 0.4s ease-out;
+	}
+
+	.note-box:global(.visible) {
+		opacity: 1;
+		transform: translateY(0);
 	}
 
 	.note-box svg {
@@ -437,7 +527,15 @@
 
 	/* Responsive */
 	@media (max-width: 768px) {
-		.hero-section,
+		.hero-section {
+			padding: 60px 30px;
+			min-height: 40vh;
+		}
+
+		.spacer {
+			height: 40vh;
+		}
+
 		.bank-info-section,
 		.invoicing-section {
 			padding: 60px 30px;
@@ -470,7 +568,15 @@
 	}
 
 	@media (max-width: 480px) {
-		.hero-section,
+		.hero-section {
+			padding: 40px 20px;
+			min-height: 35vh;
+		}
+
+		.spacer {
+			height: 35vh;
+		}
+
 		.bank-info-section,
 		.invoicing-section {
 			padding: 40px 20px;
