@@ -4,8 +4,18 @@
 	import { onMount } from 'svelte';
 	import { theme } from '$lib/stores/theme';
 	import { browser } from '$app/environment';
+	import { page } from '$app/stores';
 
 	let { children } = $props();
+
+	// Determinar si mostrar el widget de chat (no en páginas individuales de blog/boletines)
+	let showChatWidget = $derived(() => {
+		const path = $page.url.pathname;
+		// Ocultar en /blog/[slug] y /boletines/[id]
+		const isBlogPost = /^\/blog\/[^/]+$/.test(path);
+		const isBoletinPost = /^\/boletines\/[^/]+$/.test(path);
+		return !isBlogPost && !isBoletinPost;
+	});
 
 	// Inicializar el tema cuando el componente se monte
 	onMount(() => {
@@ -67,6 +77,13 @@
 			}
 		})();
 	</script>
+	<!-- ElevenLabs Conversational AI Widget Script -->
+	<script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
 </svelte:head>
 
 {@render children()}
+
+<!-- ElevenLabs Conversational AI Widget (oculto en páginas individuales de blog y boletines) -->
+{#if showChatWidget()}
+	<elevenlabs-convai agent-id="agent_7301kcscg0t7fdas2yv73hbhq6rr"></elevenlabs-convai>
+{/if}
