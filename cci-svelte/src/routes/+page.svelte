@@ -177,7 +177,13 @@
 
 <style>
 	.carousel-spacer {
-		height: 550px;
+		height: calc(100vh - 96px);
+	}
+
+	@media (max-width: 1023px) {
+		.carousel-spacer {
+			height: calc(100vh - 88px);
+		}
 	}
 
 	.content-wrapper {
@@ -201,13 +207,19 @@
 
 	@media (max-width: 768px) {
 		.carousel-spacer {
-			height: 400px;
+			height: calc(100vh - 80px);
 		}
 	}
 
 	@media (max-width: 480px) {
 		.carousel-spacer {
-			height: 275px;
+			height: calc(100vh - 68px);
+		}
+	}
+
+	@media (max-width: 360px) {
+		.carousel-spacer {
+			height: calc(100vh - 60px);
 		}
 	}
 </style>

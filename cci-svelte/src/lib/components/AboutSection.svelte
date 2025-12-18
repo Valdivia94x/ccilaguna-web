@@ -2,13 +2,42 @@
 	import InteractiveProyectos from './InteractiveProyectos.svelte';
 
 	let { title, content, image }: { title: string; content: string; image: string } = $props();
+
+	function animarAlEntrar(node: HTMLElement, options?: { delay?: number }) {
+		const delay = options?.delay ?? 0;
+		node.style.transitionDelay = `${delay}ms`;
+
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						node.classList.add('visible');
+					} else {
+						node.classList.remove('visible');
+					}
+				});
+			},
+			{
+				threshold: 0.2,
+				rootMargin: '0px'
+			}
+		);
+
+		observer.observe(node);
+
+		return {
+			destroy() {
+				observer.disconnect();
+			}
+		};
+	}
 </script>
 
 <section id="nosotros" class="about-section" aria-labelledby="about-heading">
-	<div class="about-image">
+	<div class="about-image" use:animarAlEntrar={{ delay: 0 }}>
 		<InteractiveProyectos />
 	</div>
-	<div class="about-content">
+	<div class="about-content" use:animarAlEntrar={{ delay: 200 }}>
 		<h2 id="about-heading">{title}</h2>
 		<p>{@html content}</p>
 	</div>
@@ -30,10 +59,34 @@
 		justify-content: center;
 		align-items: center;
 		width: 100%;
+
+		/* Estado inicial para animación - entrada desde la izquierda */
+		opacity: 0;
+		transform: translateX(-80px) scale(0.95);
+		transition:
+			opacity 1s ease-out,
+			transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	.about-image:global(.visible) {
+		opacity: 1;
+		transform: translateX(0) scale(1);
 	}
 
 	.about-content {
 		color: var(--text-primary);
+
+		/* Estado inicial para animación - entrada desde la derecha */
+		opacity: 0;
+		transform: translateX(80px);
+		transition:
+			opacity 1s ease-out,
+			transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	.about-content:global(.visible) {
+		opacity: 1;
+		transform: translateX(0);
 	}
 
 	.about-content h2 {

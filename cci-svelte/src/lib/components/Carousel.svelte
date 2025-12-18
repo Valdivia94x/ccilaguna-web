@@ -167,12 +167,20 @@
 <style>
 	.hero-carousel {
 		position: fixed;
-		top: 0;
+		top: 96px;
 		left: 0;
 		width: 100%;
-		height: 700px;
+		height: calc(100vh - 96px);
 		overflow: hidden;
 		z-index: 1;
+	}
+
+	/* Tablet */
+	@media (max-width: 1023px) {
+		.hero-carousel {
+			top: 88px;
+			height: calc(100vh - 88px);
+		}
 	}
 
 	.carousel-container {
@@ -344,7 +352,8 @@
 
 	@media (max-width: 768px) {
 		.hero-carousel {
-			height: 500px;
+			top: 80px;
+			height: calc(100vh - 80px);
 		}
 
 		.carousel-overlay {
@@ -394,7 +403,15 @@
 
 	@media (max-width: 480px) {
 		.hero-carousel {
-			height: 350px;
+			top: 68px;
+			height: calc(100vh - 68px);
+		}
+	}
+
+	@media (max-width: 360px) {
+		.hero-carousel {
+			top: 60px;
+			height: calc(100vh - 60px);
 		}
 
 		.carousel-overlay {

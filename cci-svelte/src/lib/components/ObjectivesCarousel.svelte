@@ -97,7 +97,7 @@
 	</div>
 
 	<!-- Título de Objetivos con banda -->
-	<div class="title-section">
+	<div class="title-section" use:animarAlEntrar>
 		<img src="/images/stickers/objetivosSticker.png" alt="Objetivos Sticker" class="sticker" />
 		<h2 id="objectives-heading" class="objectives-title">Objetivos</h2>
 	</div>
@@ -297,8 +297,20 @@
 		gap: 20px;
 		position: relative;
 		margin: -70px -50px 40px -50px;
-		transition: background 0.3s ease;
+		transition:
+			background 0.3s ease,
+			opacity 0.8s ease-out,
+			transform 0.8s ease-out;
 		overflow: visible;
+
+		/* Estado inicial para animación */
+		opacity: 0;
+		transform: translateY(30px);
+	}
+
+	.title-section:global(.visible) {
+		opacity: 1;
+		transform: translateY(0);
 	}
 
 	:global([data-theme='dark']) .title-section {
