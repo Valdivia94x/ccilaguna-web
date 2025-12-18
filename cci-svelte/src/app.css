@@ -23,23 +23,24 @@
 	--text-color: #000000;
 	--text-sub: #000000;
 	--text-title: #000000;
-	--nav-text: #000000;
-	--nav-text-hover: #3b82f6;
+	--nav-text: #1e293b;
+	--nav-text-hover: #fb923c;
+	--nav-separator: #94a3b8;
 	--card-bg: #ffffff;
 	--card-shadow: rgba(30, 58, 95, 0.08);
 	--bannerPages: rgba(232, 244, 248, 0.75);
 	--titlePages: #000000;
 	--subtitlePages: #000000;
 
-	/* Navbar Glassmorphic - Modo Claro */
-	--navbar-glass-bg: rgba(255, 255, 255, 0.85);
-	--navbar-fallback-bg: rgba(255, 255, 255, 0.98);
-	--navbar-border: rgba(30, 58, 95, 0.08);
+	/* Navbar Glassmorphic - Modo Claro (slate-100) */
+	--navbar-glass-bg: rgba(241, 245, 249, 0.85);
+	--navbar-fallback-bg: rgba(241, 245, 249, 0.98);
+	--navbar-border: rgba(203, 213, 225, 0.5);
 	--navbar-shadow: rgba(30, 58, 95, 0.08);
 
 	/* Mobile Menu - Modo Claro */
-	--mobile-menu-bg: rgba(255, 255, 255, 0.95);
-	--mobile-menu-fallback-bg: rgba(255, 255, 255, 0.98);
+	--mobile-menu-bg: rgba(241, 245, 249, 0.95);
+	--mobile-menu-fallback-bg: rgba(241, 245, 249, 0.98);
 
 	/* Colores de acento */
 	--accent-primary: #3b82f6;
@@ -60,22 +61,23 @@
 	--text-sub: #5ce947;
 	--text-title: #FFA100;
 	--nav-text: #ffffff;
-	--nav-text-hover: #60a5fa;
+	--nav-text-hover: #fb923c;
+	--nav-separator: #64748b;
 	--card-bg: #334155;
 	--card-shadow: rgba(0, 0, 0, 0.4);
 	--bannerPages: rgba(15, 20, 25, 0.85);
 	--titlePages: #ffa100;
 	--subtitlePages: #ffffff;
 
-	/* Navbar Glassmorphic - Modo Oscuro */
-	--navbar-glass-bg: rgba(15, 20, 25, 0.85);
-	--navbar-fallback-bg: rgba(15, 20, 25, 0.98);
-	--navbar-border: rgba(255, 255, 255, 0.06);
+	/* Navbar Glassmorphic - Modo Oscuro (slate-800) */
+	--navbar-glass-bg: rgba(30, 41, 59, 0.85);
+	--navbar-fallback-bg: rgba(30, 41, 59, 0.98);
+	--navbar-border: rgba(51, 65, 85, 0.5);
 	--navbar-shadow: rgba(0, 0, 0, 0.4);
 
 	/* Mobile Menu - Modo Oscuro */
-	--mobile-menu-bg: rgba(15, 20, 25, 0.95);
-	--mobile-menu-fallback-bg: rgba(15, 20, 25, 0.98);
+	--mobile-menu-bg: rgba(30, 41, 59, 0.95);
+	--mobile-menu-fallback-bg: rgba(30, 41, 59, 0.98);
 
 	/* Colores de acento */
 	--accent-primary: #60a5fa;

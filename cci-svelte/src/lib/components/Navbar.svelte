@@ -26,7 +26,8 @@
 	});
 
 	// Determinar el tema inicial desde el DOM inmediatamente
-	const initialTheme: 'light' | 'dark' = browser && document.documentElement.hasAttribute('data-theme') ? 'dark' : 'dark';
+	const initialTheme: 'light' | 'dark' =
+		browser && document.documentElement.hasAttribute('data-theme') ? 'dark' : 'dark';
 
 	// Inicializar con el tema del DOM
 	let currentTheme = $state<'light' | 'dark'>(initialTheme);
@@ -137,11 +138,11 @@
 	.navbar {
 		/* Glassmorphic effect */
 		background: var(--navbar-glass-bg);
-		backdrop-filter: blur(12px) saturate(180%);
-		-webkit-backdrop-filter: blur(12px) saturate(180%);
+		backdrop-filter: blur(24px) saturate(180%);
+		-webkit-backdrop-filter: blur(24px) saturate(180%);
 
 		/* Layout */
-		padding: 2px 50px;
+		padding: 16px 16px;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
@@ -149,20 +150,19 @@
 		/* Border para definición */
 		border-bottom: 1px solid var(--navbar-border);
 
-		/* Shadow sutil */
-		box-shadow: 0 4px 20px var(--navbar-shadow);
-
 		/* Position */
 		position: sticky;
 		top: 0;
-		z-index: 1000;
+		z-index: 50;
 
 		/* Smooth transitions */
-		transition: all 0.3s ease;
+		transition:
+			background-color 0.3s ease,
+			border-color 0.3s ease;
 	}
 
 	/* Soporte para Firefox (sin backdrop-blur) */
-	@supports not (backdrop-filter: blur(12px)) {
+	@supports not (backdrop-filter: blur(24px)) {
 		.navbar {
 			background: var(--navbar-fallback-bg);
 		}
@@ -176,14 +176,14 @@
 	}
 
 	.navbar-logo img {
-		height: 70px;
+		height: 64px;
 		width: auto;
 		object-fit: contain;
 		transition: transform 0.3s ease;
 	}
 
 	.navbar-logo:hover img {
-		transform: scale(1.05);
+		transform: scale(1.02);
 	}
 
 	.navbar-right-content {
@@ -194,7 +194,7 @@
 
 	.nav-menu {
 		display: flex;
-		gap: 30px;
+		gap: 8px;
 		align-items: center;
 		list-style: none;
 		margin: 0;
@@ -207,86 +207,78 @@
 	}
 
 	.nav-separator {
-		color: var(--nav-text);
-		opacity: 0.5;
+		color: var(--nav-separator);
 		user-select: none;
+		font-size: 14px;
+		padding: 0 4px;
 	}
 
 	.nav-menu a {
 		color: var(--nav-text);
 		text-decoration: none;
 		font-size: 14px;
-		font-weight: 500;
-		transition:
-			color 0.3s,
-			transform 0.2s;
+		font-weight: 600;
+		letter-spacing: 0.025em;
+		transition: color 0.3s ease;
 		display: inline-block;
-		position: relative;
-	}
-
-	.nav-menu a::after {
-		content: '';
-		position: absolute;
-		bottom: -5px;
-		left: 50%;
-		transform: translateX(-50%) scaleX(0);
-		width: 100%;
-		height: 2px;
-		background: var(--nav-text-hover);
-		transition: transform 0.3s ease;
+		padding: 8px 12px;
+		border-radius: 6px;
 	}
 
 	.nav-menu a:hover {
 		color: var(--nav-text-hover);
 	}
 
-	.nav-menu a:hover::after {
-		transform: translateX(-50%) scaleX(1);
-	}
-
 	.social-icons {
 		display: flex;
-		gap: 15px;
+		gap: 12px;
 		align-items: center;
 	}
 
 	.social-icons a {
-		color: white;
-		font-size: 18px;
 		width: 36px;
 		height: 36px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		border-radius: 50%;
-		background: rgba(255, 255, 255, 0.1);
+		border-radius: 8px;
+		background: transparent;
 		transition: all 0.3s ease;
 	}
 
 	.social-icons a:hover {
-		background: rgba(255, 255, 255, 0.2);
-		transform: translateY(-3px);
-		box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+		background: var(--navbar-border);
+		transform: translateY(-2px);
 	}
 
 	.social-icon {
-		width: 20px;
-		height: 20px;
+		width: 25px;
+		height: 25px;
+		opacity: 0.8;
+		transition: opacity 0.3s ease;
+	}
+
+	.social-icons a:hover .social-icon {
+		opacity: 1;
 	}
 
 	.btn-donar {
-		background: linear-gradient(135deg, #ffa500, #ff8c00);
+		background: linear-gradient(135deg, #fb923c, #f59e0b);
 		color: white;
-		padding: 10px 30px;
+		padding: 5px 24px;
 		border-radius: 25px;
 		text-decoration: none;
-		font-weight: 600;
-		box-shadow: 0 4px 15px rgba(255, 165, 0, 0.4);
-		transition: transform 0.3s;
+		font-weight: 700;
+		font-size: 12px;
+		letter-spacing: 0.025em;
+		transition: all 0.3s ease;
+		box-shadow: 0 2px 8px rgba(251, 146, 60, 0.3);
 	}
 
 	.btn-donar:hover {
-		transform: translateY(-2px);
+		background: linear-gradient(135deg, #f97316, #d97706);
+		transform: translateY(-1px);
+		box-shadow: 0 4px 12px rgba(251, 146, 60, 0.4);
 	}
 
 	.hamburger-menu {
@@ -295,21 +287,27 @@
 		background: none;
 		border: none;
 		cursor: pointer;
-		padding: 5px;
+		padding: 8px;
 		z-index: 1001;
+		border-radius: 8px;
+		transition: background-color 0.3s ease;
+	}
+
+	.hamburger-menu:hover {
+		background: var(--navbar-border);
 	}
 
 	.hamburger-line {
-		width: 25px;
-		height: 3px;
+		width: 24px;
+		height: 2px;
 		background-color: var(--nav-text);
 		margin: 3px 0;
 		transition: all 0.3s ease;
-		border-radius: 3px;
+		border-radius: 2px;
 	}
 
 	.hamburger-menu.active .hamburger-line:nth-child(1) {
-		transform: rotate(45deg) translate(8px, 8px);
+		transform: rotate(45deg) translate(6px, 6px);
 	}
 
 	.hamburger-menu.active .hamburger-line:nth-child(2) {
@@ -317,25 +315,57 @@
 	}
 
 	.hamburger-menu.active .hamburger-line:nth-child(3) {
-		transform: rotate(-45deg) translate(7px, -7px);
+		transform: rotate(-45deg) translate(6px, -6px);
+	}
+
+	/* Large screens */
+	@media (min-width: 1024px) {
+		.navbar {
+			padding: 16px 32px;
+		}
+	}
+
+	/* Extra large screens */
+	@media (min-width: 1280px) {
+		.navbar {
+			padding: 16px 48px;
+		}
+
+		.nav-menu a {
+			font-size: 16px;
+		}
+
+		.btn-donar {
+			font-size: 16px;
+			padding: 12px 28px;
+		}
 	}
 
 	/* Tablet y pantallas medianas */
 	@media (max-width: 1024px) {
 		.navbar-logo img {
-			height: 60px;
+			height: 56px;
+		}
+
+		.nav-menu {
+			gap: 4px;
+		}
+
+		.nav-menu a {
+			padding: 6px 8px;
+			font-size: 13px;
 		}
 	}
 
 	/* Mobile */
 	@media (max-width: 768px) {
 		.navbar {
-			padding: 15px 20px;
+			padding: 16px 16px;
 		}
 
 		.navbar-logo img {
-			height: 50px;
-			min-height: 50px;
+			height: 48px;
+			min-height: 48px;
 		}
 
 		.hamburger-menu {
@@ -347,27 +377,28 @@
 			top: 0;
 			right: -100%;
 			height: 100vh;
-			width: 80%;
+			width: 85%;
 			max-width: 400px;
 
 			/* Glassmorphic effect para menú móvil */
 			background: var(--mobile-menu-bg);
-			backdrop-filter: blur(20px) saturate(180%);
-			-webkit-backdrop-filter: blur(20px) saturate(180%);
+			backdrop-filter: blur(24px) saturate(180%);
+			-webkit-backdrop-filter: blur(24px) saturate(180%);
 
 			flex-direction: column;
 			justify-content: flex-start;
 			align-items: flex-start;
-			padding: 80px 30px 30px;
+			padding: 100px 24px 32px;
 			gap: 2rem;
-			transition: right 0.3s ease;
-			box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+			transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+			box-shadow: -8px 0 24px rgba(0, 0, 0, 0.15);
 			overflow-y: auto;
 			z-index: 999;
+			border-left: 1px solid var(--navbar-border);
 		}
 
 		/* Fallback para navegadores sin soporte de backdrop-filter */
-		@supports not (backdrop-filter: blur(20px)) {
+		@supports not (backdrop-filter: blur(24px)) {
 			.navbar-right-content {
 				background: var(--mobile-menu-fallback-bg);
 			}
@@ -380,7 +411,7 @@
 		.nav-menu {
 			flex-direction: column;
 			align-items: flex-start;
-			gap: 1.5rem;
+			gap: 0;
 			width: 100%;
 		}
 
@@ -390,9 +421,11 @@
 
 		.nav-menu a {
 			display: block;
-			padding: 10px 0;
+			padding: 16px 0;
 			font-size: 18px;
-			border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+			border-bottom: 1px solid var(--navbar-border);
+			border-radius: 0;
+			width: 100%;
 		}
 
 		.nav-separator {
@@ -403,31 +436,39 @@
 			flex-direction: row;
 			width: 100%;
 			justify-content: flex-start;
+			padding-top: 8px;
+		}
+
+		.social-icons a {
+			width: 44px;
+			height: 44px;
 		}
 
 		.btn-donar {
 			width: 100%;
 			text-align: center;
-			padding: 15px 30px;
+			padding: 16px 32px;
+			font-size: 16px;
+			margin-top: 8px;
 		}
 	}
 
 	/* Pantallas muy pequeñas */
 	@media (max-width: 480px) {
 		.navbar {
-			padding: 10px 15px;
+			padding: 12px 16px;
 		}
 
 		.navbar-logo img {
-			height: 45px;
-			min-height: 45px;
+			height: 44px;
+			min-height: 44px;
 		}
 	}
 
 	/* Pantallas extra pequeñas */
 	@media (max-width: 360px) {
 		.navbar {
-			padding: 8px 12px;
+			padding: 10px 12px;
 		}
 
 		.navbar-logo img {

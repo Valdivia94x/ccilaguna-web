@@ -94,17 +94,13 @@
 
 <style>
 	.footer {
-		background: var(--footer-bg, #1a2332);
+		background: #0f172a;
 		color: var(--footer-text, #f8fafc);
 		padding: 60px 50px 40px;
 		margin-top: 0px;
 		transition: all 0.3s ease;
 		position: relative;
 		z-index: 10;
-	}
-
-	:global([data-theme='dark']) .footer {
-		background: var(--footer-bg-dark, #0f1419);
 	}
 
 	.footer-container {

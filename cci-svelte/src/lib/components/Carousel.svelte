@@ -9,11 +9,26 @@
 	let { slides }: { slides: Slide[] } = $props();
 
 	let currentSlide = $state(0);
+	let previousSlide = $state(0);
 	let carouselInterval: ReturnType<typeof setInterval> | undefined;
+	let progressInterval: ReturnType<typeof setInterval> | undefined;
 	let isPaused = $state(false);
+	let isTransitioning = $state(false);
+	let progress = $state(0);
+
+	const SLIDE_DURATION = 5000;
+	const PROGRESS_UPDATE_INTERVAL = 50;
 
 	function showSlide(n: number) {
+		if (isTransitioning) return;
+		previousSlide = currentSlide;
+		isTransitioning = true;
 		currentSlide = (n + slides.length) % slides.length;
+		progress = 0;
+
+		setTimeout(() => {
+			isTransitioning = false;
+		}, 600);
 	}
 
 	function nextSlide() {
@@ -24,18 +39,36 @@
 		showSlide(currentSlide - 1);
 	}
 
+	function startProgress() {
+		progress = 0;
+		if (progressInterval) clearInterval(progressInterval);
+		progressInterval = setInterval(() => {
+			if (!isPaused) {
+				progress += (PROGRESS_UPDATE_INTERVAL / SLIDE_DURATION) * 100;
+				if (progress >= 100) {
+					progress = 100;
+				}
+			}
+		}, PROGRESS_UPDATE_INTERVAL);
+	}
+
 	function startAutoplay() {
 		if (carouselInterval) clearInterval(carouselInterval);
+		startProgress();
 		carouselInterval = setInterval(() => {
 			if (!isPaused) {
 				nextSlide();
+				startProgress();
 			}
-		}, 5000);
+		}, SLIDE_DURATION);
 	}
 
 	function stopAutoplay() {
 		if (carouselInterval) {
 			clearInterval(carouselInterval);
+		}
+		if (progressInterval) {
+			clearInterval(progressInterval);
 		}
 	}
 
@@ -59,7 +92,7 @@
 		startAutoplay();
 	}
 
-	function handleDotClick(index: number) {
+	function handleIndicatorClick(index: number) {
 		stopAutoplay();
 		showSlide(index);
 		startAutoplay();
@@ -85,20 +118,17 @@
 			<div
 				class="carousel-slide"
 				class:active={index === currentSlide}
+				class:previous={index === previousSlide && isTransitioning}
 				role="group"
 				aria-label="Slide {index + 1} de {slides.length}"
 				aria-roledescription="slide"
 				aria-hidden={index !== currentSlide}
 			>
-				<img
-					src={slide.image}
-					alt={slide.alt}
-					class="absolute inset-0 h-full w-full object-cover"
-				/>
+				<img src={slide.image} alt={slide.alt} />
 			</div>
 		{/each}
 
-		<!-- Text Overlay -->
+		<!-- Text Overlay with gradient -->
 		<div class="carousel-overlay">
 			<div class="overlay-content">
 				<h1 class="overlay-title">
@@ -116,16 +146,20 @@
 		<i class="fas fa-chevron-right"></i>
 	</button>
 
-	<div class="carousel-dots" role="tablist" aria-label="Navegación del carrusel">
+	<!-- Progress bar indicators -->
+	<div class="carousel-indicators" role="tablist" aria-label="Navegación del carrusel">
 		{#each slides as _, index}
 			<button
-				class="dot"
+				class="indicator"
 				class:active={index === currentSlide}
 				role="tab"
 				aria-label="Ir a slide {index + 1}"
 				aria-selected={index === currentSlide}
-				onclick={() => handleDotClick(index)}
-			></button>
+				onclick={() => handleIndicatorClick(index)}
+			>
+				<span class="indicator-progress" style={index === currentSlide ? `width: ${progress}%` : ''}
+				></span>
+			</button>
 		{/each}
 	</div>
 </section>
@@ -136,7 +170,7 @@
 		top: 0;
 		left: 0;
 		width: 100%;
-		height: 625px;
+		height: 700px;
 		overflow: hidden;
 		z-index: 1;
 	}
@@ -147,14 +181,31 @@
 		height: 100%;
 	}
 
+	/* Slide transitions - fade effect */
 	.carousel-slide {
+		position: absolute;
+		top: 0;
+		left: 0;
 		width: 100%;
 		height: 100%;
-		display: none;
+		opacity: 0;
+		visibility: hidden;
+		transition:
+			opacity 0.6s ease-in-out,
+			visibility 0.6s ease-in-out;
+		z-index: 1;
 	}
 
 	.carousel-slide.active {
-		display: block;
+		opacity: 1;
+		visibility: visible;
+		z-index: 2;
+	}
+
+	.carousel-slide.previous {
+		opacity: 0;
+		visibility: visible;
+		z-index: 1;
 	}
 
 	.carousel-slide img {
@@ -163,7 +214,7 @@
 		object-fit: cover;
 	}
 
-	/* Text Overlay */
+	/* Text Overlay with enhanced gradient */
 	.carousel-overlay {
 		position: absolute;
 		top: 0;
@@ -176,8 +227,9 @@
 		padding: 0 80px;
 		background: linear-gradient(
 			to right,
-			rgba(0, 0, 0, 0.5) 0%,
-			rgba(0, 0, 0, 0.3) 50%,
+			rgba(0, 0, 0, 0.65) 0%,
+			rgba(0, 0, 0, 0.45) 35%,
+			rgba(0, 0, 0, 0.2) 60%,
 			transparent 100%
 		);
 		z-index: 5;
@@ -202,30 +254,36 @@
 		text-align: left;
 	}
 
+	/* Navigation arrows with semi-transparent background */
 	.carousel-nav {
 		position: absolute;
 		top: 50%;
 		transform: translateY(-50%);
-		background: rgba(255, 255, 255, 0.9);
-		border: none;
-		width: 50px;
-		height: 50px;
+		background: rgba(0, 0, 0, 0.3);
+		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
+		border: 1px solid rgba(255, 255, 255, 0.15);
+		width: 52px;
+		height: 52px;
 		border-radius: 50%;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		cursor: pointer;
-		font-size: 20px;
+		font-size: 18px;
 		z-index: 10;
-		color: #333;
+		color: white;
 		transition: all 0.3s ease;
-		box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 	}
 
 	.carousel-nav:hover {
-		background: white;
-		transform: translateY(-50%) scale(1.1);
-		box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+		background: rgba(0, 0, 0, 0.5);
+		border-color: rgba(255, 255, 255, 0.3);
+		transform: translateY(-50%) scale(1.08);
+	}
+
+	.carousel-nav:active {
+		transform: translateY(-50%) scale(0.95);
 	}
 
 	.carousel-nav.prev {
@@ -236,35 +294,52 @@
 		right: 30px;
 	}
 
-	.carousel-dots {
+	/* Progress bar indicators */
+	.carousel-indicators {
 		position: absolute;
-		bottom: 20px;
+		bottom: 30px;
 		left: 50%;
 		transform: translateX(-50%);
 		display: flex;
-		gap: 10px;
+		gap: 12px;
+		z-index: 10;
 	}
 
-	.dot {
-		width: 12px;
-		height: 12px;
-		border-radius: 50%;
-		background: rgba(255, 255, 255, 0.5);
+	.indicator {
+		width: 60px;
+		height: 4px;
+		border-radius: 2px;
+		background: rgba(255, 255, 255, 0.35);
 		cursor: pointer;
-		border: 2px solid transparent;
-		transition: all 0.3s ease;
+		border: none;
 		padding: 0;
+		position: relative;
+		overflow: hidden;
+		transition: all 0.3s ease;
 	}
 
-	.dot:hover {
-		background: rgba(255, 255, 255, 0.7);
-		transform: scale(1.2);
+	.indicator:hover {
+		background: rgba(255, 255, 255, 0.5);
+		transform: scaleY(1.5);
 	}
 
-	.dot.active {
+	.indicator.active {
+		background: rgba(255, 255, 255, 0.35);
+	}
+
+	.indicator-progress {
+		position: absolute;
+		top: 0;
+		left: 0;
+		height: 100%;
+		width: 0;
 		background: white;
-		border-color: rgba(255, 255, 255, 0.8);
-		transform: scale(1.3);
+		border-radius: 2px;
+		transition: width 0.05s linear;
+	}
+
+	.indicator.active .indicator-progress {
+		box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
 	}
 
 	@media (max-width: 768px) {
@@ -274,7 +349,7 @@
 
 		.carousel-overlay {
 			padding: 0 40px;
-			background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.4) 100%);
+			background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.35) 100%);
 			justify-content: center;
 			align-items: center;
 		}
@@ -293,8 +368,8 @@
 		}
 
 		.carousel-nav {
-			width: 40px;
-			height: 40px;
+			width: 44px;
+			height: 44px;
 			font-size: 16px;
 		}
 
@@ -304,6 +379,16 @@
 
 		.carousel-nav.next {
 			right: 15px;
+		}
+
+		.carousel-indicators {
+			bottom: 25px;
+			gap: 10px;
+		}
+
+		.indicator {
+			width: 50px;
+			height: 3px;
 		}
 	}
 
@@ -322,8 +407,8 @@
 		}
 
 		.carousel-nav {
-			width: 35px;
-			height: 35px;
+			width: 38px;
+			height: 38px;
 			font-size: 14px;
 		}
 
@@ -333,6 +418,16 @@
 
 		.carousel-nav.next {
 			right: 10px;
+		}
+
+		.carousel-indicators {
+			bottom: 20px;
+			gap: 8px;
+		}
+
+		.indicator {
+			width: 40px;
+			height: 3px;
 		}
 	}
 </style>

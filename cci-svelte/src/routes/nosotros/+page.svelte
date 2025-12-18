@@ -442,12 +442,16 @@
 	/* Tarjetas base */
 	.card {
 		position: relative;
-		border-radius: 16px;
+		border-radius: 20px;
 		padding: 50px 40px;
 		min-height: 550px;
 		display: flex;
 		flex-direction: column;
 		overflow: hidden;
+
+		/* Glassmorphism base */
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
 
 		/* Estado inicial para animación */
 		opacity: 0;
@@ -455,7 +459,8 @@
 		transition:
 			opacity 0.8s ease-out,
 			transform 0.8s ease-out,
-			box-shadow 0.3s ease;
+			box-shadow 0.3s ease,
+			border-color 0.3s ease;
 	}
 
 	.card:global(.visible) {
@@ -464,38 +469,80 @@
 	}
 
 	.card:global(.visible):hover {
-		transform: translateY(-5px);
+		transform: translateY(-8px);
 	}
 
-	/* Tarjeta Nuestros Objetivos - Fondo oscuro azul institucional */
+	/* Tarjeta Nuestros Objetivos - Glassmorphism claro (mismo estilo que Visión) */
 	.card-objective {
-		background: linear-gradient(135deg, #2c5f8d 0%, #4a7ba7 100%);
-		color: white;
-		box-shadow: 0 8px 25px rgba(44, 95, 141, 0.3);
+		background: rgba(255, 255, 255, 0.7);
+		color: var(--text-primary);
+		border: 1px solid rgba(74, 123, 167, 0.2);
+		box-shadow:
+			0 8px 32px var(--card-shadow),
+			inset 0 1px 0 rgba(255, 255, 255, 0.5);
+	}
+
+	:global([data-theme='dark']) .card-objective {
+		background: rgba(51, 65, 85, 0.7);
+		border-color: rgba(255, 161, 0, 0.2);
+		box-shadow:
+			0 8px 32px rgba(0, 0, 0, 0.3),
+			inset 0 1px 0 rgba(255, 255, 255, 0.05);
 	}
 
 	.card-objective:hover {
-		box-shadow: 0 15px 40px rgba(44, 95, 141, 0.5);
+		box-shadow:
+			0 20px 50px rgba(74, 123, 167, 0.4),
+			inset 0 1px 0 rgba(255, 255, 255, 0.6);
+		border-color: rgba(74, 123, 167, 0.4);
+	}
+
+	:global([data-theme='dark']) .card-objective:hover {
+		box-shadow:
+			0 20px 50px rgba(0, 0, 0, 0.5),
+			inset 0 1px 0 rgba(255, 255, 255, 0.1);
+		border-color: rgba(255, 161, 0, 0.4);
 	}
 
 	.card-objective .card-title {
-		color: #ffa100;
+		color: #4a7ba7;
 	}
 
-	/* Tarjeta Nuestra Visión - Fondo blanco con borde y sombra */
+	:global([data-theme='dark']) .card-objective .card-title {
+		color: #ffa100;
+		text-shadow: 0 0 20px rgba(255, 161, 0, 0.3);
+	}
+
+	/* Tarjeta Nuestra Visión - Glassmorphism claro */
 	.card-vision {
-		background: var(--card-bg);
+		background: rgba(255, 255, 255, 0.7);
 		color: var(--text-primary);
-		border: 2px solid #e0e0e0;
-		box-shadow: 0 8px 25px var(--card-shadow);
+		border: 1px solid rgba(74, 123, 167, 0.2);
+		box-shadow:
+			0 8px 32px var(--card-shadow),
+			inset 0 1px 0 rgba(255, 255, 255, 0.5);
 	}
 
 	:global([data-theme='dark']) .card-vision {
-		border-color: #414a5e;
+		background: rgba(51, 65, 85, 0.7);
+		border-color: rgba(255, 161, 0, 0.2);
+		box-shadow:
+			0 8px 32px rgba(0, 0, 0, 0.3),
+			inset 0 1px 0 rgba(255, 255, 255, 0.05);
 	}
 
 	.card-vision:hover {
-		box-shadow: 0 15px 40px rgba(44, 95, 141, 0.5);
+		box-shadow:
+			0 20px 50px rgba(74, 123, 167, 0.4),
+			inset 0 1px 0 rgba(255, 255, 255, 0.6);
+		border-color: rgba(74, 123, 167, 0.4);
+	}
+
+	:global([data-theme='dark']) .card-vision:hover {
+		box-shadow:
+			0 20px 50px rgba(0, 0, 0, 0.5),
+			inset 0 1px 0 rgba(255, 255, 255, 0.1);
+		border-color: rgba(255, 161, 0, 0.4);
 	}
 
 	.card-vision .card-title {
@@ -504,6 +551,7 @@
 
 	:global([data-theme='dark']) .card-vision .card-title {
 		color: #ffa100;
+		text-shadow: 0 0 20px rgba(255, 161, 0, 0.3);
 	}
 
 	/* Títulos de las tarjetas */
@@ -511,13 +559,41 @@
 		font-size: 32px;
 		font-weight: 700;
 		text-transform: uppercase;
-		margin-bottom: 25px;
+		margin-bottom: 15px;
 		letter-spacing: 1.5px;
+		position: relative;
+		display: inline-block;
+	}
+
+	/* Línea decorativa debajo del título */
+	.card-title::after {
+		content: '';
+		position: absolute;
+		bottom: -8px;
+		left: 0;
+		width: 60px;
+		height: 3px;
+		background: linear-gradient(90deg, #ffa100 0%, rgba(255, 161, 0, 0.3) 100%);
+		border-radius: 2px;
+		transition: width 0.3s ease;
+	}
+
+	.card:hover .card-title::after {
+		width: 100px;
+	}
+
+	.card-vision .card-title::after {
+		background: linear-gradient(90deg, #4a7ba7 0%, rgba(74, 123, 167, 0.3) 100%);
+	}
+
+	:global([data-theme='dark']) .card-vision .card-title::after {
+		background: linear-gradient(90deg, #ffa100 0%, rgba(255, 161, 0, 0.3) 100%);
 	}
 
 	/* Texto de las tarjetas */
 	.card-text {
 		flex-grow: 1;
+		margin-top: 15px;
 	}
 
 	.card-text p {
@@ -531,45 +607,73 @@
 	}
 
 	.card-objective .card-text p {
-		color: rgba(255, 255, 255, 0.95);
+		color: var(--text-primary);
 	}
 
-	/* Imágenes decorativas (stickers) */
+	.card-objective .card-title::after {
+		background: linear-gradient(90deg, #4a7ba7 0%, rgba(74, 123, 167, 0.3) 100%);
+	}
+
+	:global([data-theme='dark']) .card-objective .card-title::after {
+		background: linear-gradient(90deg, #ffa100 0%, rgba(255, 161, 0, 0.3) 100%);
+	}
+
+	/* Imágenes decorativas (stickers) - Más grandes con glow */
 	.card-icon {
 		position: absolute;
-		bottom: 15px;
-		right: 15px;
-		width: 80px;
+		bottom: 20px;
+		right: 20px;
+		width: 120px;
 		height: auto;
-		opacity: 0.2;
+		opacity: 0.3;
 		pointer-events: none;
 		object-fit: contain;
+		transition:
+			opacity 0.4s ease,
+			transform 0.4s ease,
+			filter 0.4s ease;
 	}
 
 	.card-objective .card-icon {
 		opacity: 0.25;
-		transition: opacity 0.3s ease;
+		filter: drop-shadow(0 0 10px rgba(74, 123, 167, 0.2));
 	}
 
 	.card-objective:hover .card-icon {
-		opacity: 0.7;
+		opacity: 0.9;
+		transform: scale(1.1) rotate(5deg);
+		filter: drop-shadow(0 0 20px rgba(74, 123, 167, 0.4));
+	}
+
+	:global([data-theme='dark']) .card-objective .card-icon {
+		opacity: 0.35;
+		filter: drop-shadow(0 0 15px rgba(255, 161, 0, 0.2));
+	}
+
+	:global([data-theme='dark']) .card-objective:hover .card-icon {
+		opacity: 0.85;
+		filter: drop-shadow(0 0 25px rgba(255, 161, 0, 0.5));
 	}
 
 	.card-vision .card-icon {
-		opacity: 0.2;
-		transition: opacity 0.3s ease;
+		opacity: 0.25;
+		filter: drop-shadow(0 0 10px rgba(74, 123, 167, 0.2));
 	}
 
 	.card-vision:hover .card-icon {
 		opacity: 0.9;
+		transform: scale(1.1) rotate(-5deg);
+		filter: drop-shadow(0 0 20px rgba(74, 123, 167, 0.4));
 	}
 
 	:global([data-theme='dark']) .card-vision .card-icon {
-		opacity: 0.3;
+		opacity: 0.35;
+		filter: drop-shadow(0 0 15px rgba(255, 161, 0, 0.2));
 	}
 
 	:global([data-theme='dark']) .card-vision:hover .card-icon {
-		opacity: 0.8;
+		opacity: 0.85;
+		filter: drop-shadow(0 0 25px rgba(255, 161, 0, 0.5));
 	}
 
 	/* Team Section */
@@ -802,9 +906,9 @@
 		}
 
 		.card-icon {
-			width: 70px;
-			bottom: 12px;
-			right: 12px;
+			width: 100px;
+			bottom: 15px;
+			right: 15px;
 		}
 
 		.team-section {
@@ -910,9 +1014,9 @@
 		}
 
 		.card-icon {
-			width: 60px;
-			bottom: 10px;
-			right: 10px;
+			width: 80px;
+			bottom: 12px;
+			right: 12px;
 		}
 
 		.team-section {

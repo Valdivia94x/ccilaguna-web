@@ -35,9 +35,9 @@
 	.theme-toggle-container {
 		/* Posicionamiento flotante */
 		position: fixed;
-		top: 75px;
+		top: 95px;
 		right: 20px;
-		z-index: 1001;
+		z-index: 49;
 
 		/* Glassmorphic effect - matching navbar */
 		background: var(--navbar-glass-bg);
@@ -130,7 +130,7 @@
 
 	@media (max-width: 768px) {
 		.theme-toggle-container {
-			top: 55px;
+			top: 80px;
 			right: 15px;
 			padding: 8px 15px;
 		}
@@ -157,7 +157,7 @@
 
 	@media (max-width: 480px) {
 		.theme-toggle-container {
-			top: 50px;
+			top: 75px;
 			right: 10px;
 			padding: 6px 12px;
 		}

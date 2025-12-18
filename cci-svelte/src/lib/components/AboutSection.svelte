@@ -17,10 +17,10 @@
 <style>
 	.about-section {
 		background: var(--bg-about);
-		padding: 5px 50px 20px 50px;
+		padding: 0 50px;
 		display: grid;
 		grid-template-columns: 1fr 1fr;
-		gap: 20px;
+		gap: 10px;
 		align-items: center;
 		transition: background 0.3s ease;
 	}
@@ -56,8 +56,8 @@
 
 	@media (max-width: 1024px) {
 		.about-section {
-			padding: 20px 40px 80px 40px;
-			gap: 40px;
+			padding: 0 40px 40px 40px;
+			gap: 20px;
 		}
 
 		.about-content h2 {
@@ -67,9 +67,9 @@
 
 	@media (max-width: 768px) {
 		.about-section {
-			padding: 40px 20px 80px 20px;
+			padding: 20px 20px 40px 20px;
 			grid-template-columns: 1fr;
-			gap: 30px;
+			gap: 20px;
 		}
 
 		.about-content h2 {
@@ -83,7 +83,7 @@
 
 	@media (max-width: 480px) {
 		.about-section {
-			padding: 10px 15px 70px 15px;
+			padding: 10px 15px 30px 15px;
 		}
 
 		.about-content h2 {
