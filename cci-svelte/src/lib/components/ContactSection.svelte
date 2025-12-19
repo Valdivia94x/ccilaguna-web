@@ -50,10 +50,35 @@
 <section id="contacto" class="contact-section" aria-labelledby="contact-heading">
 	<!-- Título Contacto con banda -->
 	<div class="title-section" use:animarAlEntrar>
+		<div class="contact-header-icon">
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<!-- Sobre/Carta -->
+				<rect x="15" y="28" width="50" height="35" rx="3" />
+				<path d="M15 32 L40 50 L65 32" />
+
+				<!-- Líneas decorativas del sobre -->
+				<path d="M20 55 L35 55" stroke-width="1.5" opacity="0.5" />
+				<path d="M20 60 L30 60" stroke-width="1.5" opacity="0.5" />
+
+				<!-- Teléfono -->
+				<rect x="70" y="25" width="18" height="32" rx="3" />
+				<circle cx="79" cy="52" r="2" fill="currentColor" />
+				<path d="M74 30 L84 30" stroke-width="1.5" />
+
+				<!-- Ondas de comunicación -->
+				<path d="M55 18 Q60 15, 65 18" stroke-width="1.5" opacity="0.6" />
+				<path d="M52 12 Q60 7, 68 12" stroke-width="1.5" opacity="0.4" />
+
+				<!-- Pin de ubicación -->
+				<circle cx="30" cy="78" r="8" />
+				<circle cx="30" cy="78" r="3" fill="currentColor" />
+				<path d="M30 86 L30 95" stroke-width="2" />
+			</svg>
+		</div>
 		<h2 id="contact-heading" class="contact-title">Contacto</h2>
 	</div>
 
-	<p class="contact-description">{contactData.description}</p>
+	<p class="contact-description" use:animarAlEntrar>{contactData.description}</p>
 
 	<div class="contact-info">
 		<!-- Dirección -->
@@ -170,12 +195,13 @@
 
 	/* Banda horizontal del título */
 	.title-section {
-		background: linear-gradient(135deg, #e8f4f8 0%, #d4e9f7 100%);
+		background: linear-gradient(135deg, #e8f4f8 0%, #d4e9f7 50%, #c5dff0 100%);
 		height: 80px;
 		padding: 5px 50px;
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		gap: 24px;
 		position: relative;
 		margin: -70px -50px 40px -50px;
 		transition:
@@ -183,10 +209,21 @@
 			opacity 0.8s ease-out,
 			transform 0.8s ease-out;
 		overflow: visible;
+		box-shadow: 0 4px 12px rgba(74, 123, 167, 0.15);
 
 		/* Estado inicial para animación */
 		opacity: 0;
 		transform: translateY(30px);
+	}
+
+	.title-section::after {
+		content: '';
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		height: 3px;
+		background: linear-gradient(90deg, transparent 0%, rgba(74, 123, 167, 0.3) 50%, transparent 100%);
 	}
 
 	.title-section:global(.visible) {
@@ -195,13 +232,42 @@
 	}
 
 	:global([data-theme='dark']) .title-section {
-		background: #414a5e;
+		background: linear-gradient(135deg, #374151 0%, #414a5e 50%, #4b5563 100%);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+	}
+
+	:global([data-theme='dark']) .title-section::after {
+		background: linear-gradient(90deg, transparent 0%, rgba(255, 161, 0, 0.4) 50%, transparent 100%);
+	}
+
+	.contact-header-icon {
+		width: 70px;
+		height: 70px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: #4a7ba7;
+		transition: color 0.3s ease, transform 0.3s ease;
+	}
+
+	.contact-header-icon svg {
+		width: 100%;
+		height: 100%;
+	}
+
+	.title-section:hover .contact-header-icon {
+		transform: scale(1.05);
+	}
+
+	:global([data-theme='dark']) .contact-header-icon {
+		color: #ffa100;
 	}
 
 	.contact-title {
-		color: #000000;
+		color: #1a365d;
 		font-size: 42px;
-		font-weight: 600;
+		font-weight: 700;
+		letter-spacing: 3px;
 		text-transform: uppercase;
 		margin: 0;
 		text-align: center;
@@ -218,6 +284,18 @@
 		max-width: 800px;
 		margin: 0 auto 60px;
 		line-height: 1.6;
+
+		/* Estado inicial para animación */
+		opacity: 0;
+		transform: translateY(30px);
+		transition:
+			opacity 0.8s ease-out,
+			transform 0.8s ease-out;
+	}
+
+	.contact-description:global(.visible) {
+		opacity: 1;
+		transform: translateY(0);
 	}
 
 	.contact-info {
@@ -345,10 +423,17 @@
 		.title-section {
 			padding: 5px 20px;
 			margin: -60px -20px 40px -20px;
+			gap: 15px;
+		}
+
+		.contact-header-icon {
+			width: 55px;
+			height: 55px;
 		}
 
 		.contact-title {
-			font-size: 36px;
+			font-size: 32px;
+			letter-spacing: 2px;
 		}
 
 		.contact-description {
@@ -404,10 +489,17 @@
 		.title-section {
 			padding: 5px 15px;
 			margin: -50px -20px 30px -20px;
+			gap: 10px;
+		}
+
+		.contact-header-icon {
+			width: 45px;
+			height: 45px;
 		}
 
 		.contact-title {
-			font-size: 28px;
+			font-size: 22px;
+			letter-spacing: 1.5px;
 		}
 
 		.contact-description {

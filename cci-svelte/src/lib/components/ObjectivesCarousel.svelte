@@ -98,7 +98,23 @@
 
 	<!-- Título de Objetivos con banda -->
 	<div class="title-section" use:animarAlEntrar>
-		<img src="/images/stickers/objetivosSticker.png" alt="Objetivos Sticker" class="sticker" />
+		<div class="objectives-icon">
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<!-- Diana/Target -->
+				<circle cx="50" cy="50" r="35" />
+				<circle cx="50" cy="50" r="24" />
+				<circle cx="50" cy="50" r="12" />
+				<circle cx="50" cy="50" r="4" fill="currentColor" />
+
+				<!-- Flecha -->
+				<path d="M72 28 L50 50" stroke-width="2.5" />
+				<path d="M72 28 L62 30 M72 28 L70 38" stroke-width="2" />
+
+				<!-- Checkmarks pequeños -->
+				<path d="M18 75 L22 79 L30 71" stroke-width="2" opacity="0.6" />
+				<path d="M70 75 L74 79 L82 71" stroke-width="2" opacity="0.6" />
+			</svg>
+		</div>
 		<h2 id="objectives-heading" class="objectives-title">Objetivos</h2>
 	</div>
 
@@ -288,13 +304,13 @@
 
 	/* Banda horizontal del título */
 	.title-section {
-		background: linear-gradient(135deg, #e8f4f8 0%, #d4e9f7 100%);
+		background: linear-gradient(135deg, #e8f4f8 0%, #d4e9f7 50%, #c5dff0 100%);
 		height: 80px;
 		padding: 5px 50px;
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		gap: 20px;
+		gap: 24px;
 		position: relative;
 		margin: -70px -50px 40px -50px;
 		transition:
@@ -302,10 +318,21 @@
 			opacity 0.8s ease-out,
 			transform 0.8s ease-out;
 		overflow: visible;
+		box-shadow: 0 4px 12px rgba(74, 123, 167, 0.15);
 
 		/* Estado inicial para animación */
 		opacity: 0;
 		transform: translateY(30px);
+	}
+
+	.title-section::after {
+		content: '';
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		height: 3px;
+		background: linear-gradient(90deg, transparent 0%, rgba(74, 123, 167, 0.3) 50%, transparent 100%);
 	}
 
 	.title-section:global(.visible) {
@@ -314,23 +341,43 @@
 	}
 
 	:global([data-theme='dark']) .title-section {
-		background: #414a5e;
+		background: linear-gradient(135deg, #374151 0%, #414a5e 50%, #4b5563 100%);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 	}
 
-	.sticker {
-		height: 160px;
-		width: auto;
-		object-fit: contain;
-		position: relative;
-		top: -35px;
-		margin-bottom: -60px;
+	:global([data-theme='dark']) .title-section::after {
+		background: linear-gradient(90deg, transparent 0%, rgba(255, 161, 0, 0.4) 50%, transparent 100%);
+	}
+
+	.objectives-icon {
+		width: 70px;
+		height: 70px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: #4a7ba7;
+		transition: color 0.3s ease, transform 0.3s ease;
+	}
+
+	.objectives-icon svg {
+		width: 100%;
+		height: 100%;
+	}
+
+	.title-section:hover .objectives-icon {
+		transform: scale(1.05);
+	}
+
+	:global([data-theme='dark']) .objectives-icon {
+		color: #ffa100;
 	}
 
 	/* Título Objetivos */
 	.objectives-title {
-		color: #000000;
+		color: #1a365d;
 		font-size: 42px;
-		font-weight: 600;
+		font-weight: 700;
+		letter-spacing: 3px;
 		text-transform: uppercase;
 		margin: 0;
 		text-align: center;
@@ -552,14 +599,14 @@
 			gap: 15px;
 		}
 
-		.sticker {
-			height: 140px;
-			top: -30px;
-			margin-bottom: -50px;
+		.objectives-icon {
+			width: 55px;
+			height: 55px;
 		}
 
 		.objectives-title {
-			font-size: 36px;
+			font-size: 32px;
+			letter-spacing: 2px;
 		}
 
 		.carousel-container {
@@ -622,14 +669,14 @@
 			gap: 10px;
 		}
 
-		.sticker {
-			height: 110px;
-			top: -40px;
-			margin-bottom: -40px;
+		.objectives-icon {
+			width: 45px;
+			height: 45px;
 		}
 
 		.objectives-title {
-			font-size: 28px;
+			font-size: 22px;
+			letter-spacing: 1.5px;
 		}
 
 		.carousel-container {
