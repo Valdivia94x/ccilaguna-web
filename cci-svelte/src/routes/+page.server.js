@@ -3,7 +3,6 @@ import { client } from '$lib/sanity';
 export async function load() {
   try {
     // Query para los LOGOS (Aliados)
-    // Los ordenamos por fecha de creación para que los nuevos salgan al final (o al principio)
     const alliesQuery = `*[_type == "ally"] | order(orderRank asc) {
       _id,
       name,
@@ -17,15 +16,29 @@ export async function load() {
       url
     }`;
 
-    const allies = await client.fetch(alliesQuery);
+    // Query para el Carousel
+    const carouselQuery = `*[_type == "carousel"][0]{
+      images[]{
+        descripcion,
+        "imageUrl": imagen.asset->url,
+        "hotspot": imagen.hotspot
+      }
+    }`;
+
+    const [allies, carouselData] = await Promise.all([
+      client.fetch(alliesQuery),
+      client.fetch(carouselQuery)
+    ]);
 
     return {
-      allies: allies || []
+      allies: allies || [],
+      carouselSlides: carouselData?.images || []
     };
   } catch (error) {
-    console.error('Error fetching allies:', error);
+    console.error('Error fetching data:', error);
     return {
-      allies: []
+      allies: [],
+      carouselSlides: []
     };
   }
 }

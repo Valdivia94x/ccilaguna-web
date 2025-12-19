@@ -2,8 +2,12 @@
 	import { onMount, onDestroy } from 'svelte';
 
 	interface Slide {
-		image: string;
-		alt: string;
+		imageUrl: string;
+		descripcion: string;
+		hotspot?: {
+			x: number;
+			y: number;
+		} | null;
 	}
 
 	let { slides }: { slides: Slide[] } = $props();
@@ -124,7 +128,11 @@
 				aria-roledescription="slide"
 				aria-hidden={index !== currentSlide}
 			>
-				<img src={slide.image} alt={slide.alt} />
+				<img
+					src={slide.imageUrl}
+					alt={slide.descripcion}
+					style={slide.hotspot ? `object-position: ${slide.hotspot.x * 100}% ${slide.hotspot.y * 100}%` : ''}
+				/>
 			</div>
 		{/each}
 
@@ -135,6 +143,9 @@
 					CCI CONSEJO CÍVICO DE LAS<br />
 					INSTITUCIONES LAGUNA
 				</h1>
+				{#if slides[currentSlide]?.descripcion}
+					<p class="overlay-description">{slides[currentSlide].descripcion}</p>
+				{/if}
 			</div>
 		</div>
 	</div>
@@ -255,11 +266,21 @@
 		font-size: 36px;
 		font-weight: 700;
 		line-height: 1.2;
-		margin-bottom: 25px;
+		margin-bottom: 15px;
 		text-transform: uppercase;
 		letter-spacing: 1.5px;
 		text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
 		text-align: left;
+	}
+
+	.overlay-description {
+		font-size: 18px;
+		font-weight: 400;
+		line-height: 1.4;
+		color: rgba(255, 255, 255, 0.9);
+		text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
+		text-align: left;
+		margin: 0;
 	}
 
 	/* Navigation arrows with semi-transparent background */
@@ -371,8 +392,13 @@
 
 		.overlay-title {
 			font-size: 24px;
-			margin-bottom: 20px;
+			margin-bottom: 12px;
 			letter-spacing: 1px;
+			text-align: center;
+		}
+
+		.overlay-description {
+			font-size: 15px;
 			text-align: center;
 		}
 
@@ -420,7 +446,11 @@
 
 		.overlay-title {
 			font-size: 18px;
-			margin-bottom: 15px;
+			margin-bottom: 10px;
+		}
+
+		.overlay-description {
+			font-size: 13px;
 		}
 
 		.carousel-nav {

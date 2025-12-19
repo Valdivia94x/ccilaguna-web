@@ -36,21 +36,8 @@
 
 	let { data } = $props();
 
-	// Datos del carrusel
-	const carouselSlides = [
-		{
-			image: '/images/imagenCarrusel1.png',
-			alt: 'Asamblea General de Socios Activos del Consejo Cívico de Laguna'
-		},
-		{
-			image: '/images/imagenCarrusel2.png',
-			alt: 'Ciudad de Torreón'
-		},
-		{
-			image: '/images/imagenCarrusel3.png',
-			alt: 'Reunión de trabajo del Consejo Cívico de Laguna'
-		}
-	];
+	// Datos del carrusel desde Sanity
+	let carouselSlides = $derived(data.carouselSlides || []);
 
 	// Datos de la sección "Quiénes somos"
 	const aboutData = {

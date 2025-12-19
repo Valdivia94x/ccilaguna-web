@@ -6,5 +6,6 @@ import ally from './ally'
 import regidorReport from './regidorReport'
 import agendaDocument from './agendaDocument'
 import publication from './publication'
+import carousel from './carousel'
 
-export const schemaTypes = [post, report, newsletter, ally, regidorReport, agendaDocument, publication]
+export const schemaTypes = [post, report, newsletter, ally, regidorReport, agendaDocument, publication, carousel]
