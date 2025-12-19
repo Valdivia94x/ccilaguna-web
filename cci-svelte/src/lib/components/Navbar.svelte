@@ -3,6 +3,21 @@
 	import { browser } from '$app/environment';
 
 	let isMenuOpen = $state(false);
+	let isProjectsDropdownOpen = $state(false);
+
+	// Lista de proyectos (mismos que InteractiveProyectos)
+	const proyectos = [
+		{ title: 'Observatorio de la Laguna', href: 'https://observatoriodelalaguna.org.mx/', external: true },
+		{ title: 'MIDLAG', href: '/midlag', external: false },
+		{ title: 'Regidor MX Laguna', href: '/regidor-mx', external: false },
+		{ title: 'Mesa de Seguridad y Justicia', href: '/mesa-seguridad', external: false },
+		{
+			title: 'Karewa Laguna',
+			href: 'https://www.karewalaguna.org/select-organization?redirectTo=%2F',
+			external: true
+		},
+		{ title: 'Agenda Anticorrupción', href: '/agenda-anticorrupcion', external: false }
+	];
 
 	function toggleMenu() {
 		isMenuOpen = !isMenuOpen;
@@ -10,6 +25,19 @@
 
 	function closeMenu() {
 		isMenuOpen = false;
+		isProjectsDropdownOpen = false;
+	}
+
+	function toggleProjectsDropdown() {
+		isProjectsDropdownOpen = !isProjectsDropdownOpen;
+	}
+
+	function openProjectsDropdown() {
+		isProjectsDropdownOpen = true;
+	}
+
+	function closeProjectsDropdown() {
+		isProjectsDropdownOpen = false;
 	}
 
 	$effect(() => {
@@ -80,6 +108,52 @@
 			<li role="none"><a href="/" role="menuitem" onclick={closeMenu}>INICIO</a></li>
 			<li class="nav-separator" aria-hidden="true">|</li>
 			<li role="none"><a href="/nosotros" role="menuitem" onclick={closeMenu}>NOSOTROS</a></li>
+			<li class="nav-separator" aria-hidden="true">|</li>
+			<li
+				class="nav-dropdown"
+				role="none"
+				onmouseenter={openProjectsDropdown}
+				onmouseleave={closeProjectsDropdown}
+			>
+				<button
+					class="nav-dropdown-trigger"
+					role="menuitem"
+					aria-haspopup="true"
+					aria-expanded={isProjectsDropdownOpen}
+					onclick={toggleProjectsDropdown}
+				>
+					PROYECTOS
+					<svg class="dropdown-arrow" class:open={isProjectsDropdownOpen} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<polyline points="6 9 12 15 18 9"></polyline>
+					</svg>
+				</button>
+				<ul class="dropdown-menu" class:open={isProjectsDropdownOpen} role="menu">
+					{#each proyectos as proyecto}
+						<li role="none">
+							{#if proyecto.external}
+								<a
+									href={proyecto.href}
+									target="_blank"
+									rel="noopener noreferrer"
+									role="menuitem"
+									onclick={closeMenu}
+								>
+									{proyecto.title}
+									<svg class="external-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+										<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+										<polyline points="15 3 21 3 21 9"></polyline>
+										<line x1="10" y1="14" x2="21" y2="3"></line>
+									</svg>
+								</a>
+							{:else}
+								<a href={proyecto.href} role="menuitem" onclick={closeMenu}>
+									{proyecto.title}
+								</a>
+							{/if}
+						</li>
+					{/each}
+				</ul>
+			</li>
 			<li class="nav-separator" aria-hidden="true">|</li>
 			<li role="none"><a href="/blog" role="menuitem" onclick={closeMenu}>BLOG</a></li>
 			<li class="nav-separator" aria-hidden="true">|</li>
@@ -231,6 +305,100 @@
 		color: var(--nav-text-hover);
 	}
 
+	/* Dropdown styles */
+	.nav-dropdown {
+		position: relative;
+	}
+
+	.nav-dropdown-trigger {
+		color: var(--nav-text);
+		background: none;
+		border: none;
+		font-size: 14px;
+		font-weight: 600;
+		letter-spacing: 0.025em;
+		cursor: pointer;
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		padding: 8px 12px;
+		border-radius: 6px;
+		transition: color 0.3s ease;
+		font-family: inherit;
+	}
+
+	.nav-dropdown-trigger:hover {
+		color: var(--nav-text-hover);
+	}
+
+	.dropdown-arrow {
+		width: 14px;
+		height: 14px;
+		transition: transform 0.3s ease;
+	}
+
+	.dropdown-arrow.open {
+		transform: rotate(180deg);
+	}
+
+	.dropdown-menu {
+		position: absolute;
+		top: 100%;
+		left: 50%;
+		transform: translateX(-50%);
+		background: var(--card-bg);
+		border: 1px solid var(--navbar-border);
+		border-radius: 12px;
+		padding: 8px 0;
+		min-width: 240px;
+		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+		opacity: 0;
+		visibility: hidden;
+		transition: all 0.3s ease;
+		z-index: 100;
+		list-style: none;
+		margin: 0;
+	}
+
+	.dropdown-menu.open {
+		opacity: 1;
+		visibility: visible;
+	}
+
+	.dropdown-menu li {
+		margin: 0;
+		padding: 0;
+	}
+
+	.dropdown-menu a {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 12px 20px;
+		color: var(--text-primary);
+		text-decoration: none;
+		font-size: 14px;
+		font-weight: 500;
+		transition: all 0.2s ease;
+		border-radius: 0;
+	}
+
+	.dropdown-menu a:hover {
+		background: var(--navbar-border);
+		color: var(--nav-text-hover);
+	}
+
+	.external-icon {
+		width: 14px;
+		height: 14px;
+		opacity: 0.5;
+		flex-shrink: 0;
+	}
+
+	.dropdown-menu a:hover .external-icon {
+		opacity: 0.8;
+	}
+
 	.social-icons {
 		display: flex;
 		gap: 12px;
@@ -357,6 +525,11 @@
 			padding: 6px 8px;
 			font-size: 13px;
 		}
+
+		.nav-dropdown-trigger {
+			padding: 6px 8px;
+			font-size: 13px;
+		}
 	}
 
 	/* Mobile */
@@ -432,6 +605,54 @@
 
 		.nav-separator {
 			display: none;
+		}
+
+		/* Dropdown en móvil */
+		.nav-dropdown {
+			width: 100%;
+		}
+
+		.nav-dropdown-trigger {
+			width: 100%;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 16px 0;
+			font-size: 18px;
+			border-bottom: 1px solid var(--navbar-border);
+			border-radius: 0;
+		}
+
+		.dropdown-menu {
+			position: static;
+			transform: none;
+			width: 100%;
+			border: none;
+			border-radius: 0;
+			box-shadow: none;
+			padding: 0;
+			background: transparent;
+			max-height: 0;
+			overflow: hidden;
+			opacity: 1;
+			visibility: visible;
+			transition: max-height 0.3s ease;
+		}
+
+		.dropdown-menu.open {
+			max-height: 500px;
+		}
+
+		.dropdown-menu a {
+			padding: 14px 20px;
+			font-size: 16px;
+			border-bottom: 1px solid var(--navbar-border);
+			background: var(--navbar-border);
+		}
+
+		.dropdown-menu a:hover {
+			background: var(--nav-text-hover);
+			color: white;
 		}
 
 		.social-icons {

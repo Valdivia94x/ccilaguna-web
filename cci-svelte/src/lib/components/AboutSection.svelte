@@ -46,7 +46,7 @@
 <style>
 	.about-section {
 		background: var(--bg-about);
-		padding: 0 50px;
+		padding: 0 50px 80px 50px;
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		gap: 10px;
@@ -109,7 +109,7 @@
 
 	@media (max-width: 1024px) {
 		.about-section {
-			padding: 0 40px 40px 40px;
+			padding: 0 40px 70px 40px;
 			gap: 20px;
 		}
 
@@ -120,7 +120,7 @@
 
 	@media (max-width: 768px) {
 		.about-section {
-			padding: 20px 20px 40px 20px;
+			padding: 20px 20px 60px 20px;
 			grid-template-columns: 1fr;
 			gap: 20px;
 		}
@@ -136,7 +136,7 @@
 
 	@media (max-width: 480px) {
 		.about-section {
-			padding: 10px 15px 30px 15px;
+			padding: 10px 15px 50px 15px;
 		}
 
 		.about-content h2 {
