@@ -488,14 +488,7 @@
 		transform: rotate(-45deg) translate(6px, -6px);
 	}
 
-	/* Large screens */
-	@media (min-width: 1024px) {
-		.navbar {
-			padding: 16px 32px;
-		}
-	}
-
-	/* Extra large screens */
+	/* Extra large screens (1280px+) */
 	@media (min-width: 1280px) {
 		.navbar {
 			padding: 16px 48px;
@@ -503,36 +496,219 @@
 
 		.nav-menu a {
 			font-size: 16px;
-		}
-
-		.btn-donar {
-			font-size: 16px;
-			padding: 12px 28px;
-		}
-	}
-
-	/* Tablet y pantallas medianas */
-	@media (max-width: 1024px) {
-		.navbar-logo img {
-			height: 56px;
-		}
-
-		.nav-menu {
-			gap: 4px;
-		}
-
-		.nav-menu a {
-			padding: 6px 8px;
-			font-size: 13px;
+			padding: 8px 12px;
 		}
 
 		.nav-dropdown-trigger {
-			padding: 6px 8px;
-			font-size: 13px;
+			font-size: 16px;
+			padding: 8px 12px;
+		}
+
+		.btn-donar {
+			font-size: 14px;
+			padding: 10px 24px;
+		}
+
+		.navbar-logo img {
+			height: 64px;
 		}
 	}
 
-	/* Mobile */
+	/* Large screens (1024px - 1279px) */
+	@media (min-width: 1024px) and (max-width: 1279px) {
+		.navbar {
+			padding: 14px 24px;
+		}
+
+		.navbar-logo img {
+			height: 52px;
+		}
+
+		.navbar-right-content {
+			gap: 1rem;
+		}
+
+		.nav-menu {
+			gap: 2px;
+		}
+
+		.nav-menu a {
+			font-size: 12px;
+			padding: 6px 6px;
+		}
+
+		.nav-dropdown-trigger {
+			font-size: 12px;
+			padding: 6px 6px;
+		}
+
+		.nav-separator {
+			font-size: 12px;
+			padding: 0 2px;
+		}
+
+		.social-icons {
+			gap: 6px;
+		}
+
+		.social-icons a {
+			width: 30px;
+			height: 30px;
+		}
+
+		.social-icon {
+			width: 20px;
+			height: 20px;
+		}
+
+		.btn-donar {
+			font-size: 11px;
+			padding: 8px 16px;
+		}
+
+		.dropdown-arrow {
+			width: 12px;
+			height: 12px;
+		}
+	}
+
+	/* Medium screens (900px - 1023px) */
+	@media (min-width: 900px) and (max-width: 1023px) {
+		.navbar {
+			padding: 12px 16px;
+		}
+
+		.navbar-logo img {
+			height: 44px;
+		}
+
+		.navbar-right-content {
+			gap: 0.75rem;
+		}
+
+		.nav-menu {
+			gap: 1px;
+		}
+
+		.nav-menu a {
+			font-size: 10px;
+			padding: 5px 4px;
+		}
+
+		.nav-dropdown-trigger {
+			font-size: 10px;
+			padding: 5px 4px;
+			gap: 2px;
+		}
+
+		.nav-separator {
+			font-size: 10px;
+			padding: 0 1px;
+		}
+
+		.social-icons {
+			gap: 4px;
+		}
+
+		.social-icons a {
+			width: 26px;
+			height: 26px;
+		}
+
+		.social-icon {
+			width: 18px;
+			height: 18px;
+		}
+
+		.btn-donar {
+			font-size: 10px;
+			padding: 6px 12px;
+		}
+
+		.dropdown-arrow {
+			width: 10px;
+			height: 10px;
+		}
+
+		.dropdown-menu {
+			min-width: 200px;
+		}
+
+		.dropdown-menu a {
+			padding: 10px 16px;
+			font-size: 12px;
+		}
+	}
+
+	/* Small-medium screens (769px - 899px) */
+	@media (min-width: 769px) and (max-width: 899px) {
+		.navbar {
+			padding: 10px 12px;
+		}
+
+		.navbar-logo img {
+			height: 40px;
+		}
+
+		.navbar-right-content {
+			gap: 0.5rem;
+		}
+
+		.nav-menu {
+			gap: 0;
+		}
+
+		.nav-menu a {
+			font-size: 9px;
+			padding: 4px 3px;
+		}
+
+		.nav-dropdown-trigger {
+			font-size: 9px;
+			padding: 4px 3px;
+			gap: 1px;
+		}
+
+		.nav-separator {
+			font-size: 9px;
+			padding: 0;
+		}
+
+		.social-icons {
+			gap: 2px;
+		}
+
+		.social-icons a {
+			width: 24px;
+			height: 24px;
+		}
+
+		.social-icon {
+			width: 16px;
+			height: 16px;
+		}
+
+		.btn-donar {
+			font-size: 9px;
+			padding: 5px 10px;
+		}
+
+		.dropdown-arrow {
+			width: 9px;
+			height: 9px;
+		}
+
+		.dropdown-menu {
+			min-width: 180px;
+		}
+
+		.dropdown-menu a {
+			padding: 8px 12px;
+			font-size: 11px;
+		}
+	}
+
+	/* Mobile - Menú hamburger activo */
 	@media (max-width: 768px) {
 		.navbar {
 			padding: 16px 16px;
