@@ -5,7 +5,7 @@
 	import Carousel from '$lib/components/Carousel.svelte';
 	import AboutSection from '$lib/components/AboutSection.svelte';
 	import LogoGrid from '$lib/components/LogoGrid.svelte';
-	import ObjectivesCarousel from '$lib/components/ObjectivesCarousel.svelte';
+	import LatestContentCarousel from '$lib/components/LatestContentCarousel.svelte';
 	import ContactSection from '$lib/components/ContactSection.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import { urlFor } from '$lib/sanity';
@@ -69,35 +69,12 @@
 		logos: logosReales
 	});
 
-	// Datos de objetivos
-	const objectivesData = {
-		mission:
-			'Promover y organizar la participación para desarrollar buenos gobiernos y mejores ciudadanos en la Comarca Lagunera.',
-		objectives: [
-			{
-				number: 1,
-				title: 'Constituirse como referente',
-				description:
-					'en materia de seguridad, ejercicio ciudadano, transparencia y rendición de cuentas.'
-			},
-			{
-				number: 2,
-				title: 'Generar una relación cercana',
-				description: 'Consejo Cívico de las instituciones Laguna. - Comunidad Lagunera'
-			},
-			{
-				number: 3,
-				title: 'Crear mecanismo de transparencia y rendición',
-				description: 'de cuentas para el combate a la corrupción y a la impunidad.'
-			},
-			{
-				number: 4,
-				title: 'Establecer procesos de comunicación',
-				description:
-					'y colaboración que faciliten la participación ciudadana en las políticas y asuntos públicos.'
-			}
-		]
-	};
+	// Mision para el componente de publicaciones recientes
+	const missionText =
+		'Promover y organizar la participación para desarrollar buenos gobiernos y mejores ciudadanos en la Comarca Lagunera.';
+
+	// Datos de contenido reciente desde Sanity
+	let latestContent = $derived(data.latestContent || []);
 
 	// Datos de contacto
 	const contactData = {
@@ -156,8 +133,8 @@
 	<div bind:this={aboutSectionRef} class="fade-up" class:visible={aboutVisible}>
 		<AboutSection title={aboutData.title} content={aboutData.content} image={aboutData.image} />
 	</div>
+	<LatestContentCarousel items={latestContent} mission={missionText} />
 	<LogoGrid title={adherentesData.title} logos={adherentesData.logos} />
-	<ObjectivesCarousel mission={objectivesData.mission} objectives={objectivesData.objectives} />
 	<ContactSection {contactData} />
 	<Footer />
 </div>

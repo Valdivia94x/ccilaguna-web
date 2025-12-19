@@ -1,17 +1,67 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 
-	interface Objective {
-		number: number;
+	interface ContentItem {
+		_id: string;
+		_type: 'post' | 'publication' | 'newsletter' | 'report';
 		title: string;
-		description: string;
+		slug: string;
+		date: string;
+		image: string | null;
+		excerpt: string | null;
+		category?: string;
 	}
 
-	let { objectives, mission }: { objectives: Objective[]; mission: string } = $props();
+	let { items, mission }: { items: ContentItem[]; mission: string } = $props();
 
 	let currentIndex = $state(0);
 	let isPaused = $state(false);
 	let intervalId: number | undefined;
+
+	// Configuración de tipos de contenido
+	const typeConfig = {
+		post: {
+			label: 'Blog',
+			color: '#3b82f6',
+			darkColor: '#60a5fa',
+			route: '/blog'
+		},
+		publication: {
+			label: 'Publicacion',
+			color: '#10b981',
+			darkColor: '#34d399',
+			route: '/publicaciones'
+		},
+		newsletter: {
+			label: 'Boletin',
+			color: '#f59e0b',
+			darkColor: '#fbbf24',
+			route: '/boletines'
+		},
+		report: {
+			label: 'Informe',
+			color: '#8b5cf6',
+			darkColor: '#a78bfa',
+			route: '/informes'
+		}
+	};
+
+	function getItemUrl(item: ContentItem): string {
+		const config = typeConfig[item._type];
+		if (item._type === 'report') {
+			return config.route;
+		}
+		return `${config.route}/${item.slug}`;
+	}
+
+	function formatDate(dateString: string): string {
+		const date = new Date(dateString);
+		return date.toLocaleDateString('es-MX', {
+			day: 'numeric',
+			month: 'long',
+			year: 'numeric'
+		});
+	}
 
 	function animarAlEntrar(node: HTMLElement, options?: { threshold?: number }) {
 		const threshold = options?.threshold ?? 0.15;
@@ -42,11 +92,15 @@
 	}
 
 	function nextSlide() {
-		currentIndex = (currentIndex + 1) % objectives.length;
+		if (items.length > 0) {
+			currentIndex = (currentIndex + 1) % items.length;
+		}
 	}
 
 	function prevSlide() {
-		currentIndex = (currentIndex - 1 + objectives.length) % objectives.length;
+		if (items.length > 0) {
+			currentIndex = (currentIndex - 1 + items.length) % items.length;
+		}
 	}
 
 	function goToSlide(index: number) {
@@ -86,113 +140,133 @@
 	}
 </script>
 
-<section id="objetivos" class="objectives-section" aria-labelledby="objectives-heading">
-	<!-- Misión -->
-	<div class="mission-wrapper">
-		<div class="mission-card" use:animarAlEntrar>
-			<span class="quote-watermark">"</span>
-			<span class="mission-label">NUESTRA MISIÓN</span>
-			<p class="mission-text">{mission}</p>
-		</div>
-	</div>
-
-	<!-- Título de Objetivos con banda -->
+<section id="publicaciones-recientes" class="content-section" aria-labelledby="content-heading">
+	<!-- Titulo con banda -->
 	<div class="title-section" use:animarAlEntrar>
-		<div class="objectives-icon">
+		<div class="content-icon">
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-				<!-- Diana/Target -->
-				<circle cx="50" cy="50" r="35" />
-				<circle cx="50" cy="50" r="24" />
-				<circle cx="50" cy="50" r="12" />
-				<circle cx="50" cy="50" r="4" fill="currentColor" />
+				<!-- Documento/Publicacion -->
+				<rect x="20" y="10" width="50" height="65" rx="3" />
+				<rect x="30" y="25" width="60" height="65" rx="3" fill="var(--bg-primary, white)" />
 
-				<!-- Flecha -->
-				<path d="M72 28 L50 50" stroke-width="2.5" />
-				<path d="M72 28 L62 30 M72 28 L70 38" stroke-width="2" />
+				<!-- Lineas de texto -->
+				<line x1="38" y1="40" x2="78" y2="40" stroke-width="2.5" />
+				<line x1="38" y1="52" x2="72" y2="52" opacity="0.7" />
+				<line x1="38" y1="62" x2="75" y2="62" opacity="0.7" />
+				<line x1="38" y1="72" x2="65" y2="72" opacity="0.7" />
 
-				<!-- Checkmarks pequeños -->
-				<path d="M18 75 L22 79 L30 71" stroke-width="2" opacity="0.6" />
-				<path d="M70 75 L74 79 L82 71" stroke-width="2" opacity="0.6" />
+				<!-- Indicador de "nuevo" -->
+				<circle cx="78" cy="30" r="8" fill="currentColor" stroke="none" />
 			</svg>
 		</div>
-		<h2 id="objectives-heading" class="objectives-title">Objetivos</h2>
+		<h2 id="content-heading" class="content-title">Publicaciones mas recientes</h2>
 	</div>
 
-	<!-- Carrusel de Objetivos -->
+	<!-- Carrusel de contenido -->
 	<div
 		class="carousel-container"
 		use:animarAlEntrar={{ threshold: 0.3 }}
 		onmouseenter={handleMouseEnter}
 		onmouseleave={handleMouseLeave}
 		role="region"
-		aria-label="Carrusel de objetivos"
+		aria-label="Carrusel de publicaciones recientes"
 	>
-		<button class="carousel-btn prev" onclick={prevSlide} aria-label="Objetivo anterior">
+		<button class="carousel-btn prev" onclick={prevSlide} aria-label="Publicacion anterior">
 			&#10094;
 		</button>
 
-		<div class="objectives-carousel">
-			{#each objectives as objective, index (objective.number)}
-				<div
-					class="objective-card"
-					class:active={index === currentIndex}
-					aria-hidden={index !== currentIndex}
-				>
-					{#if index < 4}
-						<div class="objective-image">
-							<img
-								src="/images/objetivos/{['constituirse', 'generar', 'crear', 'establecer'][
-									index
-								]}.svg"
-								alt="Objetivo {objective.number}"
-							/>
-						</div>
-					{:else}
-						<div class="objective-number">
-							<span>{objective.number}</span>
-						</div>
-					{/if}
-					<h3 class="objective-title">{objective.title}</h3>
-					<p class="objective-description">{objective.description}</p>
+		<div class="content-carousel">
+			{#if items.length === 0}
+				<div class="empty-state">
+					<p>No hay publicaciones recientes disponibles.</p>
 				</div>
-			{/each}
+			{:else}
+				{#each items as item, index (item._id)}
+					{@const config = typeConfig[item._type]}
+					<div
+						class="content-card"
+						class:active={index === currentIndex}
+						aria-hidden={index !== currentIndex}
+					>
+						<a href={getItemUrl(item)} class="card-link">
+							<div class="card-image-container">
+								{#if item.image}
+									<img src={item.image} alt={item.title} class="card-image" />
+								{:else}
+									<div class="card-image-placeholder" style="background-color: {config.color}20">
+										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke={config.color} stroke-width="1.5">
+											<rect x="3" y="3" width="18" height="18" rx="2" />
+											<line x1="7" y1="10" x2="17" y2="10" />
+											<line x1="7" y1="14" x2="14" y2="14" />
+										</svg>
+									</div>
+								{/if}
+								<span
+									class="type-badge"
+									style="--badge-color: {config.color}; --badge-color-dark: {config.darkColor}"
+								>
+									{config.label}
+								</span>
+							</div>
+							<div class="card-content">
+								<span class="card-date">{formatDate(item.date)}</span>
+								<h3 class="card-title">{item.title}</h3>
+								{#if item.excerpt}
+									<p class="card-excerpt">{item.excerpt}</p>
+								{/if}
+								<span class="card-cta">Ver mas &rarr;</span>
+							</div>
+						</a>
+					</div>
+				{/each}
+			{/if}
 		</div>
 
-		<button class="carousel-btn next" onclick={nextSlide} aria-label="Objetivo siguiente">
+		<button class="carousel-btn next" onclick={nextSlide} aria-label="Publicacion siguiente">
 			&#10095;
 		</button>
 	</div>
 
 	<!-- Indicadores -->
-	<div class="carousel-indicators" role="tablist" aria-label="Navegación de objetivos">
-		{#each objectives as objective, index (objective.number)}
-			<button
-				class="indicator"
-				class:active={index === currentIndex}
-				onclick={() => goToSlide(index)}
-				aria-label={`Ir al objetivo ${objective.number}`}
-				aria-selected={index === currentIndex}
-				role="tab"
-			></button>
-		{/each}
+	{#if items.length > 0}
+		<div class="carousel-indicators" role="tablist" aria-label="Navegacion de publicaciones">
+			{#each items as item, index (item._id)}
+				<button
+					class="indicator"
+					class:active={index === currentIndex}
+					onclick={() => goToSlide(index)}
+					aria-label={`Ir a publicacion ${index + 1}`}
+					aria-selected={index === currentIndex}
+					role="tab"
+				></button>
+			{/each}
+		</div>
+	{/if}
+
+	<!-- Mision (debajo del carrusel) -->
+	<div class="mission-wrapper">
+		<div class="mission-card" use:animarAlEntrar>
+			<span class="quote-watermark">"</span>
+			<span class="mission-label">NUESTRA MISION</span>
+			<p class="mission-text">{mission}</p>
+		</div>
 	</div>
 </section>
 
 <style>
-	.objectives-section {
-		padding: 30px 50px 100px 50px;
-		padding-top: 70px;
+	.content-section {
+		padding: 30px 50px 30px 50px;
+		padding-top: 100px;
 		background: var(--bg-objectives);
 		transition: background 0.3s ease;
 		overflow: visible;
 	}
 
-	/* Misión */
+	/* Mision (debajo del carrusel) */
 	.mission-wrapper {
 		background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
-		padding: 30px 50px;
-		margin: -70px -50px 0 -50px;
-		margin-bottom: 150px;
+		padding: 60px 50px;
+		margin: 60px -50px -30px -50px;
 		transition: background 0.3s ease;
 	}
 
@@ -201,25 +275,18 @@
 	}
 
 	.mission-card {
-		/* Estado Inicial: Invisible, pequeño y desplazado abajo */
 		opacity: 0;
 		transform: scale(0.9) translateY(30px);
-
-		/* Suavidad de la animación */
 		transition:
 			opacity 0.8s ease-out,
 			transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-
 		will-change: opacity, transform;
 		transition-delay: 0.2s;
-
 		max-width: 900px;
 		margin: 0 auto;
 		text-align: center;
 		position: relative;
 		overflow: hidden;
-
-		/* Tarjeta azul */
 		background: linear-gradient(135deg, #d4e9f7 0%, #e8f4f8 100%);
 		padding: 50px 60px;
 		border-radius: 16px;
@@ -302,7 +369,7 @@
 		color: #e2e8f0;
 	}
 
-	/* Banda horizontal del título */
+	/* Banda horizontal del titulo */
 	.title-section {
 		background: linear-gradient(135deg, #e8f4f8 0%, #d4e9f7 50%, #c5dff0 100%);
 		height: 80px;
@@ -312,17 +379,15 @@
 		align-items: center;
 		gap: 24px;
 		position: relative;
-		margin: -70px -50px 40px -50px;
+		margin: -100px -50px 40px -50px;
 		transition:
 			background 0.3s ease,
-			opacity 0.8s ease-out,
-			transform 0.8s ease-out;
+			opacity 1s cubic-bezier(0.22, 1, 0.36, 1),
+			transform 1s cubic-bezier(0.22, 1, 0.36, 1);
 		overflow: visible;
 		box-shadow: 0 4px 12px rgba(74, 123, 167, 0.15);
-
-		/* Estado inicial para animación */
 		opacity: 0;
-		transform: translateY(30px);
+		transform: translateY(60px) scale(0.95);
 	}
 
 	.title-section::after {
@@ -337,7 +402,7 @@
 
 	.title-section:global(.visible) {
 		opacity: 1;
-		transform: translateY(0);
+		transform: translateY(0) scale(1);
 	}
 
 	:global([data-theme='dark']) .title-section {
@@ -349,7 +414,7 @@
 		background: linear-gradient(90deg, transparent 0%, rgba(255, 161, 0, 0.4) 50%, transparent 100%);
 	}
 
-	.objectives-icon {
+	.content-icon {
 		width: 70px;
 		height: 70px;
 		display: flex;
@@ -359,21 +424,20 @@
 		transition: color 0.3s ease, transform 0.3s ease;
 	}
 
-	.objectives-icon svg {
+	.content-icon svg {
 		width: 100%;
 		height: 100%;
 	}
 
-	.title-section:hover .objectives-icon {
+	.title-section:hover .content-icon {
 		transform: scale(1.05);
 	}
 
-	:global([data-theme='dark']) .objectives-icon {
+	:global([data-theme='dark']) .content-icon {
 		color: #ffa100;
 	}
 
-	/* Título Objetivos */
-	.objectives-title {
+	.content-title {
 		color: #1a365d;
 		font-size: 42px;
 		font-weight: 700;
@@ -384,7 +448,7 @@
 		transition: color 0.3s ease;
 	}
 
-	:global([data-theme='dark']) .objectives-title {
+	:global([data-theme='dark']) .content-title {
 		color: #ffa100;
 	}
 
@@ -394,8 +458,6 @@
 		max-width: 800px;
 		margin: 0 auto;
 		padding: 20px 80px;
-
-		/* Estado inicial para animación - más pronunciado */
 		opacity: 0;
 		transform: translateY(60px);
 		transition:
@@ -408,103 +470,169 @@
 		transform: translateY(0);
 	}
 
-	.objectives-carousel {
+	.content-carousel {
 		position: relative;
 		width: 100%;
-		min-height: 400px;
+		min-height: 480px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 	}
 
-	.objective-card {
+	.empty-state {
+		text-align: center;
+		color: var(--text-secondary);
+		font-size: 18px;
+		padding: 60px 20px;
+	}
+
+	/* Tarjeta de contenido */
+	.content-card {
 		position: absolute;
 		width: 100%;
+		max-width: 500px;
 		opacity: 0;
 		transform: scale(0.8);
 		transition:
 			opacity 0.5s ease,
 			transform 0.5s ease;
 		pointer-events: none;
-		text-align: center;
-		padding: 40px 40px;
-		background: var(--card-bg);
-		border-radius: 20px;
-		box-shadow: 0 10px 30px var(--card-shadow);
 	}
 
-	.objective-card.active {
+	.content-card.active {
 		opacity: 1;
 		transform: scale(1);
 		pointer-events: auto;
 		z-index: 1;
 	}
 
-	.objective-image {
-		width: 100px;
-		height: 100px;
-		margin: 0 auto 30px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		position: relative;
+	.card-link {
+		display: block;
+		text-decoration: none;
+		color: inherit;
+		background: var(--card-bg);
+		border-radius: 16px;
+		overflow: hidden;
+		box-shadow: 0 10px 30px var(--card-shadow);
+		transition: transform 0.3s ease, box-shadow 0.3s ease;
 	}
 
-	.objective-image img {
+	.card-link:hover {
+		transform: translateY(-5px);
+		box-shadow: 0 15px 40px var(--card-shadow);
+	}
+
+	.card-image-container {
+		position: relative;
+		width: 100%;
+		aspect-ratio: 16 / 9;
+		overflow: hidden;
+		background: #f3f4f6;
+	}
+
+	:global([data-theme='dark']) .card-image-container {
+		background: #374151;
+	}
+
+	.card-image {
 		width: 100%;
 		height: 100%;
-		object-fit: contain;
+		object-fit: cover;
+		transition: transform 0.3s ease;
 	}
 
-	:global([data-theme='dark']) .objective-image img {
-		filter: invert(1) brightness(100%);
+	.card-link:hover .card-image {
+		transform: scale(1.05);
 	}
 
-	.objective-number {
-		width: 100px;
-		height: 100px;
-		margin: 0 auto 30px;
+	.card-image-placeholder {
+		width: 100%;
+		height: 100%;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		background: linear-gradient(135deg, #4a7ba7, #2c5f8d);
-		border-radius: 50%;
-		position: relative;
 	}
 
-	.objective-number::before {
-		content: '';
+	.card-image-placeholder svg {
+		width: 64px;
+		height: 64px;
+		opacity: 0.5;
+	}
+
+	.type-badge {
 		position: absolute;
-		width: 110px;
-		height: 110px;
-		border: 3px solid #ffa100;
-		border-radius: 50%;
-		opacity: 0.3;
-	}
-
-	.objective-number span {
-		font-size: 48px;
-		font-weight: 400;
+		top: 12px;
+		left: 12px;
+		background: var(--badge-color);
 		color: white;
-	}
-
-	.objective-title {
-		font-size: 28px;
-		font-weight: 400;
-		color: var(--text-primary);
-		margin-bottom: 20px;
+		font-size: 12px;
+		font-weight: 600;
+		padding: 6px 12px;
+		border-radius: 20px;
 		text-transform: uppercase;
+		letter-spacing: 0.5px;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 	}
 
-	.objective-description {
-		font-size: 18px;
+	:global([data-theme='dark']) .type-badge {
+		background: var(--badge-color-dark);
+	}
+
+	.card-content {
+		padding: 24px;
+	}
+
+	.card-date {
+		display: block;
+		font-size: 14px;
+		color: var(--text-secondary);
+		margin-bottom: 8px;
+	}
+
+	.card-title {
+		font-size: 22px;
+		font-weight: 600;
 		color: var(--text-primary);
-		line-height: 1.6;
-		max-width: 600px;
-		margin: 0 auto;
+		margin: 0 0 12px 0;
+		line-height: 1.3;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
 	}
 
-	/* Botones de navegación */
+	.card-excerpt {
+		font-size: 15px;
+		color: var(--text-secondary);
+		line-height: 1.6;
+		margin: 0 0 16px 0;
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	.card-cta {
+		display: inline-block;
+		font-size: 14px;
+		font-weight: 600;
+		color: #4a7ba7;
+		transition: color 0.3s ease;
+	}
+
+	:global([data-theme='dark']) .card-cta {
+		color: #60a5fa;
+	}
+
+	.card-link:hover .card-cta {
+		color: #2c5f8d;
+	}
+
+	:global([data-theme='dark']) .card-link:hover .card-cta {
+		color: #93c5fd;
+	}
+
+	/* Botones de navegacion */
 	.carousel-btn {
 		position: absolute;
 		top: 50%;
@@ -568,15 +696,14 @@
 
 	/* Responsive */
 	@media (max-width: 768px) {
-		.objectives-section {
-			padding: 40px 20px 80px 20px;
-			padding-top: 60px;
+		.content-section {
+			padding: 40px 20px 20px 20px;
+			padding-top: 90px;
 		}
 
 		.mission-wrapper {
 			padding: 40px 20px;
-			margin: -60px -20px 0 -20px;
-			margin-bottom: 100px;
+			margin: 40px -20px -20px -20px;
 		}
 
 		.mission-card {
@@ -595,16 +722,16 @@
 
 		.title-section {
 			padding: 5px 20px;
-			margin: -60px -20px 40px -20px;
+			margin: -20px -20px 40px -20px;
 			gap: 15px;
 		}
 
-		.objectives-icon {
+		.content-icon {
 			width: 55px;
 			height: 55px;
 		}
 
-		.objectives-title {
+		.content-title {
 			font-size: 32px;
 			letter-spacing: 2px;
 		}
@@ -613,42 +740,20 @@
 			padding: 20px 60px;
 		}
 
-		.objectives-carousel {
+		.content-carousel {
 			min-height: 450px;
 		}
 
-		.objective-card {
-			padding: 30px 20px;
+		.card-content {
+			padding: 20px;
 		}
 
-		.objective-image {
-			width: 80px;
-			height: 80px;
-			margin-bottom: 20px;
+		.card-title {
+			font-size: 20px;
 		}
 
-		.objective-number {
-			width: 80px;
-			height: 80px;
-			margin-bottom: 20px;
-		}
-
-		.objective-number::before {
-			width: 90px;
-			height: 90px;
-		}
-
-		.objective-number span {
-			font-size: 36px;
-		}
-
-		.objective-title {
-			font-size: 22px;
-			margin-bottom: 15px;
-		}
-
-		.objective-description {
-			font-size: 16px;
+		.card-excerpt {
+			font-size: 14px;
 		}
 
 		.carousel-btn {
@@ -659,22 +764,23 @@
 	}
 
 	@media (max-width: 480px) {
-		.objectives-section {
-			padding-top: 50px;
+		.content-section {
+			padding-top: 80px;
+			padding-bottom: 10px;
 		}
 
 		.title-section {
 			padding: 5px 15px;
-			margin: -50px -20px 10px -20px;
+			margin: -80px -20px 10px -20px;
 			gap: 10px;
 		}
 
-		.objectives-icon {
+		.content-icon {
 			width: 45px;
 			height: 45px;
 		}
 
-		.objectives-title {
+		.content-title {
 			font-size: 22px;
 			letter-spacing: 1.5px;
 		}
@@ -683,12 +789,25 @@
 			padding: 5px 50px;
 		}
 
-		.objectives-carousel {
-			min-height: 325px;
+		.content-carousel {
+			min-height: 420px;
 		}
 
-		.objective-card {
-			padding: 10px 15px;
+		.card-image-container {
+			aspect-ratio: 16 / 10;
+		}
+
+		.card-content {
+			padding: 16px;
+		}
+
+		.card-title {
+			font-size: 18px;
+		}
+
+		.card-excerpt {
+			font-size: 13px;
+			-webkit-line-clamp: 2;
 		}
 
 		.carousel-btn {
@@ -704,7 +823,7 @@
 
 		.mission-wrapper {
 			padding: 30px 20px;
-			margin-bottom: 80px;
+			margin: 30px -20px -10px -20px;
 		}
 
 		.mission-card {

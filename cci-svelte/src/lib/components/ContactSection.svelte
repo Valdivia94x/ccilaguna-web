@@ -206,14 +206,14 @@
 		margin: -70px -50px 40px -50px;
 		transition:
 			background 0.3s ease,
-			opacity 0.8s ease-out,
-			transform 0.8s ease-out;
+			opacity 1s cubic-bezier(0.22, 1, 0.36, 1),
+			transform 1s cubic-bezier(0.22, 1, 0.36, 1);
 		overflow: visible;
 		box-shadow: 0 4px 12px rgba(74, 123, 167, 0.15);
 
-		/* Estado inicial para animación */
+		/* Estado inicial para animación - más pronunciado */
 		opacity: 0;
-		transform: translateY(30px);
+		transform: translateY(60px) scale(0.95);
 	}
 
 	.title-section::after {
@@ -228,7 +228,7 @@
 
 	.title-section:global(.visible) {
 		opacity: 1;
-		transform: translateY(0);
+		transform: translateY(0) scale(1);
 	}
 
 	:global([data-theme='dark']) .title-section {
