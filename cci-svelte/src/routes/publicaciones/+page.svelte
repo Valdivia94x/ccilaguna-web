@@ -2,25 +2,25 @@
 	import Navbar from '$lib/components/Navbar.svelte';
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 	import Footer from '$lib/components/Footer.svelte';
-	import BoletinCard from '$lib/components/BoletinCard.svelte';
-	import { urlFor } from '$lib/sanity'; // <--- Importamos Sanity
+	import PublicacionCard from '$lib/components/PublicacionCard.svelte';
+	import { urlFor } from '$lib/sanity';
 
 	// Recibimos los datos del servidor (+page.server.js)
 	let { data } = $props();
 
-	// Tipos (Actualizados para incluir PDF y tamaño)
-	interface Boletin {
+	// Tipos para Publicaciones
+	interface Publicacion {
 		id: string;
 		title: string;
 		date: string;
 		image: string;
 		excerpt: string;
-		category: 'seguridad' | 'empleo';
-		pdfUrl: string; // Nuevo
-		size: string; // Nuevo
+		category: string;
+		pdfUrl: string;
+		size: string;
 	}
 
-	// Función para formatear bytes (la misma que en Informes)
+	// Función para formatear bytes
 	function formatBytes(bytes: number, decimals = 1) {
 		if (!bytes) return 'PDF';
 		const k = 1024;
@@ -29,8 +29,17 @@
 		return parseFloat((bytes / Math.pow(k, i)).toFixed(decimals)) + ' ' + sizes[i];
 	}
 
-	// Estado para el tema activo
-	let activeTheme = $state<'seguridad' | 'empleo'>('seguridad');
+	// Mapeo de categorías (value -> display)
+	const categoryLabels: Record<string, string> = {
+		estudios: 'Estudios',
+		investigaciones: 'Investigaciones',
+		reportes: 'Reportes',
+		documentos: 'Documentos',
+		analisis: 'Análisis'
+	};
+
+	// Estado para la categoría activa
+	let activeCategory = $state<string>('all');
 
 	// Estado para la búsqueda
 	let searchQuery = $state('');
@@ -39,49 +48,52 @@
 	let filterStartDate = $state('');
 	let filterEndDate = $state('');
 
-	// --- TRANSFORMACIÓN DE DATOS ---
-	// Convertimos los datos crudos de Sanity al formato que tu UI ya conoce
-	let boletines = $derived(
-		data.newsletters
-			? data.newsletters.map((n: any) => ({
-					id: n._id,
-					title: n.title,
-					slug: n.slug.current,
-					date: n.publishedAt,
-					// Generamos la URL de la imagen (cuadrada para que se vea bien en cards)
-					image: n.coverImage ? urlFor(n.coverImage).width(500).height(500).url() : '',
-					// Como no pusimos "excerpt" en el schema del boletín, usamos el tamaño como info útil
-					excerpt: n.description || `Boletín disponible en PDF (${formatBytes(n.size)})`,
-					// Convertimos "Seguridad" (Sanity) a "seguridad" (Tu UI)
-					category: (n.category ? n.category.toLowerCase() : 'seguridad') as 'seguridad' | 'empleo',
-					pdfUrl: n.pdfUrl,
-					size: formatBytes(n.size)
+	// Transformar datos de Sanity al formato de la UI
+	let publicaciones = $derived<Publicacion[]>(
+		data.publications
+			? data.publications.map((p: any) => ({
+					id: p._id,
+					slug: p.slug?.current,
+					title: p.title,
+					date: p.publishedAt,
+					image: p.coverImage ? urlFor(p.coverImage).width(500).height(350).url() : '',
+					excerpt: p.description || 'Publicación disponible para consulta.',
+					category: p.category || 'documentos',
+					pdfUrl: p.pdfUrl,
+					size: formatBytes(p.size)
 				}))
 			: []
 	);
 
-	// Filtrar boletines (Lógica original pero usando la variable reactiva 'boletines')
-	let boletinesFiltrados = $derived(() => {
-		// Usamos la lista procesada de Sanity
-		let filtered = boletines.filter((b: Boletin) => b.category === activeTheme);
+	// Categorías disponibles desde Sanity
+	let categories = $derived<string[]>(data.categories || []);
+
+	// Filtrar publicaciones
+	let publicacionesFiltradas = $derived(() => {
+		let filtered = publicaciones;
+
+		// Filtrar por categoría si no es "all"
+		if (activeCategory !== 'all') {
+			filtered = filtered.filter((p: Publicacion) => p.category === activeCategory);
+		}
 
 		// Aplicar filtro de búsqueda por título
 		if (searchQuery.trim()) {
 			const query = searchQuery.toLowerCase().trim();
-			filtered = filtered.filter((b: Boletin) => b.title.toLowerCase().includes(query));
+			filtered = filtered.filter((p: Publicacion) => p.title.toLowerCase().includes(query));
 		}
 
 		// Aplicar filtro de fechas
 		if (filterStartDate) {
-			filtered = filtered.filter((b: Boletin) => b.date >= filterStartDate);
+			filtered = filtered.filter((p: Publicacion) => p.date >= filterStartDate);
 		}
 		if (filterEndDate) {
-			filtered = filtered.filter((b: Boletin) => b.date <= filterEndDate);
+			filtered = filtered.filter((p: Publicacion) => p.date <= filterEndDate);
 		}
 
 		// Ordenar por fecha descendente
 		return filtered.sort(
-			(a: Boletin, b: Boletin) => new Date(b.date).getTime() - new Date(a.date).getTime()
+			(a: Publicacion, b: Publicacion) => new Date(b.date).getTime() - new Date(a.date).getTime()
 		);
 	});
 
@@ -90,15 +102,20 @@
 		filterStartDate = '';
 		filterEndDate = '';
 	}
+
+	function setCategory(category: string) {
+		activeCategory = category;
+		clearFilters();
+	}
 </script>
 
 <svelte:head>
-	<title>Boletines | Consejo Cívico de Laguna</title>
+	<title>Publicaciones | Consejo Cívico de Laguna</title>
 	<meta
 		name="description"
-		content="Boletines informativos sobre seguridad y empleo en la Comarca Lagunera"
+		content="Publicaciones y documentos del Consejo Cívico de la Comarca Lagunera"
 	/>
-	<meta name="keywords" content="boletines, seguridad, empleo, laguna, informes" />
+	<meta name="keywords" content="publicaciones, documentos, CCI, laguna, informes, estudios" />
 
 	<!-- Preconnect for performance -->
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -114,13 +131,14 @@
 <Navbar />
 <ThemeToggle />
 
-<main class="boletines-page">
+<main class="publicaciones-page">
 	<!-- Hero Section -->
 	<section class="hero-section">
 		<div class="hero-content">
-			<h1>Boletines Informativos</h1>
+			<h1>Publicaciones</h1>
 			<p class="hero-description">
-				Accede a nuestros informes y análisis sobre seguridad y empleo en la Comarca Lagunera
+				Accede a nuestros documentos, estudios y publicaciones sobre el desarrollo de la Comarca
+				Lagunera
 			</p>
 		</div>
 	</section>
@@ -149,30 +167,26 @@
 		</div>
 	</section>
 
-	<!-- Tabs de Temas -->
+	<!-- Tabs de Categorías -->
 	<section class="themes-section">
 		<div class="themes-container">
 			<div class="theme-tabs">
 				<button
-					class="theme-tab theme-tab-seguridad"
-					class:active={activeTheme === 'seguridad'}
-					onclick={() => {
-						activeTheme = 'seguridad';
-						clearFilters();
-					}}
+					class="theme-tab"
+					class:active={activeCategory === 'all'}
+					onclick={() => setCategory('all')}
 				>
-					<span class="tab-text">Seguridad</span>
+					<span class="tab-text">Todas</span>
 				</button>
-				<button
-					class="theme-tab theme-tab-empleo"
-					class:active={activeTheme === 'empleo'}
-					onclick={() => {
-						activeTheme = 'empleo';
-						clearFilters();
-					}}
-				>
-					<span class="tab-text">Empleo</span>
-				</button>
+				{#each categories as category}
+					<button
+						class="theme-tab"
+						class:active={activeCategory === category}
+						onclick={() => setCategory(category)}
+					>
+						<span class="tab-text">{categoryLabels[category] || category}</span>
+					</button>
+				{/each}
 			</div>
 
 			<!-- Filtros de Fecha -->
@@ -190,18 +204,35 @@
 		</div>
 	</section>
 
-	<!-- Grid de Boletines -->
-	<section class="boletines-section">
-		<div class="boletines-container">
-			{#if boletinesFiltrados().length > 0}
-				<div class="boletines-grid">
-					{#each boletinesFiltrados() as boletin (boletin.id)}
-						<BoletinCard {boletin} />
+	<!-- Grid de Publicaciones -->
+	<section class="publicaciones-section">
+		<div class="publicaciones-container">
+			{#if publicacionesFiltradas().length > 0}
+				<div class="publicaciones-grid">
+					{#each publicacionesFiltradas() as publicacion (publicacion.id)}
+						<PublicacionCard {publicacion} />
 					{/each}
 				</div>
 			{:else}
 				<div class="no-results">
-					<p>No se encontraron boletines para los criterios seleccionados.</p>
+					<div class="no-results-icon">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="1.5"
+						>
+							<path
+								d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+							/>
+						</svg>
+					</div>
+					<p>No se encontraron publicaciones.</p>
+					<span class="no-results-hint"
+						>Las publicaciones estarán disponibles próximamente cuando se configure el contenido en
+						Sanity.</span
+					>
 				</div>
 			{/if}
 		</div>
@@ -211,7 +242,7 @@
 <Footer />
 
 <style>
-	.boletines-page {
+	.publicaciones-page {
 		min-height: calc(100vh - 200px);
 	}
 
@@ -366,14 +397,15 @@
 
 	.theme-tabs {
 		display: flex;
-		gap: 30px;
+		gap: 15px;
 		justify-content: center;
 		align-items: center;
+		flex-wrap: wrap;
 	}
 
 	.theme-tab {
-		padding: 15px 40px;
-		font-size: 18px;
+		padding: 12px 28px;
+		font-size: 16px;
 		font-weight: 600;
 		background: var(--card-bg);
 		color: var(--text-primary);
@@ -387,155 +419,27 @@
 	.theme-tab:hover {
 		transform: translateY(-2px);
 		box-shadow: 0 4px 12px var(--card-shadow);
+		border-color: rgba(74, 123, 167, 0.3);
+	}
+
+	:global([data-theme='dark']) .theme-tab:hover {
+		border-color: rgba(0, 212, 255, 0.3);
 	}
 
 	.theme-tab.active {
-		background: linear-gradient(135deg, #3b82f6, #2563eb);
+		background: linear-gradient(135deg, #4a7ba7, #2c5f8d);
 		color: white;
-		border-color: #3b82f6;
+		border-color: #4a7ba7;
 	}
 
-	/* Estilos base compartidos para tarjetas de categoría */
-	.theme-tab-seguridad,
-	.theme-tab-empleo {
-		position: relative;
-		width: 380px;
-		aspect-ratio: 16 / 9;
-		padding: 0;
-		border-radius: 20px;
-		background-size: cover;
-		background-position: center;
-		background-repeat: no-repeat;
-		overflow: hidden;
-		transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-		border: none;
-		box-shadow:
-			0 4px 20px rgba(0, 0, 0, 0.15),
-			0 8px 40px rgba(0, 0, 0, 0.1);
+	:global([data-theme='dark']) .theme-tab.active {
+		background: linear-gradient(135deg, #00d4ff, #0099cc);
+		border-color: #00d4ff;
 	}
 
-	/* Forzar imagen de fondo en tarjetas - sobrescribir .theme-tab.active */
-	.theme-tab-seguridad,
-	.theme-tab-seguridad.active {
-		background: url('/images/boletines/seguridad.png') center/cover no-repeat !important;
-	}
-
-	.theme-tab-empleo,
-	.theme-tab-empleo.active {
-		background: url('/images/boletines/empleo.jpg') center/cover no-repeat !important;
-	}
-
-	/* Hover compartido */
-	.theme-tab-seguridad:hover,
-	.theme-tab-empleo:hover {
-		transform: translateY(-6px) scale(1.02);
-		box-shadow:
-			0 12px 40px rgba(0, 0, 0, 0.25),
-			0 20px 60px rgba(0, 0, 0, 0.15);
-	}
-
-	/* Estado activo compartido */
-	.theme-tab-seguridad.active,
-	.theme-tab-empleo.active {
-		transform: translateY(-4px);
-		box-shadow:
-			0 8px 30px rgba(0, 0, 0, 0.2),
-			0 4px 20px rgba(59, 130, 246, 0.15);
-	}
-
-	/* Gradient overlay desde abajo - permanente */
-	.theme-tab-seguridad::before,
-	.theme-tab-empleo::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		background: linear-gradient(
-			to top,
-			rgba(0, 0, 0, 0.75) 0%,
-			rgba(0, 0, 0, 0.35) 50%,
-			rgba(0, 0, 0, 0.1) 100%
-		);
-		transition: all 0.5s ease;
-		z-index: 1;
-	}
-
-	/* Overlay más intenso en hover */
-	.theme-tab-seguridad:hover::before,
-	.theme-tab-empleo:hover::before {
-		background: linear-gradient(
-			to top,
-			rgba(0, 0, 0, 0.85) 0%,
-			rgba(0, 0, 0, 0.45) 50%,
-			rgba(0, 0, 0, 0.15) 100%
-		);
-	}
-
-	/* Overlay activo - más transparente para ver la imagen */
-	.theme-tab-seguridad.active::before,
-	.theme-tab-empleo.active::before {
-		background: linear-gradient(
-			to top,
-			rgba(0, 0, 0, 0.7) 0%,
-			rgba(0, 0, 0, 0.25) 50%,
-			rgba(0, 0, 0, 0.05) 100%
-		);
-	}
-
-	/* Texto elegante centrado en la parte inferior */
-	.theme-tab-seguridad .tab-text,
-	.theme-tab-empleo .tab-text {
-		position: absolute;
-		bottom: 20px;
-		left: 50%;
-		transform: translateX(-50%);
-		z-index: 2;
-		color: white;
-		font-size: 20px;
-		font-weight: 600;
+	.tab-text {
 		text-transform: uppercase;
-		letter-spacing: 3px;
-		text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
-		transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-		white-space: nowrap;
-	}
-
-	.theme-tab-seguridad:hover .tab-text,
-	.theme-tab-empleo:hover .tab-text {
-		letter-spacing: 4px;
-		text-shadow: 0 2px 15px rgba(0, 0, 0, 0.8);
-	}
-
-	.theme-tab-seguridad.active .tab-text,
-	.theme-tab-empleo.active .tab-text {
-		letter-spacing: 4px;
-		color: #ffffff;
-		text-shadow:
-			0 2px 10px rgba(59, 130, 246, 0.4),
-			0 4px 20px rgba(0, 0, 0, 0.5);
-	}
-
-	/* Efecto de luz debajo del texto en estado activo */
-	.theme-tab-seguridad.active .tab-text::after,
-	.theme-tab-empleo.active .tab-text::after {
-		content: '';
-		position: absolute;
-		bottom: -12px;
-		left: 50%;
-		transform: translateX(-50%);
-		width: 140%;
-		height: 25px;
-		background: radial-gradient(ellipse at center, rgba(59, 130, 246, 0.6) 0%, rgba(59, 130, 246, 0.3) 40%, transparent 70%);
-		filter: blur(10px);
-		pointer-events: none;
-	}
-
-	/* Indicador de selección sutil (borde luminoso) */
-	.theme-tab-seguridad.active,
-	.theme-tab-empleo.active {
-		box-shadow:
-			0 8px 30px rgba(0, 0, 0, 0.2),
-			0 4px 20px rgba(59, 130, 246, 0.2),
-			inset 0 0 0 2px rgba(59, 130, 246, 0.4);
+		letter-spacing: 1px;
 	}
 
 	/* Date Filters - diseño compacto en línea */
@@ -545,10 +449,8 @@
 		justify-content: center;
 		align-items: center;
 		flex-wrap: wrap;
-		/*background: var(--card-bg);*/
 		padding: 16px 24px;
 		border-radius: 50px;
-		/*box-shadow: 0 2px 12px var(--card-shadow);*/
 		max-width: 600px;
 		margin: 0 auto;
 	}
@@ -646,8 +548,8 @@
 		transform: scale(0.97);
 	}
 
-	/* Boletines Section */
-	.boletines-section {
+	/* Publicaciones Section */
+	.publicaciones-section {
 		background: var(--bg-primary);
 		padding: 60px 50px;
 		transition: background 0.3s ease;
@@ -655,12 +557,12 @@
 		z-index: 10;
 	}
 
-	.boletines-container {
+	.publicaciones-container {
 		max-width: 1200px;
 		margin: 0 auto;
 	}
 
-	.boletines-grid {
+	.publicaciones-grid {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
 		gap: 30px;
@@ -668,13 +570,34 @@
 
 	.no-results {
 		text-align: center;
-		padding: 60px 20px;
+		padding: 80px 20px;
+	}
+
+	.no-results-icon {
+		width: 80px;
+		height: 80px;
+		margin: 0 auto 24px;
+		color: var(--text-primary);
+		opacity: 0.3;
+	}
+
+	.no-results-icon svg {
+		width: 100%;
+		height: 100%;
 	}
 
 	.no-results p {
-		font-size: 18px;
+		font-size: 20px;
 		color: var(--text-primary);
 		opacity: 0.7;
+		margin-bottom: 12px;
+	}
+
+	.no-results-hint {
+		font-size: 14px;
+		color: var(--text-primary);
+		opacity: 0.5;
+		display: block;
 	}
 
 	/* Responsive */
@@ -710,26 +633,12 @@
 		}
 
 		.theme-tabs {
-			flex-direction: column;
-			gap: 15px;
-			align-items: center;
+			gap: 10px;
 		}
 
 		.theme-tab {
-			width: 100%;
-			padding: 12px 30px;
-		}
-
-		.theme-tab-seguridad,
-		.theme-tab-empleo {
-			width: 280px;
-		}
-
-		.theme-tab-seguridad .tab-text,
-		.theme-tab-empleo .tab-text {
-			font-size: 16px;
-			letter-spacing: 2px;
-			bottom: 16px;
+			padding: 10px 20px;
+			font-size: 14px;
 		}
 
 		.date-filters {
@@ -745,11 +654,11 @@
 			justify-content: center;
 		}
 
-		.boletines-section {
+		.publicaciones-section {
 			padding: 40px 20px;
 		}
 
-		.boletines-grid {
+		.publicaciones-grid {
 			grid-template-columns: 1fr;
 			gap: 25px;
 		}
@@ -788,16 +697,9 @@
 			left: 15px;
 		}
 
-		.theme-tab-seguridad,
-		.theme-tab-empleo {
-			width: 260px;
-		}
-
-		.theme-tab-seguridad .tab-text,
-		.theme-tab-empleo .tab-text {
-			font-size: 14px;
-			letter-spacing: 2px;
-			bottom: 14px;
+		.theme-tab {
+			padding: 8px 16px;
+			font-size: 13px;
 		}
 	}
 </style>

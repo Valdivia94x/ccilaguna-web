@@ -62,7 +62,7 @@
 <main class="informes-page">
 	<section class="hero-section">
 		<div class="hero-content">
-			<h1>Informes y Publicaciones</h1>
+			<h1>Informes</h1>
 			<p class="hero-description">
 				Descarga nuestros informes, estudios y análisis sobre participación ciudadana, transparencia
 				gubernamental y desarrollo social en la Comarca Lagunera
