@@ -160,8 +160,6 @@
 			<li role="none"><a href="/boletines" role="menuitem" onclick={closeMenu}>BOLETINES</a></li>
 			<li class="nav-separator" aria-hidden="true">|</li>
 			<li role="none"><a href="/publicaciones" role="menuitem" onclick={closeMenu}>PUBLICACIONES</a></li>
-			<li class="nav-separator" aria-hidden="true">|</li>
-			<li role="none"><a href="/informes" role="menuitem" onclick={closeMenu}>INFORMES</a></li>
 		</ul>
 
 		<div class="social-icons" aria-label="Redes sociales">

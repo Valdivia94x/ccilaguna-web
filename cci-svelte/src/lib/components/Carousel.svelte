@@ -246,19 +246,19 @@
 		padding: 0 80px;
 		background: linear-gradient(
 			to right,
-			rgba(0, 0, 0, 0.65) 0%,
-			rgba(0, 0, 0, 0.45) 35%,
-			rgba(0, 0, 0, 0.2) 60%,
-			transparent 100%
+			rgba(0, 0, 0, 0.8) 0%,
+			rgba(0, 0, 0, 0.6) 35%,
+			rgba(0, 0, 0, 0.4) 60%,
+			rgba(0, 0, 0, 0.25) 100%
 		);
 		z-index: 5;
 		pointer-events: none;
 	}
 
 	.overlay-content {
-		max-width: 600px;
+		max-width: 750px;
 		color: white;
-		text-align: center;
+		text-align: left;
 		margin-left: 80px;
 	}
 
@@ -274,10 +274,10 @@
 	}
 
 	.overlay-description {
-		font-size: 18px;
+		font-size: 22px;
 		font-weight: 400;
-		line-height: 1.4;
-		color: rgba(255, 255, 255, 0.9);
+		line-height: 1.5;
+		color: rgba(255, 255, 255, 0.95);
 		text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
 		text-align: left;
 		margin: 0;
@@ -379,13 +379,13 @@
 
 		.carousel-overlay {
 			padding: 0 40px;
-			background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.35) 100%);
+			background: linear-gradient(to bottom, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.5) 100%);
 			justify-content: center;
 			align-items: center;
 		}
 
 		.overlay-content {
-			max-width: 100%;
+			max-width: 90%;
 			text-align: center;
 			margin-left: 0;
 		}
@@ -398,7 +398,7 @@
 		}
 
 		.overlay-description {
-			font-size: 15px;
+			font-size: 17px;
 			text-align: center;
 		}
 
@@ -441,7 +441,11 @@
 		}
 
 		.carousel-overlay {
-			padding: 0 25px;
+			padding: 0 15px;
+		}
+
+		.overlay-content {
+			max-width: 95%;
 		}
 
 		.overlay-title {
@@ -450,7 +454,7 @@
 		}
 
 		.overlay-description {
-			font-size: 13px;
+			font-size: 15px;
 		}
 
 		.carousel-nav {

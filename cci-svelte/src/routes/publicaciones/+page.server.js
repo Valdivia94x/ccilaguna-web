@@ -2,8 +2,8 @@ import { client } from '$lib/sanity';
 
 export async function load() {
   try {
-    // Pedimos las publicaciones ordenadas por fecha (del más reciente al más viejo)
-    const query = `*[_type == "publication"] | order(publishedAt desc) {
+    // Query para publicaciones
+    const publicationsQuery = `*[_type == "publication"] | order(publishedAt desc) {
       _id,
       title,
       slug,
@@ -23,7 +23,23 @@ export async function load() {
       "size": pdfFile.asset->size
     }`;
 
-    const publications = await client.fetch(query);
+    // Query para informes
+    const reportsQuery = `*[_type == "report"] | order(year desc) {
+      _id,
+      title,
+      description,
+      year,
+      pages,
+      coverImage,
+      "pdfUrl": pdfFile.asset->url,
+      "size": pdfFile.asset->size
+    }`;
+
+    // Fetch ambos tipos en paralelo
+    const [publications, reports] = await Promise.all([
+      client.fetch(publicationsQuery),
+      client.fetch(reportsQuery)
+    ]);
 
     // Extraer categorías únicas de las publicaciones
     const categoriesSet = new Set();
@@ -36,12 +52,14 @@ export async function load() {
 
     return {
       publications: publications || [],
+      reports: reports || [],
       categories: categories || []
     };
   } catch (error) {
-    console.error('Error fetching publications:', error);
+    console.error('Error fetching documents:', error);
     return {
       publications: [],
+      reports: [],
       categories: []
     };
   }

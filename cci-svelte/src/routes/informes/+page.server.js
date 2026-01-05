@@ -1,19 +1,6 @@
-import { client } from '$lib/sanity';
+import { redirect } from '@sveltejs/kit';
 
-export async function load() {
-  // OJO: Agregamos 'size' dentro de la referencia del asset
-  const query = `*[_type == "report"] | order(year desc) {
-    _id,
-    title,
-    description,
-    year,
-    pages, // Este sigue siendo manual
-    coverImage,
-    "pdfUrl": pdfFile.asset->url,
-    "size": pdfFile.asset->size  // <--- ¡AQUÍ ESTÁ EL DATO AUTOMÁTICO!
-  }`;
-
-  const reports = await client.fetch(query);
-
-  return { reports };
+export function load() {
+  // Redirect permanente a la página unificada de publicaciones con filtro de informes
+  throw redirect(301, '/publicaciones?tipo=informes');
 }

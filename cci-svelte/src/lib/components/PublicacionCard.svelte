@@ -1,17 +1,20 @@
 <script lang="ts">
-	interface Publicacion {
+	interface Documento {
 		id: string;
 		slug?: string;
 		title: string;
 		date: string;
+		year?: number;
 		image: string;
 		excerpt: string;
 		category: string;
+		documentType?: 'publicacion' | 'informe';
 		pdfUrl?: string;
 		size?: string;
+		pages?: number | string;
 	}
 
-	let { publicacion }: { publicacion: Publicacion } = $props();
+	let { publicacion }: { publicacion: Documento } = $props();
 
 	// Mapeo de categorías (value -> display)
 	const categoryLabels: Record<string, string> = {
@@ -19,8 +22,12 @@
 		investigaciones: 'Investigaciones',
 		reportes: 'Reportes',
 		documentos: 'Documentos',
-		analisis: 'Análisis'
+		analisis: 'Análisis',
+		informe: 'Informe'
 	};
+
+	// Determinar si es un informe
+	let isInforme = $derived(publicacion.documentType === 'informe');
 
 	// Formatear fecha
 	function formatDate(dateStr: string): string {
@@ -33,14 +40,14 @@
 	}
 </script>
 
-<article class="publicacion-card">
+<article class="publicacion-card" class:informe-card={isInforme}>
 	<a
 		href={publicacion.pdfUrl || `/publicaciones/${publicacion.slug || publicacion.id}`}
 		class="card-link"
 		target={publicacion.pdfUrl ? '_blank' : undefined}
 		rel={publicacion.pdfUrl ? 'noopener noreferrer' : undefined}
 	>
-		<div class="card-image">
+		<div class="card-image" class:informe-image={isInforme}>
 			{#if publicacion.image}
 				<img src={publicacion.image} alt={publicacion.title} />
 			{:else}
@@ -58,8 +65,13 @@
 					</svg>
 				</div>
 			{/if}
-			<div class="card-category">
-				{categoryLabels[publicacion.category] || publicacion.category}
+			<!-- Badge: Año para informes, Categoría para publicaciones -->
+			<div class="card-category" class:year-badge={isInforme}>
+				{#if isInforme && publicacion.year}
+					{publicacion.year}
+				{:else}
+					{categoryLabels[publicacion.category] || publicacion.category}
+				{/if}
 			</div>
 			{#if publicacion.size}
 				<div class="card-size">
@@ -78,27 +90,59 @@
 			{/if}
 		</div>
 		<div class="card-content">
-			<time class="card-date" datetime={publicacion.date}>
-				{formatDate(publicacion.date)}
-			</time>
+			<!-- Fecha para publicaciones, Páginas para informes -->
+			{#if isInforme}
+				{#if publicacion.pages && publicacion.pages !== 'N/A'}
+					<span class="card-meta">
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+							<path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+						</svg>
+						{publicacion.pages} páginas
+					</span>
+				{/if}
+			{:else}
+				<time class="card-date" datetime={publicacion.date}>
+					{formatDate(publicacion.date)}
+				</time>
+			{/if}
 			<h3 class="card-title">{publicacion.title}</h3>
 			<p class="card-excerpt">{publicacion.excerpt}</p>
 			<span class="read-more">
-				{publicacion.pdfUrl ? 'Ver documento' : 'Leer más'}
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="16"
-					height="16"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				>
-					<line x1="5" y1="12" x2="19" y2="12"></line>
-					<polyline points="12 5 19 12 12 19"></polyline>
-				</svg>
+				{#if isInforme}
+					Descargar PDF
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="16"
+						height="16"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
+						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+						<polyline points="7 10 12 15 17 10"></polyline>
+						<line x1="12" y1="15" x2="12" y2="3"></line>
+					</svg>
+				{:else}
+					{publicacion.pdfUrl ? 'Ver documento' : 'Leer más'}
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="16"
+						height="16"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
+						<line x1="5" y1="12" x2="19" y2="12"></line>
+						<polyline points="12 5 19 12 12 19"></polyline>
+					</svg>
+				{/if}
 			</span>
 		</div>
 	</a>
@@ -181,6 +225,18 @@
 		background: linear-gradient(135deg, #00d4ff, #0099cc);
 	}
 
+	/* Year badge para informes */
+	.card-category.year-badge {
+		background: linear-gradient(135deg, #f59e0b, #d97706);
+		font-size: 16px;
+		font-weight: 700;
+		padding: 8px 18px;
+	}
+
+	:global([data-theme='dark']) .card-category.year-badge {
+		background: linear-gradient(135deg, #fbbf24, #f59e0b);
+	}
+
 	.card-size {
 		position: absolute;
 		bottom: 15px;
@@ -213,6 +269,41 @@
 		opacity: 0.6;
 		margin-bottom: 12px;
 		font-weight: 500;
+	}
+
+	/* Meta info para informes (páginas) */
+	.card-meta {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		font-size: 13px;
+		color: var(--text-primary);
+		opacity: 0.6;
+		margin-bottom: 12px;
+		font-weight: 500;
+	}
+
+	.card-meta svg {
+		width: 16px;
+		height: 16px;
+	}
+
+	/* Estilos específicos para informes */
+	.informe-card {
+		border: 2px solid transparent;
+		transition: all 0.3s ease, border-color 0.3s ease;
+	}
+
+	.informe-card:hover {
+		border-color: rgba(245, 158, 11, 0.3);
+	}
+
+	:global([data-theme='dark']) .informe-card:hover {
+		border-color: rgba(251, 191, 36, 0.3);
+	}
+
+	.informe-image {
+		height: 280px;
 	}
 
 	.card-title {

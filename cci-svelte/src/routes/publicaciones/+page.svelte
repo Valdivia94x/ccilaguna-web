@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 	import Navbar from '$lib/components/Navbar.svelte';
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 	import Footer from '$lib/components/Footer.svelte';
@@ -8,16 +10,20 @@
 	// Recibimos los datos del servidor (+page.server.js)
 	let { data } = $props();
 
-	// Tipos para Publicaciones
-	interface Publicacion {
+	// Tipos para Documentos Unificados
+	interface Documento {
 		id: string;
+		slug?: string;
 		title: string;
 		date: string;
+		year?: number;
 		image: string;
 		excerpt: string;
 		category: string;
+		documentType: 'publicacion' | 'informe';
 		pdfUrl: string;
 		size: string;
+		pages?: number | string;
 	}
 
 	// Función para formatear bytes
@@ -38,6 +44,9 @@
 		analisis: 'Análisis'
 	};
 
+	// Estado para el tipo de documento activo
+	let activeDocumentType = $state<'all' | 'publicacion' | 'informe'>('all');
+
 	// Estado para la categoría activa
 	let activeCategory = $state<string>('all');
 
@@ -48,8 +57,20 @@
 	let filterStartDate = $state('');
 	let filterEndDate = $state('');
 
-	// Transformar datos de Sanity al formato de la UI
-	let publicaciones = $derived<Publicacion[]>(
+	// Inicializar desde URL params
+	$effect(() => {
+		const tipo = $page.url.searchParams.get('tipo');
+		if (tipo === 'informes') {
+			activeDocumentType = 'informe';
+		} else if (tipo === 'publicaciones') {
+			activeDocumentType = 'publicacion';
+		} else {
+			activeDocumentType = 'all';
+		}
+	});
+
+	// Transformar publicaciones de Sanity
+	let publicaciones = $derived<Documento[]>(
 		data.publications
 			? data.publications.map((p: any) => ({
 					id: p._id,
@@ -59,41 +80,69 @@
 					image: p.coverImage ? urlFor(p.coverImage).width(500).height(350).url() : '',
 					excerpt: p.description || 'Publicación disponible para consulta.',
 					category: p.category || 'documentos',
+					documentType: 'publicacion' as const,
 					pdfUrl: p.pdfUrl,
 					size: formatBytes(p.size)
 				}))
 			: []
 	);
 
+	// Transformar informes de Sanity
+	let informes = $derived<Documento[]>(
+		data.reports
+			? data.reports.map((r: any) => ({
+					id: r._id,
+					title: r.title,
+					date: `${r.year}-01-01`,
+					year: r.year,
+					image: r.coverImage ? urlFor(r.coverImage).width(280).height(396).url() : '',
+					excerpt: r.description || 'Informe disponible para descarga.',
+					category: 'informe',
+					documentType: 'informe' as const,
+					pdfUrl: r.pdfUrl,
+					size: formatBytes(r.size),
+					pages: r.pages || 'N/A'
+				}))
+			: []
+	);
+
+	// Combinar todos los documentos
+	let todosLosDocumentos = $derived<Documento[]>([...publicaciones, ...informes]);
+
 	// Categorías disponibles desde Sanity
 	let categories = $derived<string[]>(data.categories || []);
 
-	// Filtrar publicaciones
-	let publicacionesFiltradas = $derived(() => {
-		let filtered = publicaciones;
+	// Filtrar documentos
+	let documentosFiltrados = $derived(() => {
+		let filtered = todosLosDocumentos;
 
-		// Filtrar por categoría si no es "all"
+		// Filtrar por tipo de documento
+		if (activeDocumentType !== 'all') {
+			filtered = filtered.filter((d: Documento) => d.documentType === activeDocumentType);
+		}
+
+		// Filtrar por categoría si no es "all" (solo aplica a publicaciones)
 		if (activeCategory !== 'all') {
-			filtered = filtered.filter((p: Publicacion) => p.category === activeCategory);
+			filtered = filtered.filter((d: Documento) => d.category === activeCategory);
 		}
 
 		// Aplicar filtro de búsqueda por título
 		if (searchQuery.trim()) {
 			const query = searchQuery.toLowerCase().trim();
-			filtered = filtered.filter((p: Publicacion) => p.title.toLowerCase().includes(query));
+			filtered = filtered.filter((d: Documento) => d.title.toLowerCase().includes(query));
 		}
 
 		// Aplicar filtro de fechas
 		if (filterStartDate) {
-			filtered = filtered.filter((p: Publicacion) => p.date >= filterStartDate);
+			filtered = filtered.filter((d: Documento) => d.date >= filterStartDate);
 		}
 		if (filterEndDate) {
-			filtered = filtered.filter((p: Publicacion) => p.date <= filterEndDate);
+			filtered = filtered.filter((d: Documento) => d.date <= filterEndDate);
 		}
 
 		// Ordenar por fecha descendente
 		return filtered.sort(
-			(a: Publicacion, b: Publicacion) => new Date(b.date).getTime() - new Date(a.date).getTime()
+			(a: Documento, b: Documento) => new Date(b.date).getTime() - new Date(a.date).getTime()
 		);
 	});
 
@@ -106,6 +155,23 @@
 	function setCategory(category: string) {
 		activeCategory = category;
 		clearFilters();
+	}
+
+	function setDocumentType(type: 'all' | 'publicacion' | 'informe') {
+		activeDocumentType = type;
+		activeCategory = 'all';
+		clearFilters();
+
+		// Actualizar URL
+		const url = new URL($page.url);
+		if (type === 'all') {
+			url.searchParams.delete('tipo');
+		} else if (type === 'informe') {
+			url.searchParams.set('tipo', 'informes');
+		} else {
+			url.searchParams.set('tipo', 'publicaciones');
+		}
+		goto(url.toString(), { replaceState: true, noScroll: true });
 	}
 </script>
 
@@ -167,50 +233,81 @@
 		</div>
 	</section>
 
-	<!-- Tabs de Categorías -->
-	<section class="themes-section">
-		<div class="themes-container">
-			<div class="theme-tabs">
+	<!-- Tabs de Tipo de Documento -->
+	<section class="document-type-section">
+		<div class="document-type-container">
+			<div class="document-type-tabs">
 				<button
-					class="theme-tab"
-					class:active={activeCategory === 'all'}
-					onclick={() => setCategory('all')}
+					class="type-tab"
+					class:active={activeDocumentType === 'all'}
+					onclick={() => setDocumentType('all')}
 				>
-					<span class="tab-text">Todas</span>
+					<span class="tab-text">Todos</span>
 				</button>
-				{#each categories as category}
-					<button
-						class="theme-tab"
-						class:active={activeCategory === category}
-						onclick={() => setCategory(category)}
-					>
-						<span class="tab-text">{categoryLabels[category] || category}</span>
-					</button>
-				{/each}
-			</div>
-
-			<!-- Filtros de Fecha -->
-			<div class="date-filters">
-				<div class="filter-group">
-					<label for="start-date">Desde:</label>
-					<input type="date" id="start-date" bind:value={filterStartDate} />
-				</div>
-				<div class="filter-group">
-					<label for="end-date">Hasta:</label>
-					<input type="date" id="end-date" bind:value={filterEndDate} />
-				</div>
-				<button class="clear-filters-btn" onclick={clearFilters}>Limpiar Filtros</button>
+				<button
+					class="type-tab"
+					class:active={activeDocumentType === 'publicacion'}
+					onclick={() => setDocumentType('publicacion')}
+				>
+					<span class="tab-text">Publicaciones</span>
+				</button>
+				<button
+					class="type-tab"
+					class:active={activeDocumentType === 'informe'}
+					onclick={() => setDocumentType('informe')}
+				>
+					<span class="tab-text">Informes</span>
+				</button>
 			</div>
 		</div>
 	</section>
 
-	<!-- Grid de Publicaciones -->
+	<!-- Tabs de Categorías (solo visible cuando no es "informe") -->
+	{#if activeDocumentType !== 'informe'}
+		<section class="themes-section">
+			<div class="themes-container">
+				<div class="theme-tabs">
+					<button
+						class="theme-tab"
+						class:active={activeCategory === 'all'}
+						onclick={() => setCategory('all')}
+					>
+						<span class="tab-text">Todas</span>
+					</button>
+					{#each categories as category}
+						<button
+							class="theme-tab"
+							class:active={activeCategory === category}
+							onclick={() => setCategory(category)}
+						>
+							<span class="tab-text">{categoryLabels[category] || category}</span>
+						</button>
+					{/each}
+				</div>
+
+				<!-- Filtros de Fecha -->
+				<div class="date-filters">
+					<div class="filter-group">
+						<label for="start-date">Desde:</label>
+						<input type="date" id="start-date" bind:value={filterStartDate} />
+					</div>
+					<div class="filter-group">
+						<label for="end-date">Hasta:</label>
+						<input type="date" id="end-date" bind:value={filterEndDate} />
+					</div>
+					<button class="clear-filters-btn" onclick={clearFilters}>Limpiar Filtros</button>
+				</div>
+			</div>
+		</section>
+	{/if}
+
+	<!-- Grid de Documentos -->
 	<section class="publicaciones-section">
 		<div class="publicaciones-container">
-			{#if publicacionesFiltradas().length > 0}
+			{#if documentosFiltrados().length > 0}
 				<div class="publicaciones-grid">
-					{#each publicacionesFiltradas() as publicacion (publicacion.id)}
-						<PublicacionCard {publicacion} />
+					{#each documentosFiltrados() as documento (documento.id)}
+						<PublicacionCard publicacion={documento} />
 					{/each}
 				</div>
 			{:else}
@@ -228,11 +325,16 @@
 							/>
 						</svg>
 					</div>
-					<p>No se encontraron publicaciones.</p>
-					<span class="no-results-hint"
-						>Las publicaciones estarán disponibles próximamente cuando se configure el contenido en
-						Sanity.</span
-					>
+					<p>No se encontraron documentos.</p>
+					<span class="no-results-hint">
+						{#if activeDocumentType === 'informe'}
+							Los informes estarán disponibles próximamente.
+						{:else if activeDocumentType === 'publicacion'}
+							Las publicaciones estarán disponibles próximamente.
+						{:else}
+							Los documentos estarán disponibles próximamente cuando se configure el contenido.
+						{/if}
+					</span>
 				</div>
 			{/if}
 		</div>
@@ -296,6 +398,62 @@
 		line-height: 1.6;
 		color: #ffffff;
 		text-shadow: #000000 0px 4px 6px;
+	}
+
+	/* Document Type Section */
+	.document-type-section {
+		background: var(--bg-primary);
+		padding: 30px 50px 0;
+		transition: background 0.3s ease;
+		position: relative;
+		z-index: 10;
+	}
+
+	.document-type-container {
+		max-width: 1200px;
+		margin: 0 auto;
+	}
+
+	.document-type-tabs {
+		display: flex;
+		gap: 10px;
+		justify-content: center;
+		align-items: center;
+		flex-wrap: wrap;
+	}
+
+	.type-tab {
+		padding: 14px 32px;
+		font-size: 16px;
+		font-weight: 700;
+		background: var(--card-bg);
+		color: var(--text-primary);
+		border: 2px solid transparent;
+		border-radius: 8px;
+		cursor: pointer;
+		transition: all 0.3s ease;
+		box-shadow: 0 2px 8px var(--card-shadow);
+	}
+
+	.type-tab:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 4px 12px var(--card-shadow);
+		border-color: rgba(74, 123, 167, 0.3);
+	}
+
+	:global([data-theme='dark']) .type-tab:hover {
+		border-color: rgba(0, 212, 255, 0.3);
+	}
+
+	.type-tab.active {
+		background: linear-gradient(135deg, #2b4a69, #1e3b59);
+		color: white;
+		border-color: #2b4a69;
+	}
+
+	:global([data-theme='dark']) .type-tab.active {
+		background: linear-gradient(135deg, #00d4ff, #0099cc);
+		border-color: #00d4ff;
 	}
 
 	/* Search Section */
@@ -619,6 +777,15 @@
 			font-size: 18px;
 		}
 
+		.document-type-section {
+			padding: 20px 20px 0;
+		}
+
+		.type-tab {
+			padding: 10px 20px;
+			font-size: 14px;
+		}
+
 		.search-section {
 			padding: 30px 30px 15px;
 		}
@@ -695,6 +862,11 @@
 			width: 16px;
 			height: 16px;
 			left: 15px;
+		}
+
+		.type-tab {
+			padding: 8px 16px;
+			font-size: 13px;
 		}
 
 		.theme-tab {

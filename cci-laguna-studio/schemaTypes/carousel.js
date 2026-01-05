@@ -31,7 +31,7 @@ export default defineType({
               name: 'descripcion',
               title: 'Descripción',
               type: 'text',
-              rows: 2
+              rows: 3
             })
           ],
           preview: {
