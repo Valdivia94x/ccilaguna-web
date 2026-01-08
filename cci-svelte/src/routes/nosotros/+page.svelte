@@ -302,12 +302,16 @@
 
 	<!-- Sección Línea del Tiempo -->
 	<section class="timeline-section">
-		<h2>Línea del Tiempo</h2>
+		<h2 use:animarAlEntrar={{ delay: 0 }}>Línea del Tiempo</h2>
 		<div class="timeline-container">
 			<div class="timeline-line"></div>
 
 			{#each timelineEvents as event, i}
-				<div class="timeline-item" class:no-image={event.images.length === 0}>
+				<div
+					class="timeline-item"
+					class:no-image={event.images.length === 0}
+					use:animarAlEntrar={{ delay: 0 }}
+				>
 					<div class="timeline-content">
 						{#if event.images.length > 0}
 							<div class="timeline-images" class:dual={event.images.length > 1}>
@@ -379,7 +383,7 @@
 
 	<!-- Sección Equipo de Trabajo -->
 	<section class="team-section">
-		<h2>Equipo de Trabajo</h2>
+		<h2 use:animarAlEntrar={{ delay: 0 }}>Equipo de Trabajo</h2>
 		<div class="team-grid">
 			<div class="team-member" use:animarAlEntrar={{ delay: 0 }}>
 				<div class="member-photo">
@@ -443,6 +447,90 @@
 				</div>
 				<h3 class="member-name">Nayeli García González</h3>
 				<p class="member-role">Community Manager</p>
+			</div>
+		</div>
+	</section>
+
+	<!-- Sección Consejo Directivo -->
+	<section class="board-section">
+		<h2 use:animarAlEntrar={{ delay: 0 }}>Consejo Directivo</h2>
+		<div class="board-grid">
+			<div class="board-member" use:animarAlEntrar={{ delay: 0 }}>
+				<h3 class="board-name">Luis Dovalina Flores</h3>
+				<p class="board-role">Presidente</p>
+			</div>
+
+			<div class="board-member" use:animarAlEntrar={{ delay: 50 }}>
+				<h3 class="board-name">Alán Garza Tijerina Murra</h3>
+				<p class="board-role">VicePresidente</p>
+			</div>
+
+			<div class="board-member" use:animarAlEntrar={{ delay: 100 }}>
+				<h3 class="board-name">Luis Rey Delgado García</h3>
+				<p class="board-role">Secretario</p>
+			</div>
+
+			<div class="board-member" use:animarAlEntrar={{ delay: 150 }}>
+				<h3 class="board-name">Othón Zermeño Wigand</h3>
+				<p class="board-role">Tesorero</p>
+			</div>
+
+			<div class="board-member" use:animarAlEntrar={{ delay: 200 }}>
+				<h3 class="board-name">Diego Jiménez Berúmen</h3>
+				<p class="board-role">Comisario</p>
+			</div>
+
+			<div class="board-member" use:animarAlEntrar={{ delay: 250 }}>
+				<h3 class="board-name">Gerardo Martín Soberón</h3>
+				<p class="board-role">Vocal</p>
+			</div>
+
+			<div class="board-member" use:animarAlEntrar={{ delay: 300 }}>
+				<h3 class="board-name">Carlos Fernández Gómez</h3>
+				<p class="board-role">Vocal</p>
+			</div>
+
+			<div class="board-member" use:animarAlEntrar={{ delay: 350 }}>
+				<h3 class="board-name">Alberto Allegre del Cueto</h3>
+				<p class="board-role">Vocal</p>
+			</div>
+
+			<div class="board-member" use:animarAlEntrar={{ delay: 400 }}>
+				<h3 class="board-name">Federico Villarreal Gómez</h3>
+				<p class="board-role">Vocal</p>
+			</div>
+
+			<div class="board-member" use:animarAlEntrar={{ delay: 450 }}>
+				<h3 class="board-name">Eduardo Bartheneuf Viesca</h3>
+				<p class="board-role">Vocal</p>
+			</div>
+
+			<div class="board-member" use:animarAlEntrar={{ delay: 500 }}>
+				<h3 class="board-name">Arturo Madero Sordo</h3>
+				<p class="board-role">Vocal</p>
+			</div>
+
+			<div class="board-member" use:animarAlEntrar={{ delay: 550 }}>
+				<h3 class="board-name">Boyardo Salmón Abraham</h3>
+				<p class="board-role">Vocal</p>
+			</div>
+
+			<div class="board-member" use:animarAlEntrar={{ delay: 600 }}>
+				<h3 class="board-name">Pablo Treviño Sepúlveda</h3>
+				<p class="board-role">Vocal</p>
+			</div>
+		</div>
+
+		<h3 class="board-subtitle" use:animarAlEntrar={{ delay: 0 }}>Consejo ExPresidentes</h3>
+		<div class="board-grid expresidents">
+			<div class="board-member" use:animarAlEntrar={{ delay: 0 }}>
+				<h3 class="board-name">Miguel Wong Sánchez Ibarra</h3>
+				<p class="board-role">ExPresidente</p>
+			</div>
+
+			<div class="board-member" use:animarAlEntrar={{ delay: 50 }}>
+				<h3 class="board-name">Fernando Pérez Garza</h3>
+				<p class="board-role">ExPresidente</p>
 			</div>
 		</div>
 	</section>
@@ -524,6 +612,18 @@
 		margin-bottom: 60px;
 		text-transform: uppercase;
 		letter-spacing: 1.5px;
+
+		/* Estado inicial para animación */
+		opacity: 0;
+		transform: translateY(30px);
+		transition:
+			opacity 0.8s ease-out,
+			transform 0.8s ease-out;
+	}
+
+	.timeline-section h2:global(.visible) {
+		opacity: 1;
+		transform: translateY(0);
 	}
 
 	.timeline-container {
@@ -551,6 +651,18 @@
 		display: flex;
 		justify-content: flex-end;
 		width: 100%;
+
+		/* Estado inicial para animación */
+		opacity: 0;
+		transform: translateY(50px);
+		transition:
+			opacity 0.8s ease-out,
+			transform 0.8s ease-out;
+	}
+
+	.timeline-item:global(.visible) {
+		opacity: 1;
+		transform: translateY(0);
 	}
 
 	/* Items impares (izquierda) */
@@ -954,6 +1066,18 @@
 		margin-bottom: 60px;
 		text-transform: uppercase;
 		letter-spacing: 1.5px;
+
+		/* Estado inicial para animación */
+		opacity: 0;
+		transform: translateY(30px);
+		transition:
+			opacity 0.8s ease-out,
+			transform 0.8s ease-out;
+	}
+
+	.team-section h2:global(.visible) {
+		opacity: 1;
+		transform: translateY(0);
 	}
 
 	.team-grid {
@@ -1071,6 +1195,129 @@
 		font-weight: 400;
 		font-style: italic;
 		opacity: 0.85;
+	}
+
+	/* Board Section (Consejo Directivo) */
+	.board-section {
+		padding: 10px 50px 100px;
+		background: var(--bg-primary);
+		transition: background 0.3s ease;
+		position: relative;
+		z-index: 10;
+	}
+
+	.board-section h2 {
+		font-size: 40px;
+		font-weight: 500;
+		color: var(--text-sub);
+		text-align: center;
+		margin-bottom: 60px;
+		text-transform: uppercase;
+		letter-spacing: 1.5px;
+
+		/* Estado inicial para animación */
+		opacity: 0;
+		transform: translateY(30px);
+		transition:
+			opacity 0.8s ease-out,
+			transform 0.8s ease-out;
+	}
+
+	.board-section h2:global(.visible) {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	.board-subtitle {
+		font-size: 32px;
+		font-weight: 500;
+		color: var(--text-sub);
+		text-align: center;
+		margin-top: 80px;
+		margin-bottom: 20px;
+		text-transform: uppercase;
+		letter-spacing: 1.2px;
+
+		/* Estado inicial para animación */
+		opacity: 0;
+		transform: translateY(30px);
+		transition:
+			opacity 0.8s ease-out,
+			transform 0.8s ease-out;
+	}
+
+	.board-subtitle:global(.visible) {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	.board-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+		gap: 30px;
+		max-width: 1200px;
+		margin: 0 auto;
+	}
+
+	.board-grid.expresidents {
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+		max-width: 800px;
+	}
+
+	.board-member {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+		padding: 30px 20px;
+		background: var(--card-bg);
+		border-radius: 16px;
+		box-shadow: 0 4px 20px var(--card-shadow);
+		transition:
+			transform 0.3s ease,
+			box-shadow 0.3s ease,
+			opacity 0.8s ease-out,
+			transform 0.8s ease-out;
+
+		/* Estado inicial para animación */
+		opacity: 0;
+		transform: translateY(30px);
+	}
+
+	.board-member:global(.visible) {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	.board-member:hover {
+		transform: translateY(-8px);
+		box-shadow: 0 12px 35px var(--card-shadow);
+	}
+
+	.board-name {
+		font-size: 18px;
+		font-weight: 600;
+		color: var(--text-primary);
+		margin-bottom: 8px;
+		line-height: 1.4;
+		transition: color 0.3s ease;
+	}
+
+	.board-member:hover .board-name {
+		color: #4a7ba7;
+	}
+
+	:global([data-theme='dark']) .board-member:hover .board-name {
+		color: #ffa100;
+	}
+
+	.board-role {
+		font-size: 14px;
+		color: var(--text-primary);
+		font-weight: 500;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+		opacity: 0.75;
 	}
 
 	/* Responsive */
@@ -1341,6 +1588,42 @@
 		}
 
 		.member-role {
+			font-size: 13px;
+		}
+
+		.board-section {
+			padding: 40px 20px;
+		}
+
+		.board-section h2 {
+			font-size: 28px;
+			margin-bottom: 30px;
+		}
+
+		.board-subtitle {
+			font-size: 24px;
+			margin-top: 40px;
+			margin-bottom: 30px;
+		}
+
+		.board-grid {
+			grid-template-columns: 1fr;
+			gap: 20px;
+		}
+
+		.board-grid.expresidents {
+			grid-template-columns: 1fr;
+		}
+
+		.board-member {
+			padding: 25px 15px;
+		}
+
+		.board-name {
+			font-size: 16px;
+		}
+
+		.board-role {
 			font-size: 13px;
 		}
 	}
