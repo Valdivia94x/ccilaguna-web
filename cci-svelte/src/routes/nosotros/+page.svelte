@@ -17,7 +17,7 @@
 			title: 'Nace el Consejo Cívico de las Instituciones',
 			description:
 				'En medio de uno de los periodos más complejos de inseguridad que ha vivido La Laguna, la sociedad civil decidió organizarse. En 2012 nace el Consejo Cívico de las Instituciones, A.C., como una respuesta ciudadana ante la violencia, la incertidumbre y la necesidad urgente de reconstruir la confianza y el tejido social. Desde su origen, el CCI asumió el compromiso de incidir con datos, participación y corresponsabilidad para recuperar la paz, fortalecer las instituciones y defender el derecho de las y los laguneros a vivir con seguridad y dignidad.',
-			images: ['Acta Constitutiva.jpeg']
+			images: ['Acta Constitutiva.png']
 		},
 		{
 			year: '2013',
@@ -31,7 +31,7 @@
 			title: 'Primer Informe de Monitoreo de Incidencia Delictiva en La Laguna',
 			description:
 				'En uno de los momentos más complejos en materia de seguridad para la región, el Consejo Cívico de las Instituciones presentó el Primer Informe de Monitoreo de Incidencia Delictiva en La Laguna. En un contexto de violencia generalizada y escasa información confiable, este ejercicio marcó un precedente al documentar y visibilizar, la magnitud real del fenómeno delictivo. Fue un acto de responsabilidad ciudadana para enfrentar la violencia con evidencia, romper el silencio y sentar las bases de una medición permanente que permitiera exigir políticas públicas más efectivas.',
-			images: ['Rueda de Prensa Lanzamiento CCI.png', 'Caratula MIDLAG 2012.png']
+			images: ['Rueda de Prensa Lanzamiento CCI.png']
 		},
 		{
 			year: '2013',
@@ -171,7 +171,7 @@
 			title: 'Seminario Permanente de Fortalecimiento de Regidurías',
 			description:
 				'Se colaboró en la organización del Seminario Permanente de Fortalecimiento de Regidurías, un espacio de capacitación, análisis y diálogo dirigido a regidores y regidoras de la Zona Metropolitana de La Laguna. Este seminario nació con el propósito de fortalecer las capacidades técnicas y la comprensión del papel estratégico de las regidurías en la gobernanza local. Desde entonces, el CCI ha mantenido este ejercicio de manera constante en cada ciclo electoral.',
-			images: ['Seminario de Regidurias.png', 'Seminario Regidurias.png']
+			images: ['Seminario de Regidurias.png']
 		},
 		{
 			year: '2023',
