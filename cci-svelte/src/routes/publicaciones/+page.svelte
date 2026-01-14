@@ -20,7 +20,7 @@
 		image: string;
 		excerpt: string;
 		category: string;
-		documentType: 'publicacion' | 'informe';
+		documentType: 'publicacion' | 'informe' | 'encuesta';
 		pdfUrl: string;
 		size: string;
 		pages?: number | string;
@@ -45,7 +45,7 @@
 	};
 
 	// Estado para el tipo de documento activo
-	let activeDocumentType = $state<'all' | 'publicacion' | 'informe'>('all');
+	let activeDocumentType = $state<'publicacion' | 'informe' | 'encuesta'>('publicacion');
 
 	// Estado para la categoría activa
 	let activeCategory = $state<string>('all');
@@ -62,10 +62,10 @@
 		const tipo = $page.url.searchParams.get('tipo');
 		if (tipo === 'informes') {
 			activeDocumentType = 'informe';
-		} else if (tipo === 'publicaciones') {
-			activeDocumentType = 'publicacion';
+		} else if (tipo === 'encuestas') {
+			activeDocumentType = 'encuesta';
 		} else {
-			activeDocumentType = 'all';
+			activeDocumentType = 'publicacion';
 		}
 	});
 
@@ -106,20 +106,33 @@
 			: []
 	);
 
+	// Transformar encuestas de Sanity
+	let encuestas = $derived<Documento[]>(
+		data.surveys
+			? data.surveys.map((s: any) => ({
+					id: s._id,
+					title: s.title,
+					date: s.publishedAt,
+					image: s.coverImage ? urlFor(s.coverImage).width(500).height(350).url() : '',
+					excerpt: s.description || 'Encuesta disponible para consulta.',
+					category: 'encuesta',
+					documentType: 'encuesta' as const,
+					pdfUrl: s.pdfUrl,
+					size: formatBytes(s.size)
+				}))
+			: []
+	);
+
 	// Combinar todos los documentos
-	let todosLosDocumentos = $derived<Documento[]>([...publicaciones, ...informes]);
+	let todosLosDocumentos = $derived<Documento[]>([...publicaciones, ...informes, ...encuestas]);
 
 	// Categorías disponibles desde Sanity
 	let categories = $derived<string[]>(data.categories || []);
 
 	// Filtrar documentos
 	let documentosFiltrados = $derived(() => {
-		let filtered = todosLosDocumentos;
-
 		// Filtrar por tipo de documento
-		if (activeDocumentType !== 'all') {
-			filtered = filtered.filter((d: Documento) => d.documentType === activeDocumentType);
-		}
+		let filtered = todosLosDocumentos.filter((d: Documento) => d.documentType === activeDocumentType);
 
 		// Filtrar por categoría si no es "all" (solo aplica a publicaciones)
 		if (activeCategory !== 'all') {
@@ -157,19 +170,19 @@
 		clearFilters();
 	}
 
-	function setDocumentType(type: 'all' | 'publicacion' | 'informe') {
+	function setDocumentType(type: 'publicacion' | 'informe' | 'encuesta') {
 		activeDocumentType = type;
 		activeCategory = 'all';
 		clearFilters();
 
 		// Actualizar URL
 		const url = new URL($page.url);
-		if (type === 'all') {
-			url.searchParams.delete('tipo');
-		} else if (type === 'informe') {
+		if (type === 'informe') {
 			url.searchParams.set('tipo', 'informes');
+		} else if (type === 'encuesta') {
+			url.searchParams.set('tipo', 'encuestas');
 		} else {
-			url.searchParams.set('tipo', 'publicaciones');
+			url.searchParams.delete('tipo');
 		}
 		goto(url.toString(), { replaceState: true, noScroll: true });
 	}
@@ -239,13 +252,6 @@
 			<div class="document-type-tabs">
 				<button
 					class="type-tab"
-					class:active={activeDocumentType === 'all'}
-					onclick={() => setDocumentType('all')}
-				>
-					<span class="tab-text">Todos</span>
-				</button>
-				<button
-					class="type-tab"
 					class:active={activeDocumentType === 'publicacion'}
 					onclick={() => setDocumentType('publicacion')}
 				>
@@ -258,12 +264,19 @@
 				>
 					<span class="tab-text">Informes</span>
 				</button>
+				<button
+					class="type-tab"
+					class:active={activeDocumentType === 'encuesta'}
+					onclick={() => setDocumentType('encuesta')}
+				>
+					<span class="tab-text">Encuestas</span>
+				</button>
 			</div>
 		</div>
 	</section>
 
-	<!-- Tabs de Categorías (solo visible cuando no es "informe") -->
-	{#if activeDocumentType !== 'informe'}
+	<!-- Tabs de Categorías (solo visible para publicaciones) -->
+	{#if activeDocumentType === 'publicacion'}
 		<section class="themes-section">
 			<div class="themes-container">
 				<div class="theme-tabs">
@@ -331,6 +344,8 @@
 							Los informes estarán disponibles próximamente.
 						{:else if activeDocumentType === 'publicacion'}
 							Las publicaciones estarán disponibles próximamente.
+						{:else if activeDocumentType === 'encuesta'}
+							Las encuestas estarán disponibles próximamente.
 						{:else}
 							Los documentos estarán disponibles próximamente cuando se configure el contenido.
 						{/if}

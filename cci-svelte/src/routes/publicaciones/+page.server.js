@@ -35,10 +35,28 @@ export async function load() {
       "size": pdfFile.asset->size
     }`;
 
-    // Fetch ambos tipos en paralelo
-    const [publications, reports] = await Promise.all([
+    // Query para encuestas
+    const surveysQuery = `*[_type == "survey"] | order(publishedAt desc) {
+      _id,
+      title,
+      description,
+      publishedAt,
+      coverImage {
+        asset->{
+          _id,
+          url
+        },
+        alt
+      },
+      "pdfUrl": pdfFile.asset->url,
+      "size": pdfFile.asset->size
+    }`;
+
+    // Fetch todos los tipos en paralelo
+    const [publications, reports, surveys] = await Promise.all([
       client.fetch(publicationsQuery),
-      client.fetch(reportsQuery)
+      client.fetch(reportsQuery),
+      client.fetch(surveysQuery)
     ]);
 
     // Extraer categorías únicas de las publicaciones
@@ -53,6 +71,7 @@ export async function load() {
     return {
       publications: publications || [],
       reports: reports || [],
+      surveys: surveys || [],
       categories: categories || []
     };
   } catch (error) {
@@ -60,6 +79,7 @@ export async function load() {
     return {
       publications: [],
       reports: [],
+      surveys: [],
       categories: []
     };
   }

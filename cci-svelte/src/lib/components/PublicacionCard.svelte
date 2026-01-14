@@ -8,7 +8,7 @@
 		image: string;
 		excerpt: string;
 		category: string;
-		documentType?: 'publicacion' | 'informe';
+		documentType?: 'publicacion' | 'informe' | 'encuesta';
 		pdfUrl?: string;
 		size?: string;
 		pages?: number | string;

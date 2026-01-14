@@ -39,6 +39,10 @@
 	let filterStartDate = $state('');
 	let filterEndDate = $state('');
 
+	// Estado para paginación
+	const ITEMS_PER_PAGE = 6;
+	let currentPage = $state(1);
+
 	// --- TRANSFORMACIÓN DE DATOS ---
 	// Convertimos los datos crudos de Sanity al formato que tu UI ya conoce
 	let boletines = $derived(
@@ -85,11 +89,40 @@
 		);
 	});
 
+	// Calcular total de páginas
+	let totalPages = $derived(Math.ceil(boletinesFiltrados().length / ITEMS_PER_PAGE));
+
+	// Boletines paginados
+	let boletinesPaginados = $derived(() => {
+		const start = (currentPage - 1) * ITEMS_PER_PAGE;
+		const end = start + ITEMS_PER_PAGE;
+		return boletinesFiltrados().slice(start, end);
+	});
+
 	function clearFilters() {
 		searchQuery = '';
 		filterStartDate = '';
 		filterEndDate = '';
+		currentPage = 1;
 	}
+
+	function goToPage(page: number) {
+		if (page >= 1 && page <= totalPages) {
+			currentPage = page;
+			// Scroll suave hacia arriba de la sección de boletines
+			document.querySelector('.boletines-section')?.scrollIntoView({ behavior: 'smooth' });
+		}
+	}
+
+	// Resetear página cuando cambian los filtros
+	$effect(() => {
+		// Cuando cambia el tema, búsqueda o fechas, volver a página 1
+		activeTheme;
+		searchQuery;
+		filterStartDate;
+		filterEndDate;
+		currentPage = 1;
+	});
 </script>
 
 <svelte:head>
@@ -195,10 +228,60 @@
 		<div class="boletines-container">
 			{#if boletinesFiltrados().length > 0}
 				<div class="boletines-grid">
-					{#each boletinesFiltrados() as boletin (boletin.id)}
+					{#each boletinesPaginados() as boletin (boletin.id)}
 						<BoletinCard {boletin} />
 					{/each}
 				</div>
+
+				<!-- Paginación -->
+				{#if totalPages > 1}
+					<nav class="pagination" aria-label="Paginación de boletines">
+						<button
+							class="pagination-btn pagination-prev"
+							onclick={() => goToPage(currentPage - 1)}
+							disabled={currentPage === 1}
+							aria-label="Página anterior"
+						>
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<polyline points="15 18 9 12 15 6"></polyline>
+							</svg>
+						</button>
+
+						<div class="pagination-numbers">
+							{#each Array(totalPages) as _, i}
+								{@const page = i + 1}
+								{#if page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)}
+									<button
+										class="pagination-number"
+										class:active={currentPage === page}
+										onclick={() => goToPage(page)}
+										aria-label="Ir a página {page}"
+										aria-current={currentPage === page ? 'page' : undefined}
+									>
+										{page}
+									</button>
+								{:else if page === currentPage - 2 || page === currentPage + 2}
+									<span class="pagination-ellipsis">...</span>
+								{/if}
+							{/each}
+						</div>
+
+						<button
+							class="pagination-btn pagination-next"
+							onclick={() => goToPage(currentPage + 1)}
+							disabled={currentPage === totalPages}
+							aria-label="Página siguiente"
+						>
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<polyline points="9 18 15 12 9 6"></polyline>
+							</svg>
+						</button>
+					</nav>
+
+					<p class="pagination-info">
+						Mostrando {(currentPage - 1) * ITEMS_PER_PAGE + 1}-{Math.min(currentPage * ITEMS_PER_PAGE, boletinesFiltrados().length)} de {boletinesFiltrados().length} boletines
+					</p>
+				{/if}
 			{:else}
 				<div class="no-results">
 					<p>No se encontraron boletines para los criterios seleccionados.</p>
@@ -677,6 +760,105 @@
 		opacity: 0.7;
 	}
 
+	/* Paginación */
+	.pagination {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 8px;
+		margin-top: 50px;
+	}
+
+	.pagination-btn {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 44px;
+		height: 44px;
+		border: 2px solid rgba(74, 123, 167, 0.3);
+		border-radius: 12px;
+		background: var(--card-bg);
+		color: var(--text-primary);
+		cursor: pointer;
+		transition: all 0.3s ease;
+	}
+
+	.pagination-btn svg {
+		width: 20px;
+		height: 20px;
+	}
+
+	.pagination-btn:hover:not(:disabled) {
+		border-color: #4a7ba7;
+		background: rgba(74, 123, 167, 0.1);
+		transform: translateY(-2px);
+	}
+
+	.pagination-btn:disabled {
+		opacity: 0.4;
+		cursor: not-allowed;
+	}
+
+	:global([data-theme='dark']) .pagination-btn {
+		border-color: rgba(0, 212, 255, 0.3);
+	}
+
+	:global([data-theme='dark']) .pagination-btn:hover:not(:disabled) {
+		border-color: #00d4ff;
+		background: rgba(0, 212, 255, 0.1);
+	}
+
+	.pagination-numbers {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+	}
+
+	.pagination-number {
+		min-width: 44px;
+		height: 44px;
+		padding: 0 12px;
+		border: 2px solid transparent;
+		border-radius: 12px;
+		background: var(--card-bg);
+		color: var(--text-primary);
+		font-size: 16px;
+		font-weight: 500;
+		cursor: pointer;
+		transition: all 0.3s ease;
+	}
+
+	.pagination-number:hover {
+		border-color: rgba(74, 123, 167, 0.3);
+		transform: translateY(-2px);
+	}
+
+	.pagination-number.active {
+		background: linear-gradient(135deg, #4a7ba7, #2c5f8d);
+		color: white;
+		border-color: #4a7ba7;
+	}
+
+	:global([data-theme='dark']) .pagination-number.active {
+		background: linear-gradient(135deg, #00d4ff, #0099cc);
+		border-color: #00d4ff;
+	}
+
+	.pagination-ellipsis {
+		padding: 0 8px;
+		color: var(--text-primary);
+		opacity: 0.5;
+		font-size: 16px;
+	}
+
+	.pagination-info {
+		text-align: center;
+		margin-top: 20px;
+		font-size: 14px;
+		color: var(--text-primary);
+		opacity: 0.6;
+	}
+
 	/* Responsive */
 	@media (max-width: 768px) {
 		.hero-section {
@@ -753,6 +935,22 @@
 			grid-template-columns: 1fr;
 			gap: 25px;
 		}
+
+		.pagination {
+			gap: 6px;
+			margin-top: 40px;
+		}
+
+		.pagination-btn,
+		.pagination-number {
+			width: 40px;
+			height: 40px;
+			min-width: 40px;
+		}
+
+		.pagination-number {
+			font-size: 14px;
+		}
 	}
 
 	@media (max-width: 480px) {
@@ -798,6 +996,33 @@
 			font-size: 14px;
 			letter-spacing: 2px;
 			bottom: 14px;
+		}
+
+		.pagination {
+			gap: 4px;
+			margin-top: 30px;
+		}
+
+		.pagination-btn,
+		.pagination-number {
+			width: 36px;
+			height: 36px;
+			min-width: 36px;
+			border-radius: 10px;
+		}
+
+		.pagination-btn svg {
+			width: 16px;
+			height: 16px;
+		}
+
+		.pagination-number {
+			font-size: 13px;
+			padding: 0 8px;
+		}
+
+		.pagination-info {
+			font-size: 12px;
 		}
 	}
 </style>
