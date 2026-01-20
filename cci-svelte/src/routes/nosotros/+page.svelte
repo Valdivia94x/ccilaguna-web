@@ -24,7 +24,7 @@
 			title: 'Primer Observatorio Ciudadano Certificado y nacimiento de la Red Nacional',
 			description:
 				'El Consejo Cívico de las Instituciones obtuvo la Certificación como Observatorio Ciudadano por parte de México Evalúa y el Observatorio Nacional Ciudadano, convirtiéndose en el primer observatorio del país certificado en la medición de incidencia delictiva. Este reconocimiento sentó las bases para la creación de la Red Nacional de Observatorios de Seguridad, Justicia y Legalidad, fortaleciendo la vigilancia ciudadana, la transparencia y la evaluación independiente de las políticas públicas en materia de seguridad en México.',
-			images: []
+			images: ['observatorio cerificacion.png']
 		},
 		{
 			year: '2013',

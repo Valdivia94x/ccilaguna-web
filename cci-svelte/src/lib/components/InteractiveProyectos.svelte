@@ -11,6 +11,7 @@
 		image?: string;
 		clipPath?: string;
 		description?: string;
+		infoPosition?: 'left' | 'right' | 'top' | 'bottom'; // Posición del info-card
 	}
 
 	// Definir las 10 áreas interactivas (ajustar coordenadas según la posición real en el SVG)
@@ -39,7 +40,8 @@
 			image: '/images/proyectos/karewa-hotspot.png',
 			clipPath:
 				'polygon(0.65% 36.01%, 0.97% 42.74%, 43.71% 96.67%, 47.77% 98.46%, 51.99% 98.46%, 55.31% 96.51%, 66.91% 84.43%, 77.53% 72.02%, 83.70% 63.42%, 92.30% 47.85%, 98.05% 35.93%, 99.27% 32.44%, 99.27% 26.36%, 97.16% 23.44%, 94.00% 21.65%, 32.44% 1.54%, 26.03% 1.54%, 21.82% 5.03%, 14.68% 17.27%, 0.65% 36.01%)',
-			description: 'Liderazgo juvenil y empoderamiento ciudadano'
+			description: 'Liderazgo juvenil y empoderamiento ciudadano',
+			infoPosition: 'bottom'
 		},
 		{
 			id: 'hotspot_mesa',
@@ -78,7 +80,8 @@
 			image: '/images/proyectos/agenda-hotspot.png',
 			clipPath:
 				'polygon(4.20% 29.80%, 4.60% 71.60%, 8.60% 78.00%, 80.60% 99.00%, 85.40% 98.00%, 89.40% 94.80%, 92.80% 77.20%, 94.80% 44.60%, 90.00% 11.00%, 85.40% 2.60%, 77.80% 1.60%, 10.80% 22.60%, 5.40% 26.40%, 4.20% 29.80%)',
-			description: 'Estrategias locales contra la corrupción y la impunidad'
+			description: 'Estrategias locales contra la corrupción y la impunidad',
+			infoPosition: 'top'
 		},
 		{
 			id: 'hotspot_midlag',
@@ -116,59 +119,62 @@
 
 		<!-- Áreas interactivas superpuestas -->
 		{#each hotspots as hotspot}
-			{#if hotspot.external}
-				<a
-					href={hotspot.href}
-					target="_blank"
-					rel="noopener noreferrer"
-					class="area-interactiva"
-					style="left: {hotspot.x}%; top: {hotspot.y}%; width: {hotspot.width}%; height: {hotspot.height}%;"
-					title={hotspot.title}
-					aria-label={hotspot.title}
-				>
-					{#if hotspot.image}
-						<img
-							src={hotspot.image}
-							alt={hotspot.title}
-							class="hotspot-image"
-							style={hotspot.clipPath ? `clip-path: ${hotspot.clipPath};` : ''}
-						/>
-						{#if hotspot.description}
-							<div class="info-card">
-								<h3 class="info-title">{hotspot.title}</h3>
-								<p class="info-description">{hotspot.description}</p>
+			<div
+				class="hotspot-container"
+				style="left: {hotspot.x}%; top: {hotspot.y}%; width: {hotspot.width}%; height: {hotspot.height}%;"
+			>
+				{#if hotspot.external}
+					<a
+						href={hotspot.href}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="area-interactiva"
+						style={hotspot.clipPath ? `clip-path: ${hotspot.clipPath};` : ''}
+						title={hotspot.title}
+						aria-label={hotspot.title}
+					>
+						{#if hotspot.image}
+							<div class="hotspot-image-wrapper">
+								<img
+									src={hotspot.image}
+									alt={hotspot.title}
+									class="hotspot-image"
+									style={hotspot.clipPath ? `clip-path: ${hotspot.clipPath};` : ''}
+								/>
 							</div>
+						{:else}
+							<span class="hotspot-overlay"></span>
 						{/if}
-					{:else}
-						<span class="hotspot-overlay"></span>
-					{/if}
-				</a>
-			{:else}
-				<a
-					href={hotspot.href}
-					class="area-interactiva"
-					style="left: {hotspot.x}%; top: {hotspot.y}%; width: {hotspot.width}%; height: {hotspot.height}%;"
-					title={hotspot.title}
-					aria-label={hotspot.title}
-				>
-					{#if hotspot.image}
-						<img
-							src={hotspot.image}
-							alt={hotspot.title}
-							class="hotspot-image"
-							style={hotspot.clipPath ? `clip-path: ${hotspot.clipPath};` : ''}
-						/>
-						{#if hotspot.description}
-							<div class="info-card">
-								<h3 class="info-title">{hotspot.title}</h3>
-								<p class="info-description">{hotspot.description}</p>
+					</a>
+				{:else}
+					<a
+						href={hotspot.href}
+						class="area-interactiva"
+						style={hotspot.clipPath ? `clip-path: ${hotspot.clipPath};` : ''}
+						title={hotspot.title}
+						aria-label={hotspot.title}
+					>
+						{#if hotspot.image}
+							<div class="hotspot-image-wrapper">
+								<img
+									src={hotspot.image}
+									alt={hotspot.title}
+									class="hotspot-image"
+									style={hotspot.clipPath ? `clip-path: ${hotspot.clipPath};` : ''}
+								/>
 							</div>
+						{:else}
+							<span class="hotspot-overlay"></span>
 						{/if}
-					{:else}
-						<span class="hotspot-overlay"></span>
-					{/if}
-				</a>
-			{/if}
+					</a>
+				{/if}
+				{#if hotspot.description}
+					<div class="info-card {hotspot.infoPosition ? `info-card--${hotspot.infoPosition}` : ''}">
+						<h3 class="info-title">{hotspot.title}</h3>
+						<p class="info-description">{hotspot.description}</p>
+					</div>
+				{/if}
+			</div>
 		{/each}
 	</div>
 </section>
@@ -186,6 +192,11 @@
 		width: 100%;
 		max-width: 100%;
 		aspect-ratio: 1 / 1;
+		filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.35));
+	}
+
+	:global([data-theme='dark']) .svg-container {
+		filter: none;
 	}
 
 	.svg-container img {
@@ -195,8 +206,15 @@
 		display: block;
 	}
 
+	.hotspot-container {
+		position: absolute;
+		overflow: visible;
+		transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
 	.area-interactiva {
 		position: absolute;
+		inset: 0;
 		display: block;
 		cursor: pointer;
 		transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -204,12 +222,17 @@
 		overflow: visible;
 	}
 
+	.hotspot-image-wrapper {
+		width: 100%;
+		height: 100%;
+		transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
 	.hotspot-image {
 		width: 100%;
 		height: 100%;
 		object-fit: contain;
 		transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-		filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0));
 	}
 
 	.hotspot-overlay {
@@ -222,9 +245,12 @@
 		pointer-events: none;
 	}
 
-	.area-interactiva:hover .hotspot-image {
-		transform: scale(1.3);
-		filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0)) brightness(1.05);
+	.hotspot-container:hover .hotspot-image-wrapper {
+		transform: scale(1.2);
+	}
+
+	.hotspot-container:hover .hotspot-image {
+		filter: brightness(1.05);
 	}
 
 	.area-interactiva:hover .hotspot-overlay {
@@ -233,8 +259,9 @@
 		box-shadow: 0 0 20px rgba(0, 123, 255, 0.3);
 	}
 
-	.area-interactiva:hover {
+	.hotspot-container:hover {
 		z-index: 10;
+		transform: scale(1.2);
 	}
 
 	.area-interactiva:focus {
@@ -261,10 +288,44 @@
 		border: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
 	}
 
-	.area-interactiva:hover .info-card {
+	.hotspot-container:hover .info-card {
 		opacity: 1;
 		visibility: visible;
 		transform: translateY(-50%) translateX(0);
+	}
+
+	/* Info card posicionado a la izquierda */
+	.info-card--left {
+		left: auto;
+		right: calc(100% + 20px);
+		transform: translateY(-50%) translateX(10px);
+	}
+
+	.hotspot-container:hover .info-card--left {
+		transform: translateY(-50%) translateX(0);
+	}
+
+	/* Info card posicionado arriba */
+	.info-card--top {
+		left: 50%;
+		top: auto;
+		bottom: calc(100% + 20px);
+		transform: translateX(-50%) translateY(10px);
+	}
+
+	.hotspot-container:hover .info-card--top {
+		transform: translateX(-50%) translateY(0);
+	}
+
+	/* Info card posicionado abajo */
+	.info-card--bottom {
+		left: 50%;
+		top: calc(100% + 20px);
+		transform: translateX(-50%) translateY(-10px);
+	}
+
+	.hotspot-container:hover .info-card--bottom {
+		transform: translateX(-50%) translateY(0);
 	}
 
 	.info-title {
@@ -288,7 +349,7 @@
 			padding: 10px;
 		}
 
-		.area-interactiva:hover .hotspot-image {
+		.hotspot-container:hover .hotspot-image-wrapper {
 			transform: scale(1.04);
 		}
 
@@ -302,7 +363,7 @@
 			padding: 12px 16px;
 		}
 
-		.area-interactiva:hover .info-card {
+		.hotspot-container:hover .info-card {
 			transform: translateX(-50%) translateY(0);
 		}
 

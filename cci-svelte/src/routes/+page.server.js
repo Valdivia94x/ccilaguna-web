@@ -75,7 +75,7 @@ export async function load() {
       client.fetch(latestContentQuery)
     ]);
 
-    // Combinar todos los contenidos, ordenar por fecha y tomar los 4 más recientes
+    // Combinar todos los contenidos, ordenar por fecha y tomar los 6 más recientes
     const allContent = [
       ...(latestContentData.posts || []),
       ...(latestContentData.publications || []),
@@ -84,7 +84,7 @@ export async function load() {
     ]
       .filter(item => item && item.date)
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-      .slice(0, 4);
+      .slice(0, 6);
 
     return {
       allies: allies || [],

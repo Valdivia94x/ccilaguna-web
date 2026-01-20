@@ -14,9 +14,19 @@
 
 	let { items, mission }: { items: ContentItem[]; mission: string } = $props();
 
-	let currentIndex = $state(0);
+	// Tomar los primeros 6 items
+	let displayItems = $derived(items.slice(0, 6));
+
+	// Estado del carrusel (0 = primera página, 1 = segunda página)
+	let currentPage = $state(0);
 	let isPaused = $state(false);
 	let intervalId: number | undefined;
+
+	// Calcular el número total de páginas (cada página muestra 3 items)
+	let totalPages = $derived(Math.ceil(displayItems.length / 3));
+
+	// Items visibles en la página actual
+	let visibleItems = $derived(displayItems.slice(currentPage * 3, currentPage * 3 + 3));
 
 	// Configuración de tipos de contenido
 	const typeConfig = {
@@ -63,6 +73,54 @@
 		});
 	}
 
+	function nextPage() {
+		if (totalPages > 0) {
+			currentPage = (currentPage + 1) % totalPages;
+		}
+	}
+
+	function prevPage() {
+		if (totalPages > 0) {
+			currentPage = (currentPage - 1 + totalPages) % totalPages;
+		}
+	}
+
+	function goToPage(index: number) {
+		currentPage = index;
+	}
+
+	function startAutoplay() {
+		if (intervalId) return;
+		intervalId = window.setInterval(() => {
+			if (!isPaused) {
+				nextPage();
+			}
+		}, 6000);
+	}
+
+	function stopAutoplay() {
+		if (intervalId) {
+			clearInterval(intervalId);
+			intervalId = undefined;
+		}
+	}
+
+	onMount(() => {
+		startAutoplay();
+	});
+
+	onDestroy(() => {
+		stopAutoplay();
+	});
+
+	function handleMouseEnter() {
+		isPaused = true;
+	}
+
+	function handleMouseLeave() {
+		isPaused = false;
+	}
+
 	function animarAlEntrar(node: HTMLElement, options?: { threshold?: number }) {
 		const threshold = options?.threshold ?? 0.15;
 
@@ -90,54 +148,6 @@
 			}
 		};
 	}
-
-	function nextSlide() {
-		if (items.length > 0) {
-			currentIndex = (currentIndex + 1) % items.length;
-		}
-	}
-
-	function prevSlide() {
-		if (items.length > 0) {
-			currentIndex = (currentIndex - 1 + items.length) % items.length;
-		}
-	}
-
-	function goToSlide(index: number) {
-		currentIndex = index;
-	}
-
-	function startAutoplay() {
-		if (intervalId) return;
-		intervalId = window.setInterval(() => {
-			if (!isPaused) {
-				nextSlide();
-			}
-		}, 5000);
-	}
-
-	function stopAutoplay() {
-		if (intervalId) {
-			clearInterval(intervalId);
-			intervalId = undefined;
-		}
-	}
-
-	onMount(() => {
-		startAutoplay();
-	});
-
-	onDestroy(() => {
-		stopAutoplay();
-	});
-
-	function handleMouseEnter() {
-		isPaused = true;
-	}
-
-	function handleMouseLeave() {
-		isPaused = false;
-	}
 </script>
 
 <section id="publicaciones-recientes" class="content-section" aria-labelledby="content-heading">
@@ -164,79 +174,85 @@
 
 	<!-- Carrusel de contenido -->
 	<div
-		class="carousel-container"
-		use:animarAlEntrar={{ threshold: 0.3 }}
-		onmouseenter={handleMouseEnter}
-		onmouseleave={handleMouseLeave}
+		class="carousel-wrapper"
+		use:animarAlEntrar={{ threshold: 0.2 }}
 		role="region"
 		aria-label="Carrusel de publicaciones recientes"
+		onmouseenter={handleMouseEnter}
+		onmouseleave={handleMouseLeave}
 	>
-		<button class="carousel-btn prev" onclick={prevSlide} aria-label="Publicacion anterior">
-			&#10094;
-		</button>
-
-		<div class="content-carousel">
-			{#if items.length === 0}
-				<div class="empty-state">
-					<p>No hay publicaciones recientes disponibles.</p>
-				</div>
-			{:else}
-				{#each items as item, index (item._id)}
-					{@const config = typeConfig[item._type]}
-					<div
-						class="content-card"
-						class:active={index === currentIndex}
-						aria-hidden={index !== currentIndex}
-					>
-						<a href={getItemUrl(item)} class="card-link">
-							<div class="card-image-container">
-								{#if item.image}
-									<img src={item.image} alt={item.title} class="card-image" />
-								{:else}
-									<div class="card-image-placeholder" style="background-color: {config.color}20">
-										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke={config.color} stroke-width="1.5">
-											<rect x="3" y="3" width="18" height="18" rx="2" />
-											<line x1="7" y1="10" x2="17" y2="10" />
-											<line x1="7" y1="14" x2="14" y2="14" />
-										</svg>
-									</div>
-								{/if}
-								<span
-									class="type-badge"
-									style="--badge-color: {config.color}; --badge-color-dark: {config.darkColor}"
-								>
-									{config.label}
-								</span>
-							</div>
-							<div class="card-content">
-								<span class="card-date">{formatDate(item.date)}</span>
-								<h3 class="card-title">{item.title}</h3>
-								{#if item.excerpt}
-									<p class="card-excerpt">{item.excerpt}</p>
-								{/if}
-								<span class="card-cta">Ver mas &rarr;</span>
-							</div>
-						</a>
-					</div>
-				{/each}
+		{#if displayItems.length === 0}
+			<div class="empty-state">
+				<p>No hay publicaciones recientes disponibles.</p>
+			</div>
+		{:else}
+			<!-- Botón anterior -->
+			{#if totalPages > 1}
+				<button class="carousel-btn prev" onclick={prevPage} aria-label="Página anterior">
+					&#10094;
+				</button>
 			{/if}
-		</div>
 
-		<button class="carousel-btn next" onclick={nextSlide} aria-label="Publicacion siguiente">
-			&#10095;
-		</button>
+			<div class="cards-container">
+				{#key currentPage}
+					<div class="cards-grid">
+						{#each visibleItems as item, index (item._id)}
+							{@const config = typeConfig[item._type]}
+							<div class="content-card" style="--delay: {index * 0.1}s">
+								<a href={getItemUrl(item)} class="card-link">
+									<div class="card-image-container">
+										{#if item.image}
+											<img src={item.image} alt={item.title} class="card-image" />
+										{:else}
+											<div class="card-image-placeholder" style="background-color: {config.color}20">
+												<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke={config.color} stroke-width="1.5">
+													<rect x="3" y="3" width="18" height="18" rx="2" />
+													<line x1="7" y1="10" x2="17" y2="10" />
+													<line x1="7" y1="14" x2="14" y2="14" />
+												</svg>
+											</div>
+										{/if}
+										<span
+											class="type-badge"
+											style="--badge-color: {config.color}; --badge-color-dark: {config.darkColor}"
+										>
+											{config.label}
+										</span>
+									</div>
+									<div class="card-content">
+										<span class="card-date">{formatDate(item.date)}</span>
+										<h3 class="card-title">{item.title}</h3>
+										{#if item.excerpt}
+											<p class="card-excerpt">{item.excerpt}</p>
+										{/if}
+										<span class="card-cta">Ver mas &rarr;</span>
+									</div>
+								</a>
+							</div>
+						{/each}
+					</div>
+				{/key}
+			</div>
+
+			<!-- Botón siguiente -->
+			{#if totalPages > 1}
+				<button class="carousel-btn next" onclick={nextPage} aria-label="Página siguiente">
+					&#10095;
+				</button>
+			{/if}
+		{/if}
 	</div>
 
-	<!-- Indicadores -->
-	{#if items.length > 0}
-		<div class="carousel-indicators" role="tablist" aria-label="Navegacion de publicaciones">
-			{#each items as item, index (item._id)}
+	<!-- Indicadores de página -->
+	{#if totalPages > 1}
+		<div class="carousel-indicators" role="tablist" aria-label="Navegación de páginas">
+			{#each Array(totalPages) as _, index}
 				<button
 					class="indicator"
-					class:active={index === currentIndex}
-					onclick={() => goToSlide(index)}
-					aria-label={`Ir a publicacion ${index + 1}`}
-					aria-selected={index === currentIndex}
+					class:active={index === currentPage}
+					onclick={() => goToPage(index)}
+					aria-label={`Ir a página ${index + 1}`}
+					aria-selected={index === currentPage}
 					role="tab"
 				></button>
 			{/each}
@@ -452,12 +468,12 @@
 		color: #ffa100;
 	}
 
-	/* Carrusel */
-	.carousel-container {
+	/* Wrapper del carrusel */
+	.carousel-wrapper {
 		position: relative;
-		max-width: 800px;
+		max-width: 1300px;
 		margin: 0 auto;
-		padding: 20px 80px;
+		padding: 20px 70px;
 		opacity: 0;
 		transform: translateY(60px);
 		transition:
@@ -465,18 +481,37 @@
 			transform 1s ease-out;
 	}
 
-	.carousel-container:global(.visible) {
+	.carousel-wrapper:global(.visible) {
 		opacity: 1;
 		transform: translateY(0);
 	}
 
-	.content-carousel {
-		position: relative;
-		width: 100%;
-		min-height: 480px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
+	.carousel-wrapper:global(.visible) .content-card {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	/* Contenedor de tarjetas */
+	.cards-container {
+		overflow: hidden;
+	}
+
+	.cards-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 30px;
+		animation: fadeIn 0.5s ease-out;
+	}
+
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+			transform: translateX(30px);
+		}
+		to {
+			opacity: 1;
+			transform: translateX(0);
+		}
 	}
 
 	.empty-state {
@@ -484,26 +519,96 @@
 		color: var(--text-secondary);
 		font-size: 18px;
 		padding: 60px 20px;
+		grid-column: 1 / -1;
+	}
+
+	/* Botones de navegación */
+	.carousel-btn {
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		background: rgba(74, 123, 167, 0.9);
+		color: white;
+		border: none;
+		width: 50px;
+		height: 50px;
+		border-radius: 50%;
+		font-size: 24px;
+		cursor: pointer;
+		transition: all 0.3s ease;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 2;
+		box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+	}
+
+	.carousel-btn:hover {
+		background: rgba(74, 123, 167, 1);
+		transform: translateY(-50%) scale(1.1);
+		box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+	}
+
+	.carousel-btn.prev {
+		left: 10px;
+	}
+
+	.carousel-btn.next {
+		right: 10px;
+	}
+
+	:global([data-theme='dark']) .carousel-btn {
+		background: rgba(255, 161, 0, 0.9);
+	}
+
+	:global([data-theme='dark']) .carousel-btn:hover {
+		background: rgba(255, 161, 0, 1);
+	}
+
+	/* Indicadores */
+	.carousel-indicators {
+		display: flex;
+		justify-content: center;
+		gap: 15px;
+		margin-top: 30px;
+	}
+
+	.indicator {
+		width: 12px;
+		height: 12px;
+		border-radius: 50%;
+		border: 2px solid #4a7ba7;
+		background: transparent;
+		cursor: pointer;
+		transition: all 0.3s ease;
+		padding: 0;
+	}
+
+	.indicator:hover {
+		transform: scale(1.2);
+	}
+
+	.indicator.active {
+		background: #4a7ba7;
+		transform: scale(1.3);
+	}
+
+	:global([data-theme='dark']) .indicator {
+		border-color: #ffa100;
+	}
+
+	:global([data-theme='dark']) .indicator.active {
+		background: #ffa100;
 	}
 
 	/* Tarjeta de contenido */
 	.content-card {
-		position: absolute;
-		width: 100%;
-		max-width: 500px;
 		opacity: 0;
-		transform: scale(0.8);
+		transform: translateY(30px);
 		transition:
-			opacity 0.5s ease,
-			transform 0.5s ease;
-		pointer-events: none;
-	}
-
-	.content-card.active {
-		opacity: 1;
-		transform: scale(1);
-		pointer-events: auto;
-		z-index: 1;
+			opacity 0.6s ease-out,
+			transform 0.6s ease-out;
+		transition-delay: var(--delay, 0s);
 	}
 
 	.card-link {
@@ -632,73 +737,65 @@
 		color: #93c5fd;
 	}
 
-	/* Botones de navegacion */
-	.carousel-btn {
-		position: absolute;
-		top: 50%;
-		transform: translateY(-50%);
-		background: rgba(74, 123, 167, 0.8);
-		color: white;
-		border: none;
-		width: 50px;
-		height: 50px;
-		border-radius: 50%;
-		font-size: 24px;
-		cursor: pointer;
-		transition: all 0.3s ease;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		z-index: 2;
-		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-	}
-
-	.carousel-btn:hover {
-		background: rgba(74, 123, 167, 1);
-		transform: translateY(-50%) scale(1.1);
-	}
-
-	.carousel-btn.prev {
-		left: 0;
-	}
-
-	.carousel-btn.next {
-		right: 0;
-	}
-
-	/* Indicadores */
-	.carousel-indicators {
-		display: flex;
-		justify-content: center;
-		gap: 15px;
-		margin-top: 40px;
-	}
-
-	.indicator {
-		width: 15px;
-		height: 15px;
-		border-radius: 50%;
-		border: 2px solid #4a7ba7;
-		background: transparent;
-		cursor: pointer;
-		transition: all 0.3s ease;
-		padding: 0;
-	}
-
-	.indicator:hover {
-		transform: scale(1.2);
-	}
-
-	.indicator.active {
-		background: #4a7ba7;
-		transform: scale(1.3);
-	}
-
 	/* Responsive */
+	@media (max-width: 1024px) {
+		.carousel-wrapper {
+			padding: 20px 60px;
+		}
+
+		.cards-grid {
+			grid-template-columns: repeat(3, 1fr);
+			gap: 20px;
+		}
+
+		.card-title {
+			font-size: 18px;
+		}
+
+		.card-excerpt {
+			font-size: 14px;
+			-webkit-line-clamp: 2;
+		}
+
+		.carousel-btn {
+			width: 45px;
+			height: 45px;
+			font-size: 20px;
+		}
+	}
+
 	@media (max-width: 768px) {
 		.content-section {
 			padding: 40px 20px 20px 20px;
 			padding-top: 90px;
+		}
+
+		.carousel-wrapper {
+			padding: 20px 50px;
+		}
+
+		.cards-grid {
+			grid-template-columns: repeat(2, 1fr);
+			gap: 20px;
+		}
+
+		/* Ocultar la tercera tarjeta en tablet */
+		.content-card:nth-child(3) {
+			display: none;
+		}
+
+		.carousel-btn {
+			width: 40px;
+			height: 40px;
+			font-size: 18px;
+		}
+
+		.carousel-btn.prev {
+			left: 5px;
+		}
+
+		.carousel-btn.next {
+			right: 5px;
 		}
 
 		.mission-wrapper {
@@ -736,30 +833,25 @@
 			letter-spacing: 2px;
 		}
 
-		.carousel-container {
-			padding: 20px 60px;
-		}
-
-		.content-carousel {
-			min-height: 450px;
-		}
-
 		.card-content {
 			padding: 20px;
 		}
 
 		.card-title {
-			font-size: 20px;
+			font-size: 18px;
 		}
 
 		.card-excerpt {
 			font-size: 14px;
 		}
 
-		.carousel-btn {
-			width: 40px;
-			height: 40px;
-			font-size: 20px;
+		.carousel-indicators {
+			margin-top: 20px;
+		}
+
+		.indicator {
+			width: 10px;
+			height: 10px;
 		}
 	}
 
@@ -767,6 +859,35 @@
 		.content-section {
 			padding-top: 80px;
 			padding-bottom: 10px;
+		}
+
+		.carousel-wrapper {
+			padding: 15px 45px;
+		}
+
+		.cards-grid {
+			grid-template-columns: 1fr;
+			gap: 20px;
+		}
+
+		/* Mostrar solo 1 tarjeta en movil */
+		.content-card:nth-child(2),
+		.content-card:nth-child(3) {
+			display: none;
+		}
+
+		.carousel-btn {
+			width: 35px;
+			height: 35px;
+			font-size: 16px;
+		}
+
+		.carousel-btn.prev {
+			left: 5px;
+		}
+
+		.carousel-btn.next {
+			right: 5px;
 		}
 
 		.title-section {
@@ -783,14 +904,6 @@
 		.content-title {
 			font-size: 22px;
 			letter-spacing: 1.5px;
-		}
-
-		.carousel-container {
-			padding: 5px 50px;
-		}
-
-		.content-carousel {
-			min-height: 420px;
 		}
 
 		.card-image-container {
@@ -810,15 +923,14 @@
 			-webkit-line-clamp: 2;
 		}
 
-		.carousel-btn {
-			width: 35px;
-			height: 35px;
-			font-size: 18px;
+		.carousel-indicators {
+			margin-top: 15px;
+			gap: 12px;
 		}
 
 		.indicator {
-			width: 12px;
-			height: 12px;
+			width: 8px;
+			height: 8px;
 		}
 
 		.mission-wrapper {
