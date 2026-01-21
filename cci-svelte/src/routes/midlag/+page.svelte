@@ -51,8 +51,17 @@
 				El CCI Laguna forma parte de la Red Nacional de Observatorios, Seguridad, Justicia y
 				Legalidad, es considerado el primer Observatorio certificado del país, cumpliendo bajo los
 				criterios del proceso de certificación desarrollado por México Evalúa y el Observatorio
-				Nacional Ciudadano”
+				Nacional Ciudadano"
 			</p>
+		</div>
+
+		<div class="cta-section">
+			<a href="/boletines" class="cta-link">
+				<span>Boletines de Seguridad</span>
+				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M5 12h14M12 5l7 7-7 7"/>
+				</svg>
+			</a>
 		</div>
 	</div>
 </section>
@@ -181,6 +190,41 @@
 		border-radius: 12px;
 		background-color: #f4f6f8;
 		padding: 15px;
+	}
+
+	.cta-section {
+		display: flex;
+		justify-content: center;
+		margin-top: 40px;
+	}
+
+	.cta-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 10px;
+		padding: 16px 32px;
+		background: var(--accent-color, #007bff);
+		color: white;
+		text-decoration: none;
+		border-radius: 12px;
+		font-size: 18px;
+		font-weight: 600;
+		transition: all 0.3s ease;
+		box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+	}
+
+	.cta-link:hover {
+		background: var(--accent-hover, #0056b3);
+		transform: translateY(-2px);
+		box-shadow: 0 6px 16px rgba(0, 123, 255, 0.4);
+	}
+
+	.cta-link svg {
+		transition: transform 0.3s ease;
+	}
+
+	.cta-link:hover svg {
+		transform: translateX(4px);
 	}
 
 	@media (max-width: 768px) {

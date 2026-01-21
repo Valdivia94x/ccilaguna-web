@@ -1,7 +1,7 @@
 // src/routes/blog/+page.server.js
 import { client } from '$lib/sanity';
 
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 9;
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ url }) {

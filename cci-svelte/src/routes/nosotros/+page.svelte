@@ -387,7 +387,7 @@
 		<div class="team-grid">
 			<div class="team-member" use:animarAlEntrar={{ delay: 0 }}>
 				<div class="member-photo">
-					<img src="/images/team/placeholder.png" alt="Marco Antonio Zamarripa González" />
+					<img src="/images/team/marco.jpeg" alt="Marco Antonio Zamarripa González" />
 				</div>
 				<h3 class="member-name">Marco Antonio Zamarripa González</h3>
 				<p class="member-role">Director General</p>
@@ -395,7 +395,7 @@
 
 			<div class="team-member" use:animarAlEntrar={{ delay: 100 }}>
 				<div class="member-photo">
-					<img src="/images/team/placeholder.png" alt="Luis Alfredo Medina López" />
+					<img src="/images/team/luisAlf.jpeg" alt="Luis Alfredo Medina López" />
 				</div>
 				<h3 class="member-name">Luis Alfredo Medina López</h3>
 				<p class="member-role">Coordinador de Investigación</p>
@@ -403,31 +403,15 @@
 
 			<div class="team-member" use:animarAlEntrar={{ delay: 200 }}>
 				<div class="member-photo">
-					<img src="/images/team/placeholder.png" alt="David Ruelas Sarmiento" />
+					<img src="/images/team/david.jpeg" alt="David Ruelas Sarmiento" />
 				</div>
 				<h3 class="member-name">David Ruelas Sarmiento</h3>
-				<p class="member-role">Investigador</p>
-			</div>
-
-			<div class="team-member" use:animarAlEntrar={{ delay: 300 }}>
-				<div class="member-photo">
-					<img src="/images/team/placeholder1.png" alt="Dely Ramírez Sánchez" />
-				</div>
-				<h3 class="member-name">Dely Ramírez Sánchez</h3>
-				<p class="member-role">Vinculación</p>
-			</div>
-
-			<div class="team-member" use:animarAlEntrar={{ delay: 400 }}>
-				<div class="member-photo">
-					<img src="/images/team/placeholder.png" alt="Wolfang Arturo García Méndez" />
-				</div>
-				<h3 class="member-name">Wolfang Arturo García Méndez</h3>
-				<p class="member-role">Sistemas</p>
+				<p class="member-role">Coordinador Programa Anticorrupción</p>
 			</div>
 
 			<div class="team-member" use:animarAlEntrar={{ delay: 500 }}>
 				<div class="member-photo">
-					<img src="/images/team/placeholder1.png" alt="Gabriela Zamora Álvarez" />
+					<img src="/images/team/gabs.jpeg" alt="Gabriela Zamora Álvarez" />
 				</div>
 				<h3 class="member-name">Gabriela Zamora Álvarez</h3>
 				<p class="member-role">Diseñadora Gráfica</p>
@@ -435,18 +419,18 @@
 
 			<div class="team-member" use:animarAlEntrar={{ delay: 600 }}>
 				<div class="member-photo">
-					<img src="/images/team/placeholder.png" alt="Enrique Lara García" />
+					<img src="/images/team/cesar.jpeg" alt="César Rodríguez" />
 				</div>
-				<h3 class="member-name">Enrique Lara García</h3>
+				<h3 class="member-name">César Rodríguez</h3>
 				<p class="member-role">Investigador</p>
 			</div>
 
 			<div class="team-member" use:animarAlEntrar={{ delay: 700 }}>
 				<div class="member-photo">
-					<img src="/images/team/placeholder1.png" alt="Nayeli García González" />
+					<img src="/images/team/karla.jpeg" alt="Karla Barrios" />
 				</div>
-				<h3 class="member-name">Nayeli García González</h3>
-				<p class="member-role">Community Manager</p>
+				<h3 class="member-name">Karla Barrios</h3>
+				<p class="member-role">Coordinadora Programa Buen Gobierno</p>
 			</div>
 		</div>
 	</section>
