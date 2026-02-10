@@ -1,6 +1,5 @@
 <script lang="ts">
 	import '../app.css';
-	import favicon from '$lib/assets/favicon.svg';
 	import { onMount } from 'svelte';
 	import { theme } from '$lib/stores/theme';
 	import { browser } from '$app/environment';
@@ -63,7 +62,7 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+	<link rel="icon" type="image/png" href="/favicon.png" />
 	<script>
 		// Script de bloqueo para evitar flash de tema incorrecto
 		(function() {
