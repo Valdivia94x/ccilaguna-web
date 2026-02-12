@@ -56,6 +56,7 @@ export default defineType({
       name: 'coverImage',
       title: 'Portada',
       type: 'image',
+      description: 'Tamaño ideal: 1200×675px (16:9). Mínimo 800×450px. Se muestra como tarjeta en la sección de boletines.',
       options: { hotspot: true }
     }),
     defineField({

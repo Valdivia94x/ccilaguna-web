@@ -22,7 +22,7 @@ export default defineType({
       options: {
         hotspot: true 
       },
-      description: 'Sube el logo preferiblemente en formato PNG (fondo transparente) o SVG.',
+      description: 'Tamaño ideal: 512×512px (cuadrado). Mínimo 200×200px. Formato PNG con fondo transparente o SVG.',
       validation: rule => rule.required()
     }),
     defineField({

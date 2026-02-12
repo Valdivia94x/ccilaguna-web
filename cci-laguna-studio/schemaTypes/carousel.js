@@ -23,6 +23,7 @@ export default defineType({
               name: 'imagen',
               title: 'Imagen',
               type: 'image',
+              description: 'Tamaño ideal: 2560×1440px (16:9). Mínimo 1920×1080px. Se muestra a pantalla completa como banner principal.',
               options: {
                 hotspot: true
               }

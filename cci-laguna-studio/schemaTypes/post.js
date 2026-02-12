@@ -41,6 +41,7 @@ export default defineType({
       name: 'mainImage',
       title: 'Imagen de Portada',
       type: 'image',
+      description: 'Tamaño ideal: 1200×675px (16:9). Mínimo 800×450px. Se muestra como tarjeta y portada del artículo.',
       options: {
         hotspot: true, // Esto permite recortar la imagen si es necesario
       },

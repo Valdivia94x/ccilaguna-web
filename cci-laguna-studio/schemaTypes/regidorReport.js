@@ -165,7 +165,7 @@ export default defineType({
       name: 'coverImage',
       title: 'Imagen de Portada',
       type: 'image',
-      description: 'Imagen en formato vertical (proporción A4)',
+      description: 'Tamaño ideal: 800×1130px (proporción A4 vertical). Mínimo 600×850px. Se muestra como portada de informe.',
       options: {
         hotspot: true
       },

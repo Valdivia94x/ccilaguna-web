@@ -37,6 +37,7 @@ export default defineType({
       name: 'coverImage',
       title: 'Portada del Informe',
       type: 'image',
+      description: 'Tamaño ideal: 1000×750px (4:3). Mínimo 800×600px. Se muestra como tarjeta de informe con mayor altura.',
       options: { hotspot: true },
       validation: rule => rule.required()
     }),
