@@ -3,7 +3,9 @@
     "allow": [
       "Bash(npm run build:*)",
       "Bash(npm run check:*)",
-      "Bash(powershell:*)"
+      "Bash(powershell:*)",
+      "mcp__Sanity__get_schema",
+      "mcp__Sanity__query_documents"
     ]
   }
 }

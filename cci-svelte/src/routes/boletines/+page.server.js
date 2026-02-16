@@ -17,6 +17,7 @@ export async function load() {
         },
         alt
       },
+      "pdfUrl": pdfFile.asset->url,
       "size": pdfFile.asset->size
     }`;
 

@@ -3,13 +3,14 @@
 
 	interface ContentItem {
 		_id: string;
-		_type: 'post' | 'publication' | 'newsletter' | 'report';
+		_type: 'post' | 'publication' | 'newsletter' | 'report' | 'regidorReport' | 'agendaDocument' | 'survey';
 		title: string;
 		slug: string;
 		date: string;
 		image: string | null;
 		excerpt: string | null;
 		category?: string;
+		pdfUrl?: string;
 	}
 
 	let { items, mission }: { items: ContentItem[]; mission: string } = $props();
@@ -34,34 +35,70 @@
 			label: 'Blog',
 			color: '#3b82f6',
 			darkColor: '#60a5fa',
-			route: '/blog'
+			route: '/blog',
+			aspectRatio: 'horizontal'
 		},
 		publication: {
 			label: 'Publicacion',
 			color: '#10b981',
 			darkColor: '#34d399',
-			route: '/publicaciones'
+			route: '/publicaciones',
+			aspectRatio: 'horizontal'
 		},
 		newsletter: {
 			label: 'Boletin',
 			color: '#f59e0b',
 			darkColor: '#fbbf24',
-			route: '/boletines'
+			route: '/boletines',
+			aspectRatio: 'horizontal'
 		},
 		report: {
 			label: 'Informe',
 			color: '#8b5cf6',
 			darkColor: '#a78bfa',
-			route: '/informes'
+			route: '/informes',
+			aspectRatio: 'vertical'
+		},
+		regidorReport: {
+			label: 'Regidor MX',
+			color: '#ef4444',
+			darkColor: '#f87171',
+			route: '/regidor-mx',
+			aspectRatio: 'vertical'
+		},
+		agendaDocument: {
+			label: 'Agenda',
+			color: '#06b6d4',
+			darkColor: '#22d3ee',
+			route: '/agenda',
+			aspectRatio: 'vertical'
+		},
+		survey: {
+			label: 'Encuesta',
+			color: '#ec4899',
+			darkColor: '#f472b6',
+			route: '/encuestas',
+			aspectRatio: 'horizontal'
 		}
 	};
 
 	function getItemUrl(item: ContentItem): string {
 		const config = typeConfig[item._type];
-		if (item._type === 'report') {
+		// Boletines descargan directamente el PDF
+		if (item._type === 'newsletter' && item.pdfUrl) {
+			return item.pdfUrl;
+		}
+		// Tipos que son PDFs y redirigen a la página de lista
+		const pdfTypes = ['report', 'regidorReport', 'agendaDocument', 'survey'];
+		if (pdfTypes.includes(item._type)) {
 			return config.route;
 		}
 		return `${config.route}/${item.slug}`;
+	}
+
+	// Determinar si el enlace debe abrir en nueva pestaña (para descargas de PDF)
+	function shouldOpenInNewTab(item: ContentItem): boolean {
+		return item._type === 'newsletter' && !!item.pdfUrl;
 	}
 
 	function formatDate(dateString: string): string {
@@ -199,8 +236,14 @@
 						{#each visibleItems as item, index (item._id)}
 							{@const config = typeConfig[item._type]}
 							<div class="content-card" style="--delay: {index * 0.1}s">
-								<a href={getItemUrl(item)} class="card-link">
-									<div class="card-image-container">
+								<a
+								href={getItemUrl(item)}
+								class="card-link"
+								class:vertical-card={config.aspectRatio === 'vertical'}
+								target={shouldOpenInNewTab(item) ? '_blank' : undefined}
+								rel={shouldOpenInNewTab(item) ? 'noopener noreferrer' : undefined}
+							>
+									<div class="card-image-container" class:vertical={config.aspectRatio === 'vertical'}>
 										{#if item.image}
 											<img src={item.image} alt={item.title} class="card-image" />
 										{:else}
@@ -644,6 +687,16 @@
 		height: 100%;
 		object-fit: cover;
 		transition: transform 0.3s ease;
+	}
+
+	/* Imágenes verticales (PDFs) se muestran completas dentro del mismo contenedor */
+	.card-image-container.vertical .card-image {
+		object-fit: contain;
+		background: #f3f4f6;
+	}
+
+	:global([data-theme='dark']) .card-image-container.vertical .card-image {
+		background: #374151;
 	}
 
 	.card-link:hover .card-image {

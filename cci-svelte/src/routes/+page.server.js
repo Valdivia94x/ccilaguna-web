@@ -25,11 +25,12 @@ export async function load() {
       }
     }`;
 
-    // Query combinada para los últimos contenidos de cada tipo
+    // Query combinada para los últimos contenidos de cada tipo (ordenados por fecha de creación en Sanity)
     const latestContentQuery = `{
-      "posts": *[_type == "post"] | order(publishedAt desc)[0...4] {
+      "posts": *[_type == "post" && !(_id in path("drafts.**"))] | order(_createdAt desc)[0...4] {
         _id,
         _type,
+        _createdAt,
         title,
         "slug": slug.current,
         "date": publishedAt,
@@ -37,9 +38,10 @@ export async function load() {
         "image": mainImage.asset->url,
         "excerpt": pt::text(body)[0...150]
       },
-      "publications": *[_type == "publication"] | order(publishedAt desc)[0...4] {
+      "publications": *[_type == "publication" && !(_id in path("drafts.**"))] | order(_createdAt desc)[0...4] {
         _id,
         _type,
+        _createdAt,
         title,
         "slug": slug.current,
         "date": publishedAt,
@@ -47,23 +49,80 @@ export async function load() {
         "excerpt": description,
         "image": coverImage.asset->url
       },
-      "newsletters": *[_type == "newsletter"] | order(publishedAt desc)[0...4] {
+      "newsletters": *[_type == "newsletter" && !(_id in path("drafts.**"))] | order(_createdAt desc)[0...4] {
         _id,
         _type,
+        _createdAt,
         title,
         "slug": slug.current,
         "date": publishedAt,
         category,
         "excerpt": description,
-        "image": coverImage.asset->url
+        "image": coverImage.asset->url,
+        "pdfUrl": pdfFile.asset->url
       },
-      "reports": *[_type == "report"] | order(year desc)[0...4] {
+      "reports": *[_type == "report" && !(_id in path("drafts.**"))] | order(_createdAt desc)[0...4] {
         _id,
         _type,
+        _createdAt,
         title,
         "slug": slug.current,
         "date": year + "-01-01",
         category,
+        "excerpt": description,
+        "image": coverImage.asset->url
+      },
+      "regidorReports": *[_type == "regidorReport" && !(_id in path("drafts.**"))] | order(_createdAt desc)[0...4] {
+        _id,
+        _type,
+        _createdAt,
+        "title": city + " - " + select(
+          periodType == "semester" => select(
+            semester == "primer-semestre" => "1er Semestre",
+            semester == "segundo-semestre" => "2do Semestre",
+            semester
+          ) + " " + string(semesterYear),
+          periodStartMonth + " - " + periodEndMonth + " " + string(periodEndYear)
+        ),
+        "slug": _id,
+        "date": select(
+          periodType == "semester" => string(semesterYear) + "-" + select(semester == "primer-semestre" => "06", "12") + "-01",
+          string(periodEndYear) + "-" + select(
+            periodEndMonth == "enero" => "01",
+            periodEndMonth == "febrero" => "02",
+            periodEndMonth == "marzo" => "03",
+            periodEndMonth == "abril" => "04",
+            periodEndMonth == "mayo" => "05",
+            periodEndMonth == "junio" => "06",
+            periodEndMonth == "julio" => "07",
+            periodEndMonth == "agosto" => "08",
+            periodEndMonth == "septiembre" => "09",
+            periodEndMonth == "octubre" => "10",
+            periodEndMonth == "noviembre" => "11",
+            periodEndMonth == "diciembre" => "12",
+            "12"
+          ) + "-01"
+        ),
+        "excerpt": pt::text(description)[0...150],
+        "image": coverImage.asset->url
+      },
+      "agendaDocuments": *[_type == "agendaDocument" && !(_id in path("drafts.**"))] | order(_createdAt desc)[0...4] {
+        _id,
+        _type,
+        _createdAt,
+        title,
+        "slug": _id,
+        "date": publishedAt,
+        "excerpt": select(type == "informe" => "Informe de Agenda", "Comunicado de Agenda"),
+        "image": coverImage.asset->url
+      },
+      "surveys": *[_type == "survey" && !(_id in path("drafts.**"))] | order(_createdAt desc)[0...4] {
+        _id,
+        _type,
+        _createdAt,
+        title,
+        "slug": _id,
+        "date": publishedAt,
         "excerpt": description,
         "image": coverImage.asset->url
       }
@@ -75,15 +134,18 @@ export async function load() {
       client.fetch(latestContentQuery)
     ]);
 
-    // Combinar todos los contenidos, ordenar por fecha y tomar los 6 más recientes
+    // Combinar todos los contenidos, ordenar por fecha de creación en Sanity y tomar los 6 más recientes
     const allContent = [
       ...(latestContentData.posts || []),
       ...(latestContentData.publications || []),
       ...(latestContentData.newsletters || []),
-      ...(latestContentData.reports || [])
+      ...(latestContentData.reports || []),
+      ...(latestContentData.regidorReports || []),
+      ...(latestContentData.agendaDocuments || []),
+      ...(latestContentData.surveys || [])
     ]
-      .filter(item => item && item.date)
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .filter(item => item && item._createdAt)
+      .sort((a, b) => new Date(b._createdAt).getTime() - new Date(a._createdAt).getTime())
       .slice(0, 6);
 
     return {
