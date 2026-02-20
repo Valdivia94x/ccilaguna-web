@@ -53,7 +53,7 @@
 					slug: n.slug.current,
 					date: n.publishedAt,
 					// Generamos la URL de la imagen (cuadrada para que se vea bien en cards)
-					image: n.coverImage ? urlFor(n.coverImage).width(500).height(500).url() : '',
+					image: n.coverImage ? urlFor(n.coverImage).width(600).height(340).url() : '',
 					// Como no pusimos "excerpt" en el schema del boletín, usamos el tamaño como info útil
 					excerpt: n.description || `Boletín disponible en PDF (${formatBytes(n.size)})`,
 					// Convertimos "Seguridad" (Sanity) a "seguridad" (Tu UI)
