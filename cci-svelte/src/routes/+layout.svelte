@@ -4,8 +4,21 @@
 	import { theme } from '$lib/stores/theme';
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
+	import { afterNavigate } from '$app/navigation';
+	import { env } from '$env/dynamic/public';
 
 	let { children } = $props();
+
+	afterNavigate(({ to }) => {
+		if (!browser || !to || !env.PUBLIC_GA_ID) return;
+		const gtag = (window as any).gtag;
+		if (typeof gtag !== 'function') return;
+		gtag('event', 'page_view', {
+			page_path: to.url.pathname + to.url.search,
+			page_title: document.title,
+			page_location: to.url.href
+		});
+	});
 
 	// Determinar si mostrar el widget de chat (no en páginas individuales de blog/boletines)
 	let showChatWidget = $derived(() => {
