@@ -47,7 +47,7 @@
 		target={publicacion.pdfUrl ? '_blank' : undefined}
 		rel={publicacion.pdfUrl ? 'noopener noreferrer' : undefined}
 	>
-		<div class="card-image" class:informe-image={isInforme}>
+		<div class="card-image">
 			{#if publicacion.image}
 				<img src={publicacion.image} alt={publicacion.title} />
 			{:else}
@@ -171,7 +171,7 @@
 	.card-image {
 		position: relative;
 		width: 100%;
-		height: 220px;
+		aspect-ratio: 16 / 9;
 		overflow: hidden;
 		background: var(--bg-primary);
 	}
@@ -302,10 +302,6 @@
 		border-color: rgba(251, 191, 36, 0.3);
 	}
 
-	.informe-image {
-		height: 280px;
-	}
-
 	.card-title {
 		font-size: 20px;
 		font-weight: 600;
@@ -358,10 +354,6 @@
 
 	/* Responsive */
 	@media (max-width: 768px) {
-		.card-image {
-			height: 200px;
-		}
-
 		.card-content {
 			padding: 20px;
 		}
