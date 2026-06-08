@@ -8,6 +8,7 @@ export async function load({ params }) {
     const query = `*[_type == "regidorReport" && _id == $id][0]{
       _id,
       city,
+      reportDate,
       periodType,
       periodStartMonth,
       periodStartYear,

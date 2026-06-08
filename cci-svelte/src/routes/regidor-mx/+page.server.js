@@ -20,11 +20,13 @@ export async function load({ url }) {
       : '';
 
     // Query para obtener informes con paginación y filtro opcional
-    // Ordenar por año descendente usando select para manejar ambos tipos de período
+    // Ordenar por fecha del informe (reportDate) de más reciente a más antiguo.
+    // Los documentos sin reportDate quedan al final, ordenados por fecha de creación.
     const query = `{
-      "reports": *[_type == "regidorReport"${cityFilter}${yearFilter}] | order(select(periodType == "semester" => semesterYear, periodEndYear) desc) [$offset...$limit] {
+      "reports": *[_type == "regidorReport"${cityFilter}${yearFilter}] | order(reportDate desc, _createdAt desc) [$offset...$limit] {
         _id,
         city,
+        reportDate,
         periodType,
         periodStartMonth,
         periodStartYear,

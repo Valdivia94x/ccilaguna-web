@@ -50,6 +50,15 @@ export default defineType({
       validation: (rule) => rule.required().error('La ciudad es obligatoria')
     }),
     defineField({
+      name: 'reportDate',
+      title: 'Fecha',
+      type: 'date',
+      description: 'Fecha del informe (día, mes y año). Campo opcional.',
+      options: {
+        dateFormat: 'DD/MM/YYYY'
+      }
+    }),
+    defineField({
       name: 'periodType',
       title: 'Tipo de Período',
       type: 'string',
